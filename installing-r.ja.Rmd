@@ -1,0 +1,18 @@
+## Rのダウンロード
+
+* R homepage - [http://www.r-project.org](http://www.r-project.org)
+* CRAN Mirrors - [http://cran.r-project.org](http://cran.r-project.org)
+
+<img src="/introduction/installing_r/images/r-download.png" alt="Download R on Cran", class="shadow", style="width:70%">
+
+macOSにおけるパッケージ管理ソフト「Homebrew」を使用してインストールすることもできます [via command line](http://tristanpenman.com/blog/posts/2015/10/20/installing-r-and-rstudio-on-mac-os-x/)
+
+## 初期状態のRコンソール
+
+初期状態のRはこのような感じです。
+
+<img src="/introduction/installing_r/images/r-gui.png" alt="R GUI", class="shadow", style="width:60%">
+
+とてもシンプルですが、私たちはこれに甘んじることなく、次の段階に進みましょう。
+
+基本的なコードがインストールされたので、Rで作業するための [より良いインターフェース](../../installing_rstudio/installing-rstudio/) に進むことができます。
