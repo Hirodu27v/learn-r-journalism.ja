@@ -1,0 +1,12 @@
+## RStudioのインストール
+
+* RStudio Desktop - [http://www.rstudio.com](https://www.rstudio.com/products/rstudio/)
+
+<img src="/introduction/installing_rstudio/images/rstudio-install.png" alt="Download RStudio", class="shadow", style="width:70%">
+
+## RStudioの統合開発環境（IDE）
+![](/introduction/installing_rstudio/images/r-ide.png?classes=shadow)
+
+RStudioは、Rコードを記述し、データを処理するために必要なすべてを一つのアプリケーションに統合するIDEです。
+
+ヘルプファイルやプロットを閲覧したり、環境内のオブジェクトを簡単に追跡したりすることができます。
