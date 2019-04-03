@@ -20,7 +20,7 @@ RStudioを開くと、3つのセクションに分かれています。
 
 まだデータをロードしていないため、このセクションには何もありません。
 
-右上のセクションには **History**　タブもあります。これはRStudioがコンソールで実行したコマンドの履歴を表示するところです。
+右上のセクションには **History**　タブもあります。RStudioがコンソールで実行したコマンドの履歴を表示するところです。
 
 ![](/how_to_use_r/tour_rstudio/images/bottom-right.png?classes=shadow)
 
