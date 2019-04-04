@@ -1,0 +1,59 @@
+
+エディタウィンドウを開いて *File > New* または *File > Open file...*　からこれらのファイルを編集することができます。
+
+行を選択して **CTRL+ENTER** か **CMD+ENTER** 、スクリプトエディタウィンドウの上部にある *Run* をクリックすると、コードの一部を実行（コンソールウィンドウに送信）できます。何も選択しなければ、Rはカーソルがある行を実行します。
+
+いつでも関数 `source()`を使えばスクリプト全体を実行できます。
+
+例えば、保存済みの **script.R** が作業ディレクトリのルートディレクトリにあり、このスクリプト全体を実行する場合には
+
+```{r run_script, eval=F}
+source("script.R")
+```
+
+Yエディタウィンドウで *Run all* を押すか、 **CTRL+SHIFT+S** または *CMD+SHIFT+S*　と入力しても構いません。
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/tQTWM4W9XxQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+## 利用できないデータ
+
+実際にデータを扱うとき、計測が失敗したか人的エラーが発生したために、しばしば値が欠落していることがあります。
+
+データが *利用できない*　場合には,数字の代わりに　`NA` と表記する必要があります。
+
+```{r na}
+j <- c(1,2,NA)
+```
+
+不完全なデータセットの統計をとることは厳密には不可能です。
+
+あなたが測定していなかった週末の間に最大の値を発生させる出来事があったかもしれません。 したがって、Rは `j` の最大値が何かはわからないと返すでしょう。
+
+```{r na2}
+max(j)
+
+```
+
+欠けているデータに構わず計算したい場合は、引数 `na.rm=TRUE` を追加します( `NA`を除外しますか? Yes)。
+
+```{r na3}
+max(j, na.rm=T)
+```
+
+
+
+{{% notice warning %}}
+`NA`はあらゆる計算に影響します
+{{% /notice %}}
+
+
+```{r na4}
+sum(j)
+# compared to
+sum(j, na.rm=T)
+```
+
+ `NA`を処理するための[いくつかの](http://faculty.nps.edu/sebuttre/home/R/missings.html) [リンクを](https://datascienceplus.com/missing-values-in-r/) [紹介します](https://stats.idre.ucla.edu/r/faq/how-does-r-handle-missing-values/) 。
