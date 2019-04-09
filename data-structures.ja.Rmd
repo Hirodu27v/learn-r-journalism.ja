@@ -235,7 +235,7 @@ sample_df
 
  [これらの演習](http://code.r-journalism.com/chapter-1/#section-data-structures-in-r) を通じてこのセクションの知識を身につけましょう。
 
-エクササイズアプリの実行に関する説明は、このセクションの [紹介ページ](http://learn.r-journalism.com/en/how_to_use_r/) にあります。
+エクササイズアプリの実行に関する説明は、このセクションの[紹介ページ](http://learn.r-journalism.com/en/how_to_use_r/)にあります。
 
 -----
 
