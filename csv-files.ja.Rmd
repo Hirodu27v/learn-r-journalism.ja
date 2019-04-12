@@ -9,13 +9,13 @@ CSV のファイル名は **.csv**　で終わります。
 
 ## csvファイルの中身はどのようになっているか
 
-コンマで区切られた値を説明しています。
+画像のファイル名は、コンマで区切られた値を説明しています。
 
 ![](/importing_exporting/csv/images/csv2.png?classes=shadow)
 
 # CSVファイルのインポート
 
-- CSVのインポートはベースRでできるので、本来パッケージは不要です。
+- CSVのインポートはベースRでできるので、パッケージは本来不要です。
 - しかし、ここではあえて **readr**　パッケージを使ってみましょう。
 
 ## データを取得する2つの方法
@@ -28,13 +28,13 @@ CSV のファイル名は **.csv**　で終わります。
 
 
 
-CSVファイルのリンクがあるならば, [データのリンク](https://data.ct.gov/Health-and-Human-Services/Admissions-to-DMHAS-Addiction-Treatment-by-Town-Ye/iyru-82zq/data)を右クリックし、さらに **リンクのアドレスをコピー**　をクリックします。このデータセットは、 [Connecticut Open Data Portal](https://data.ct.gov/Health-and-Human-Services/Admissions-to-DMHAS-Addiction-Treatment-by-Town-Ye/iyru-82zq/)にあります。
+CSVファイルのリンクがあるならば、[データのリンク](https://data.ct.gov/Health-and-Human-Services/Admissions-to-DMHAS-Addiction-Treatment-by-Town-Ye/iyru-82zq/data)を右クリックし、さらに **リンクのアドレスをコピー**　をクリックします。このデータセットは、[Connecticut Open Data Portal](https://data.ct.gov/Health-and-Human-Services/Admissions-to-DMHAS-Addiction-Treatment-by-Town-Ye/iyru-82zq/)にあります。
 
 ![](/importing_exporting/csv/images/rightclick.png?classes=shadow)
 
 ## read.csv()
 
-CSVファイルをインポートするためのR関数は `read.csv()`です。 URLアドレスを引用符で囲み、  `stringsAsFactors=F` を追加します。(ここでは関数 `head()`を使用しています-- これはデフォルトで冒頭の6行を返しますが、10行見てみたいのでhead(data, 10)のように指定します。 )
+CSVファイルをインポートするための関数は`read.csv()`です。URLアドレスを引用符で囲み、(文字列を因子型として読み込まないよう)`stringsAsFactors=F`を追加します。(ここでは関数 `head()`を使用しています。デフォルトでは冒頭の6行を返しますが、10行見てみたいのでhead(data, 10)のように指定します。 )
 
 ```{r segment1}
 df_csv <- read.csv("https://data.ct.gov/api/views/iyru-82zq/rows.csv?accessType=DOWNLOAD", stringsAsFactors=F)
@@ -44,19 +44,19 @@ head(df_csv, 10)
 
 ## データをインポートする他の方法：ダウンロード
 
-**リンクのアドレスをコピー**　するのではなく、今度はリンクを右クリックしたとき--  **名前を付けてリンク先を保存**　をクリックします。
+**リンクのアドレスをコピー**するのではなく、リンクを右クリックして**名前を付けてリンク先を保存**をクリックします。
 
 ![](/importing_exporting/csv/images/downloading.png?classes=shadow)
 
 作業ディレクトリに保存してください。
 
-右側の更新矢印をクリックしてファイルを更新し、保存されていることを確認します。
+右側の更新を表す矢印をクリックしてファイルを更新し、保存されていることを確認します。
 
 ![](/importing_exporting/csv/images/directory.png?classes=shadow)
 
 ## 覚えていますか：RStudioでディレクトリを変更する方法
 
- `setwd("/directory/where/you/want")` と入力するか、メニューから **Session > Set Working Directory > Choose Directory...**　と進んでください。
+ `setwd("/directory/where/you/want")` と入力するか、メニューから **Session > Set Working Directory > Choose Directory...**と進んでください。
 
 ![](/importing_exporting/csv/images/setwd.png?classes=shadow)
 ## ローカルのCSVのインポート
@@ -72,7 +72,7 @@ df_csv <- read.csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__
 
 ## stringsAsFactors=F
 
-なぜこうするのでしょう？
+なぜこうする必要があるのでしょうか？
 
 統計学者のせいです。
 
@@ -87,7 +87,7 @@ str(df_csv)
 
 
 
-##readr パッケージからread_csv()を使う
+##readrパッケージからread_csv()を使う
 
 **readr** は矩形データを素早く読み込むことができるパッケージで、デフォルトでは文字はストリングであって、ファクタ型ではないと仮定しています。
 
@@ -98,11 +98,11 @@ library(readr)
 df_csv <- read_csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__and_Month.csv")
 ```
 
-ご覧のとおり、`read_csv()` 関数は **MonthYear** と **Town**  `read.csv()` のようにファクタ型としてではなくストリングとして解釈しています。
+ご覧のとおり、`read_csv()` 関数は **MonthYear** と **Town** 列を`read.csv()`のように因子型としてではなくストリングとして解釈しました。
 
 # CSVファイルのエクスポート
 
-データの分析や変換が終了したら、 **readr**　パッケージの  `write_csv()` を使用してデータフレームをCSVファイルとして保存しましょう。
+データの分析や変換が終了したら、**readr**パッケージの`write_csv()` を使用してデータフレームをCSVファイルとして保存しましょう。
 
 ```{r export1, eval=F}
 #  write_csv() 関数にデータフレームの名前と、ファイル名を付けて渡します。
@@ -118,7 +118,7 @@ write_csv(df_csv, "data/transformed_data.csv")
 
 ## `NA` があるデータフレームのエクスポート
 
-警告：エクスポートされたファイルに含まれる `NA`を置き換えるには、変数 `na="whatever"`を渡します。
+警告：エクスポートされたファイルに含まれる`NA`を置き換えるには、変数 `na="whatever"`を渡します。
 
 ```{r export3, eval=F}
 # これは、NAを空白に置き換えます。
