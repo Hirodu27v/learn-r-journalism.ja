@@ -7,7 +7,7 @@ CSV のファイル名は **.csv**　で終わります。
 ![](/importing_exporting/csv/images/csv1.png?classes=shadow)
 
 
-## csvファイルの中身はどのようになっているか
+## csvファイルの中身はどのようになっているのか
 
 画像のファイル名は、コンマで区切られた値を説明しています。
 
