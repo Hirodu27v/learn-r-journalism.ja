@@ -12,7 +12,7 @@
 
 ![](/importing_exporting/delimited_text/images/tab-delimited.png?classes=shadow)
 
-IベースRでこれらのファイルをインポートするには `read.table()` 関数を使います。
+ベースRでこれらのファイルをインポートするには `read.table()` 関数を使います。
 
 ファイルの場所（この場合はサブディレクトリ「data」）と、ヘッダー行があるかどうか、および検索する区切り記号を渡します。
 
@@ -26,7 +26,7 @@ View(df1)
 ```
 
 ```{r tab}
-# a \t indicates a tab (and a \n indicates a line break, like pressing enter in a document)
+# \tはタブを意味します。(そして\nは文章内でエンターを押すのと同じく、改行という意味です)
 df2 <- read.table("data/Employee_Payroll_Tab.txt",  header=TRUE, sep="\t")
 ```
 
@@ -42,9 +42,9 @@ View(df2)
 
 * 命名体系の不一致
 * 遅いローディング
-* 文字列を勝手ににFactorsに変換する
+* 文字列を勝手に因子型に変換する
 
-パイプ区切りファイルを読み込むには、**readr**　の `read_delim()` を使用してください。
+パイプで区切られたファイルを読み込むには、**readr**　の `read_delim()` を使用してください。
 
 ```{r readr_pipe}
 ## readrをインストールしていなければ、コメントを外して以下の行を実行してください。
@@ -52,6 +52,7 @@ View(df2)
 library(readr)
 df1 <- read_delim("data/Employee_Payroll_Pipe.txt", delim="|")
 df1
+```
 
 ## read_tsv()
 タブ区切りファイルを読み込むには、**readr** 　の`read_tsv()`を使います。
@@ -63,7 +64,7 @@ df2
 
 ## 固定幅ファイル
 
-固定幅の列を持つデータを得ることもあります。
+列の幅が固定されたデータもあります。
 
 こんな感じです。
 
@@ -80,7 +81,7 @@ read_fwf(file, col_positions, col_types = NULL, locale = default_locale(),
   n_max = Inf, guess_max = min(n_max, 1000), progress = show_progress())
 ```
 
-これを機能させるために必要な重要事項があります。:
+これを機能させるために必要な重要事項があります。
 
 * 各列の幅を変数に渡す
 * 各列の名前
