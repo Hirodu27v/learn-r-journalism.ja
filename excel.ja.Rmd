@@ -1,0 +1,230 @@
+Excelスプレッドシートには、（Excelのファイルである）ワークブックとして複数のスプレッドシートを含めることができるという固有の特徴があります。
+
+## Excelファイルはどのようなものか
+
+Excelのファイル名は **.xls** か **.xlsx**　で終わります。
+
+![](/importing_exporting/csv/images/excel1.png?classes=shadow)
+
+## Excelファイルの内部
+
+奇妙でしょう？解析は絶対無理です。
+
+![](/importing_exporting/csv/images/excel2.png?classes=shadow)
+
+私は時々、Excelのシートを.csvファイルとして保存します。
+
+それはショートカットです。しかし、透明性を保ち、生データを処理したい場合は次のようにします。
+
+## Excelファイルのインポート
+- Excelのインポートは複雑で、 **readxl package** が必要です。
+- Excelファイルを処理して追加のシートを作成できるパッケージは他にもありますが、このインスタンスでは必要ありません。
+
+まず `readxl` パッケージをインストールします。
+
+パッケージの一部として `readxl` があります。
+
+```{r segment3}
+## readxlがインストールされていない場合は、以下の行のコメントを外して実行してください。
+#install.packages("readxl")
+library(readxl)
+```
+
+csvとは異なり、ExcelシートのURLをコピーして貼り付けることはできません。
+
+最初にファイルをダウンロードする必要があります。
+
+[Excelデータリンク](http://www.ct.gov/ocme/cwp/view.asp?a=2165&Q=295128&ocmeNav=|) を右クリックし **ファイルに名前を付けて保存**
+をクリックします。
+![](/importing_exporting/csv/images/saveexcel.png?classes=shadow)
+
+## read_excel()
+
+Excelスプレッドシートには複数のシートがあり、`read_excel()` ではインポート時に特定のシートを参照する必要があるため、Excelがどのようになっているかあらかじめ調べておくのが最善です。
+
+一番初めのシートでやってみましょう。
+
+```
+df_xl <- read_excel("data/StatisticsSummary.xls", sheet=1)
+```
+
+チェックします。
+
+```
+View(df_xl)
+```
+
+![](/importing_exporting/csv/images/excel_imported.png?classes=shadow)
+
+
+**これはダメです**。
+
+Excelファイルは、Excelでは見栄えがよくてもRでは意味がないフォーマットが好きだという問題があります。
+
+## read_excel() をもう一度
+
+
+今回は `skip=2`を追加したのでデータを取り込むときに最初の行をスキップします。
+
+```{r skip}
+df_xl <- read_excel("data/StatisticsSummary.xls", sheet=1, skip=2)
+```
+
+ずっとよくなりました。
+
+```
+View(df_xl)
+```
+
+![](/importing_exporting/csv/images/excel_imported2.png?classes=shadow)
+
+{{% notice warning %}}
+列名がスペースと記号で保存されていることに注意してください。
+{{% /notice %}}
+
+
+
+```{r df_xl}
+# the colnames() 関数はデータフレームcolnames(df_xl)の列名をリストします。
+
+```
+
+それでは、スペースを含む列のデータをどのように参照すればよいのでしょう。
+
+列を抽出するためにいつも通り `$` を使ってみましょう。
+
+```{r df_xl_col_fail, error=T}
+head(df_xl$Other Cases)
+```
+
+このように、スペースがあるとうまくいきません。 スペースのある列を処理するには、バッククオートを追加します。
+
+```{r df_xl_col_pass, error=T}
+head(df_xl$`Other Cases`)
+```
+
+限られた基礎的な作業ならば、いくつか余分な操作をするだけでよいので大丈夫でしょう。
+
+ただし、これから実行する作業を見越して、文字やスペースがないよう列名を簡略化する必要があります。これが
+
+## クリーニング（パート1）
+
+列名に `make.names()` 関数を使用します。 この関数は、文字ベクトルから構文的に有効な名前を作成します（スペースを取り除きピリオドで置き換えます）。
+
+```{r next}
+colnames(df_xl) <- make.names(colnames(df_xl))
+```
+
+チェックしてみます。
+
+```
+View(df_xl)
+```
+
+![](/importing_exporting/csv/images/makenames.png?classes=shadow)
+
+```{r new_colnames}
+colnames(df_xl)
+```
+
+まあまあです。
+
+名前にまだ少し奇妙なところがありますが、それは空白がピリオドに置き換えられたためです。
+
+最初の列をチェックしてください: `Fiscal.Year......7.1.6.30`
+
+後で入力しやすいように変更しましょう。
+
+## 特定の列の名前を変更する
+
+ベースRで行う方法とdplyrパッケージを使用する方法を紹介します。
+
+`Fiscal.Year......7.1.6.30` をコピーし
+`colnames(dataframe_name)[colnames(dataframe_name) == 'ColumnNameToBeChanged'] <- 'NewColumnName'`の中に貼り付けます。
+
+```{r colrename, eval=F}
+# プロセスをお見せしたいのでコードを実行しないでください。
+colnames(df_xl)[colnames(df_xl) == 'Fiscal.Year......7.1.6.30'] <- 'Year'
+```
+
+dplyrで行う方法は `rename()` 関数を使います。
+
+```{r colrename2}
+## まだdplyrがインストールされていない場合は、以下の行のコメントを外して実行してください。
+# install.packages("dplyr")
+
+library(dplyr)
+df_xl <- rename(df_xl, Year=Fiscal.Year......7.1.6.30)
+```
+
+それはわずかな違いです。丸括弧、角括弧と等号が少なくなります。
+
+引用符を追加する必要はありません。
+
+見てみましょう。
+
+```{r colnames_again}
+colnames(df_xl)
+```
+
+必要に応じて他の列の名前も修正してください。私はとりあえずこのままにしておきます。
+
+
+## df_xlシートは十分クリーンですか？
+
+データの一番下までスクロールします。
+
+![](/importing_exporting/csv/images/nas.png?classes=shadow)
+
+
+まだクリーンではありません。たくさんの`NA`があります。
+
+後で問題が発生するかもしれないので、今のうちに対処しましょう。
+
+# NAの排除
+
+NAを取り除く手っ取り早い方法は、1列ごとに `NA`をサブセット化または除外することです。
+
+`Year` 列を使用しましょう。
+
+`subset()` と `filter()`の二つの方法があります。
+
+1. Base R
+```{r base}
+df_xl <- subset(df_xl, !is.na(Year))
+```
+
+2. dplyr
+```{r dplyr}
+##  dplyrがまだインストールされていない場合は、以下の行のコメントを外して実行してください。
+# install.packages("dplyr")
+library(dplyr)
+df_xl <- filter(df_xl, !is.na(Year))
+```
+
+何が違うのでしょう？ dplyrはtidyverseパッケージの一部で、このコースの後半で取り上げます。使ってみましょう。
+
+## チェックしてみます。
+
+![](/importing_exporting/csv/images/no.nas.png?classes=shadow)
+
+`NAs`は全くありません。
+
+数行のコードで、データは分析または視覚化するのに十分なほどクリーンアップされています。
+
+# Excelにエクスポートする
+
+オープンで他の人が開く際に有料のプログラムを要求しないために、データフレームはCSVとして保存することをお勧めします。
+
+しかし、そうしなければならない場合は、いくつかのチュートリアルがあります。
+
+* [xlsx パッケージを使う](http://www.sthda.com/english/wiki/writing-data-from-r-to-excel-files-xls-xlsx)
+* [Excel filesを Rで読み込んでインポートする](https://www.datacamp.com/community/tutorials/r-tutorial-read-excel-into-r)
+
+
+
+## 演習
+
+[これらの演習で](http://code.r-journalism.com/chapter-2/#section-excel) このセクションの知識を身につけましょう。
+
+エクササイズアプリの実行に関する説明は、このセクションの [紹介ページ](http://learn.r-journalism.com/en/importing_exporting/) にあります。
