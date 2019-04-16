@@ -1,16 +1,16 @@
 JSONはJavaScript Object Notationの略で、地図のようなWebサイト機能を支えるデータ構造です。
 
-[Sinclair Broadcast](http://sbgi.net/) のすべてのテレビ局と所在地のリストを作成することに興味があるとしましょう。
+（米放送大手）[Sinclair Broadcast](http://sbgi.net/) が擁するすべてのテレビ局と所在地のリストを作成することに興味があるとしましょう。
 
 ウェブサイトに行ってみます。
 
 ![](/importing_exporting/json/images/sinclair1.png)
 
- [地図](http://sbgi.net/tv-stations/)があるのを見つけるかもしれません！
+ きっと[地図](http://sbgi.net/tv-stations/)があるのを見つけるでしょう！
 
 ![](/importing_exporting/json/images/sinclair2.png)
 
-ブラウザのデベロッパーツールのサイズ順に並べ替えることができる **Network** をクリックし、マップによって呼び出されている **json** ファイルがあることを確認します。
+ブラウザのデベロッパーツールからサイズ順に並べ替えることができる **Network** をクリックし、マップによって呼び出されている **json** ファイルがあることを確認します。
 
 ![](/importing_exporting/json/images/sinclair3.png)
 
@@ -69,8 +69,9 @@ View(stations)
 
 JSONがこれほど整っていることはめったにありません。
 
-この比喩の出店は忘ましたが、あなたのコンピュータのフォルダ構造を考えてみましょう。スプレッドシート内のフォルダの構造を他人にどのように説明しますか。
+どこで知った比喩かは忘れましたが、あなたのコンピュータのフォルダ構造を考えてみましょう。
+スプレッドシート内のフォルダの構造をどのように説明しますか。
 
 難しい？ でも可能ではあります。
 
-JSONは通常入れ子構造になっていて複雑です。しかし[扱う方法](https://blog.exploratory.io/working-with-json-data-in-very-simple-way-ad7ebcc0bb89)はあるのです。
+JSONは通常入れ子構造になっていて複雑です。しかし[扱う方法](https://blog.exploratory.io/working-with-json-data-in-very-simple-way-ad7ebcc0bb89)はあります。
