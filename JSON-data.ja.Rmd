@@ -1,0 +1,76 @@
+JSONはJavaScript Object Notationの略で、地図のようなWebサイト機能を支えるデータ構造です。
+
+[Sinclair Broadcast](http://sbgi.net/) のすべてのテレビ局と所在地のリストを作成することに興味があるとしましょう。
+
+ウェブサイトに行ってみます。
+
+![](/importing_exporting/json/images/sinclair1.png)
+
+ [地図](http://sbgi.net/tv-stations/)があるのを見つけるかもしれません！
+
+![](/importing_exporting/json/images/sinclair2.png)
+
+ブラウザのデベロッパーツールのサイズ順に並べ替えることができる **Network** をクリックし、マップによって呼び出されている **json** ファイルがあることを確認します。
+
+![](/importing_exporting/json/images/sinclair3.png)
+
+JSONリンクをクリックすると、所属、電話番号、緯度と経度を含むデータ構造が表示されます。
+
+![](/importing_exporting/json/images/sinclair4.png)
+
+クローズアップするとこの通りです。
+
+解析可能な矩形のデータフレームに変換できそうです。
+
+![](/importing_exporting/json/images/sinclair5.png)
+## jsonliteパッケージ
+
+ [**jsonlite** ](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html)パッケージを使います。
+
+パッケージをインストールしてロードします。
+
+```{r import}
+#install.packages("jsonlite")
+library(jsonlite)
+```
+
+次に、JSONファイルがある場所を指定します。ファイルをダウンロードした場合は、URLかローカルパスを使用できます。Webサイトが再構成された場合のバックアップとして、ダウンロードしておくことをお勧めします。
+
+`fromJSON()` 関数を使います。
+
+```{r json_address}
+json_url <-"http://sbgi.net/resources/assets/sbgi/MetaverseStationData.json"
+
+## 上記のURLが存在しない場合は、以下の行のコメントを外して実行してください。
+# json_url <- "data/MetaverseStationData.json"
+
+stations <- fromJSON(json_url)
+```
+
+インポート後の構造を見てみましょう。
+
+```{r structure}
+str(stations)
+```
+
+データフレームのように見えるでしょうか？
+
+```
+View(stations)
+```
+
+![](/importing_exporting/json/images/json_example.png)
+
+絶好のスタートです。
+
+データを分析し、地図上で視覚化する段階に進むことができます。
+
+しかし、それについては後の章で説明します。
+
+JSONがこれほど整っていることはめったにありません。
+
+この比喩の出店は忘ましたが、あなたのコンピュータのフォルダ構造を考えてみましょう。スプレッドシート内のフォルダの構造を他人にどのように説明しますか。
+
+難しい？ でも可能ではあります。
+
+JSONは通常入れ子構造になっていて複雑です。しかし[扱う方法](https://blog.exploratory.io/working-with-json-data-in-very-simple-way-ad7ebcc0bb89)はあるのです。
