@@ -1,0 +1,190 @@
+SPSSは、特定の形式でデータを格納し、さらに詳細な分析に役立つグラフィカルインタフェースを提供するExcelに似た独自のソフトウェアです。
+
+これは社会科学向けの統計パッケージで、IBMの製品です。非常に高価で、ふつう大企業や大きな組織だけがライセンスを所有しています。
+
+しかし、保存されたデータをSPSSからRに取り込むことは可能です。
+
+ここでは、FBIの補遺的な殺人レポートのケースレベルデータを使用します。 27,000人以上の殺人に関するデータがあり、非営利組織 [Murder Accountability Project](http://www.murderdata.org/p/data-docs.html)が情報自由法に基づき入手しました。
+
+{{% notice note %}}
+これはMurder Accountability Projectと、データとアルゴリズムを使って連続殺人犯を探し出そうとするジャーナリスト、トーマス・ハーグローブに関する [ニューヨーカーの記事](https://www.newyorker.com/magazine/2017/11/27/the-serial-killer-detector) です。次の章では、データを詳しく調べてアルゴリズムを自分で適用してみましょう。
+{{% /notice %}}
+
+解凍すると、ファイルは約200 MBです（Excelでも開けました）。
+
+Bしかし、Rは（ある程度までの）ビッグデータを処理できます。データはコンピュータのメモリに保存されます。コンピュータのメモリが16ギガバイトなら、それがインポート可能な最大のファイルサイズです。Rの機能を実行するにはまだ多くのメモリを必要とするので、私はその数字にこだわることはお勧めしません。 ビッグデータを扱うならば、データをMySQLに入れるという方法があります。
+
+まずデータをダウンロードしてください。そして、それを作業ディレクトリの "data"サブディレクトリに解凍してください。
+
+このコースのリポジトリからダウンロードしたローカルデータを使用している場合は、次のコードを実行してください。
+
+```
+temp <- tempfile()
+unzip("data/SHR76_16.sav.zip", exdir="data", overwrite=T)
+unlink(temp)
+```
+
+*data* ディレクトリに **SHR76_16.sav** ファイルがある場合、**foreign** パッケージの `read.spss()` 関数を使ってデータをインポートできます。
+
+これがSPSSファイルです。
+
+**層状**　になっています。
+
+データのラベルと値があります。
+
+Rで作業するときは、それを想定する必要があります。
+
+```{r labels, message=F, warning=F}
+## foreignをインストールしていないのであれば、
+下の行をコメント解除して実行してください。
+#install.packages("foreign")
+library(foreign)
+data_labels <- read.spss("data/SHR76_16.sav", to.data.frame=TRUE)
+```
+
+データフレームがどのように見えるかを確認し、ずっと右側までスクロールします。
+```
+View(data_labels)
+```
+
+![](/importing_exporting/spss/images/data_labels.png)
+
+```{r no_labels, warning=F, message=F}
+data_only <- read.spss("data/SHR76_16.sav", to.data.frame=TRUE, use.value.labels=F)
+```
+
+このデータフレームを確認して、右いっぱいまでスクロールします。
+
+```
+View(data_only)
+```
+
+![](/importing_exporting/spss/images/data_only.png)
+
+**違いは何でしょう？**
+
+data_labelsデータフレームの右端には、州と首都圏の列が記載されています。
+
+The data_onlyデータフレームには、州と首都圏の列が番号で表されています。
+
+後の分析に両方のデータセットが必要になるため、これは非常に重要です。
+
+これらは重複したデータフレームですが、一種のミラーデータとなることがあります。
+## データフレームを結合する
+
+これが手順です。
+
+1. **dplyr** パッケージを呼び出す
+2. 重複しているもののデータが異なる列の名前を変更する
+3. 重複している片方のデータセットの列を削除する
+4. 1つの大きなデータフレームとしてそれらを一緒にする（結合する）
+
+{{% notice disclaimer %}}
+データセットを結合するという概念を紹介するのはこれが初めてです。これは、データ分析において最も協力で重要なことの1つです。 [次の章](http://learn.r-journalism.com/en/wrangling/tidyr_joins/tidyr-joins/) で詳しく説明します。
+{{% /notice %}}
+
+
+
+特定の列の名前を変更する **dplyr**　パッケージの`select()` 関数を使います。
+
+```{r dplyr, warning=F, message=F}
+library(dplyr)
+
+## ID, CNTYFIPS, Ori, State, Agency, and AGENCY_A の各列を保持しています。
+## ラベルが分かるように他の列の名前を変えます。
+
+new_labels <- select(data_labels,
+               ID, CNTYFIPS, Ori, State, Agency, AGENCY_A,
+               Agentype_label=Agentype,
+               Source_label=Source,
+               Solved_label=Solved,
+               Year,
+               Month_label=Month,
+               Incident, ActionType,
+               Homicide_label=Homicide,
+               Situation_label=Situation,
+               VicAge,
+               VicSex_label=VicSex,
+               VicRace_label=VicRace,
+               VicEthnic, OffAge,
+               OffSex_label=OffSex,
+               OffRace_label=OffRace,
+               OffEthnic,
+               Weapon_label=Weapon,
+               Relationship_label=Relationship,
+               Circumstance_label=Circumstance,
+               Subcircum, VicCount, OffCount, FileDate,
+               fstate_label=fstate,
+               MSA_label=MSA)
+
+## ID, CNTYFIPS, Ori, State, Agency, and AGENCY_A の各列を削除します。
+## 他の列の名前は、特に値がわかるように変更します。
+
+
+new_data_only <- select(data_only,
+               Agentype_value=Agentype,
+               Source_value=Source,
+               Solved_value=Solved,
+               Month_value=Month,
+               Homicide_value=Homicide,
+               Situation_value=Situation,
+               VicSex_value=VicSex,
+               VicRace_value=VicRace,
+               OffSex_value=OffSex,
+               OffRace_value=OffRace,
+               Weapon_value=Weapon,
+               Relationship_value=Relationship,
+               Circumstance_value=Circumstance,
+               fstate_value=fstate,
+               MSA_value=MSA)
+
+# cbind() は行数が同じ場合にのみ機能します。
+
+new_data <- cbind(new_labels, new_data_only)
+
+# select()関数を使用して列を並べ替え、ラベルと値が隣り合うようにします。
+
+new_data <- select(new_data,
+                ID, CNTYFIPS, Ori, State, Agency, AGENCY_A,
+                Agentype_label, Agentype_value,
+                Source_label, Source_value,
+                Solved_label, Solved_value,
+                Year,
+                Month_label, Month_value,
+                Incident, ActionType,
+                Homicide_label,Homicide_value,
+                Situation_label,Situation_value,
+                VicAge,
+                VicSex_label,VicSex_value,
+                VicRace_label,VicRace_value,
+                VicEthnic, OffAge,
+                OffSex_label,OffSex_value,
+                OffRace_label,OffRace_value,
+                OffEthnic,
+                Weapon_label,Weapon_value,
+                Relationship_label,Relationship_value,
+                Circumstance_label,Circumstance_value,
+                Subcircum, VicCount, OffCount, FileDate,
+                fstate_label,fstate_value,
+                MSA_label,MSA_value)
+
+# 古いデータフレームは、巨大なので削除します。
+rm(data_labels)
+rm(data_only)
+rm(new_labels)
+rm(new_data_only)
+```
+
+データフレームの終わりはどうなっているでしょう。
+
+```
+View(new_data)
+```
+
+![](/importing_exporting/spss/images/new_data.png)
+
+合計47列あり、値がラベルの横にあります。
+
+素晴らしい。
+
+次の章に進み、このデータを調べ始めましょう。
