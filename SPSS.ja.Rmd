@@ -4,7 +4,7 @@ SPSSは、特定の形式でデータを格納し、さらに詳細な分析に�
 
 しかし、保存されたデータをSPSSからRに取り込むことは可能です。
 
-ここでは、FBIの補遺的な殺人レポートのケースレベルデータを使用します。 27,000人以上の殺人に関するデータがあり、非営利組織 [Murder Accountability Project](http://www.murderdata.org/p/data-docs.html)が情報自由法に基づき入手しました。
+ここでは、FBIが公開している殺人事件のデータを使用します。27,000件以上の殺人に関するデータがあり、非営利組織 [Murder Accountability Project](http://www.murderdata.org/p/data-docs.html)が情報自由法に基づき入手しました。
 
 {{% notice note %}}
 これはMurder Accountability Projectと、データとアルゴリズムを使って連続殺人犯を探し出そうとするジャーナリスト、トーマス・ハーグローブに関する [ニューヨーカーの記事](https://www.newyorker.com/magazine/2017/11/27/the-serial-killer-detector) です。次の章では、データを詳しく調べてアルゴリズムを自分で適用してみましょう。
@@ -12,7 +12,8 @@ SPSSは、特定の形式でデータを格納し、さらに詳細な分析に�
 
 解凍すると、ファイルは約200 MBです（Excelでも開けました）。
 
-Bしかし、Rは（ある程度までの）ビッグデータを処理できます。データはコンピュータのメモリに保存されます。コンピュータのメモリが16ギガバイトなら、それがインポート可能な最大のファイルサイズです。Rの機能を実行するにはまだ多くのメモリを必要とするので、私はその数字にこだわることはお勧めしません。 ビッグデータを扱うならば、データをMySQLに入れるという方法があります。
+Rは（ある程度までの）ビッグデータを処理できます。データはコンピュータのメモリに保存されます。コンピュータのメモリが16ギガバイトなら、それがインポート可能な最大のファイルサイズです。
+Rの機能を実行するにはさらに多くのメモリを必要とするので、私はその数字にこだわることはお勧めしません。ビッグデータを扱うならば、データをMySQLに入れるという方法があります。
 
 まずデータをダウンロードしてください。そして、それを作業ディレクトリの "data"サブディレクトリに解凍してください。
 
@@ -28,7 +29,7 @@ unlink(temp)
 
 これがSPSSファイルです。
 
-**層状**　になっています。
+**層状**になっています。
 
 データのラベルと値があります。
 
@@ -70,6 +71,7 @@ The data_onlyデータフレームには、州と首都圏の列が番号で表�
 後の分析に両方のデータセットが必要になるため、これは非常に重要です。
 
 これらは重複したデータフレームですが、一種のミラーデータとなることがあります。
+
 ## データフレームを結合する
 
 これが手順です。
@@ -80,7 +82,7 @@ The data_onlyデータフレームには、州と首都圏の列が番号で表�
 4. 1つの大きなデータフレームとしてそれらを一緒にする（結合する）
 
 {{% notice disclaimer %}}
-データセットを結合するという概念を紹介するのはこれが初めてです。これは、データ分析において最も協力で重要なことの1つです。 [次の章](http://learn.r-journalism.com/en/wrangling/tidyr_joins/tidyr-joins/) で詳しく説明します。
+データセットを結合するという概念を紹介するのはこれが初めてです。これは、データ分析において最も強力で重要なことの1つです。[次の章](http://learn.r-journalism.com/en/wrangling/tidyr_joins/tidyr-joins/) で詳しく説明します。
 {{% /notice %}}
 
 
@@ -90,7 +92,7 @@ The data_onlyデータフレームには、州と首都圏の列が番号で表�
 ```{r dplyr, warning=F, message=F}
 library(dplyr)
 
-## ID, CNTYFIPS, Ori, State, Agency, and AGENCY_A の各列を保持しています。
+## ID、 CNTYFIPS、 Ori、 State、 Agency、 AGENCY_A の各列を保持しています。
 ## ラベルが分かるように他の列の名前を変えます。
 
 new_labels <- select(data_labels,
@@ -117,7 +119,7 @@ new_labels <- select(data_labels,
                fstate_label=fstate,
                MSA_label=MSA)
 
-## ID, CNTYFIPS, Ori, State, Agency, and AGENCY_A の各列を削除します。
+## ID, CNTYFIPS, Ori, State, Agency,  AGENCY_A の各列を削除します。
 ## 他の列の名前は、特に値がわかるように変更します。
 
 
