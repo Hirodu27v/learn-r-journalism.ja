@@ -1,3 +1,67 @@
 スプレッドシートを一つにまとめて大きなサイズのフォルダにしようと思ったことはありませんか。
 スプレッドシートは、何度もコピーして貼り付ける必要があります。
 しかし、Rを使えばそのプロセスをスクリプト化できます。
+実際にプロセスを単純化する関数を作成してみました。
+**devtools**パッケージを使って、私のGithubから**muckrakr**パッケージをダウンロードする必要があります。
+
+
+```{r install_muckrakr, warning=F, message=F}
+# devtoolsをインストールしていなければ、以下の行のコメントを外して実行してください。
+#install.packages("devtools")
+
+devtools::install_github("andrewbtran/muckrakr")
+library(muckrakr)
+```
+
+### CSVファイルをまとめる
+
+`bulk_csv()`という関数を使ってみます。
+
+このような感じです。 (**あくまで説明ですから、コマンドを実行しないでください**):
+
+```{r example, eval=F}
+bulk_csv(folder = "DEFAULTBULKCSV2017", export = "filenamedefaultbulkcsv2018.csv"")
+```
+
+引数は二つです: 
+
+* folder - csvファイルが存在する作業ディレクトリに関連するフォルダ。通常は現在の作業ディレクトリを指します。
+* export - csvファイルをエクスポートするためのファイル名を必要に応じて付けることができます。
+
+さて、このプロジェクトフォルダの中にはCSVでいっぱいのサブフォルダがあります。 
+
+![](/importing_exporting/folder_of_files/images/csvs.png?classes=shadow)
+
+`data/csvs`フォルダの中にあります。
+
+
+{{% notice note %}}
+このパッケージはreadrに基づいているのでread_csvから変数を渡すとbulk_csvで動作します。これらの変数は各CSVシートのインポートに適用されます。
+{{% /notice %}}
+
+すべてのデータセットを結合し、新しいデータフレームを作成するコマンドは次の通りです。
+
+```{r bulk_csv, warning=F, message=F}
+combined_data <- bulk_csv(folder="data/csvs")
+```
+
+データを新しいCSVファイルとしてエクスポートするコマンドは次のようになります。
+
+```{r bulk_csv2, warning=F, message=F}
+bulk_csv(folder="data/csvs", export="combined_data.csv")
+```
+
+
+こうすると、ファイルは現在の作業ディレクトリに保存されます。
+
+CSVファイル名の前にフォルダ構造を記述すると、ダウンロードする場所を指定できます。
+
+```{r bulk_csv3, warning=F, message=F}
+bulk_csv(folder="data/csvs", export="data/data_export/combined_data.csv")
+```
+
+### Excelファイルをまとめる
+
+ほとんど同じですが、関数の名前は`bulk_excel()`となります。
+
+この [関数](https://andrewbtran.github.io/muckrakr/bulk_excel.html) についてもっと知りたければ、 [**muckrakr** github リポジトリ](https://github.com/andrewbtran/muckrakr)をお読みください。
