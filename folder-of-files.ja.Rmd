@@ -23,7 +23,7 @@ library(muckrakr)
 bulk_csv(folder = "DEFAULTBULKCSV2017", export = "filenamedefaultbulkcsv2018.csv"")
 ```
 
-引数は二つです: 
+引数は二つです。
 
 * folder - csvファイルが存在する作業ディレクトリに関連するフォルダ。通常は現在の作業ディレクトリを指します。
 * export - csvファイルをエクスポートするためのファイル名を必要に応じて付けることができます。
