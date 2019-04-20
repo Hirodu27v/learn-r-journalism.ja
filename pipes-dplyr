@@ -1,1 +1,226 @@
+## 論理演算子
+
+| 演算子 | Description |
+| ------ | ------------------------ |
+| `<` | 未満 |
+| `<=` | 以下 |
+| `>`    | 大なり |
+| `>=`    | 以上 |
+| `==`    | 等しい |
+| `!=`    | 等しくない |
+| `!x`    | xではない |
+| `x | y`    | x または y |
+| `x & y`    | x かつ y |
+| `%in%`    | グループメンバーシップ
+| `isTRUE(x)`    | xがTRUEかどうか調べる |
+| `is.na(x)`    | xがNAかどうか調べる |
+| `!is.na(x)`    | xがNAではないか調べる |
+
+**演習**
+
+殺人事件の全データを持つ　**df4**　を論理演算子と `filter()` を使って作成してみましょう:
+
+1. コロンビア特別区で発生した
+2. 黒人の犠牲者を含み、2015年に解決された
+3. ピストル、リボルバーなどの拳銃が使用され、犠牲者は18～21歳
+**よくある間違い**
+
+1. `==`ではなく `=`を使う
+
+```
+# 誤り
+filter(murders, fstate_label="District of Columbia")
+
+# 正解
+filter(murders, fstate_label=="District of Columbia")
+```
+
+2. 引用符を忘れる
+
+```
+# 誤り
+filter(murders, fstate_label=District of Columbia)
+
+# 正解
+filter(murders, fstate_label="District of Columbia")
+```
+
+3. 複数のテストを一つにまとめてしまう
+
+```
+# 誤り
+filter(murders, 1980 < year < 1990)
+
+# 正解
+filter(murders, 1980 < year, year < 1990)
+```
+
+4. ％in％を使用せず、多くのテストをつなぎ合わせる
+
+```
+# 間違っていないが不十分
+filter(murders, VicRace_label=="Black" | VicRace_label="Unknown" | VicRace_label=="Asian or Pacific Islander")
+
+# 理想
+filter(murders, VicRace_label %in% c("Black", "Unknown", "Asian or Pacific Islander"))
+```
+
+
+さて、私たちは計75万件の殺人事件から、2016年に60歳以上のパートナーを殺害した約25件と人の特定の事件と、夫またはボーイフレンドが関与し、または被害者が三角関係にあった約３万２０００件からなる新しいデータフレームを手に入れました。
+
+47個の変数（コラム）がありますが、基礎分析に全ては必要ではありません。絞り込みましょう。
+
+------
+
+## select()
+
+![](/wrangling/dplyr/images/select.png?classes=shadow)
+
+抽出したいデータフレームの後ろに列名をリストするだけです。
+
+```{r select1}
+df1_narrow <- select(df1, State, Agency, Solved_label, Year)
+```
+
+```
+View(df1_narrow)
+```
+
+![](/wrangling/dplyr/images/df1.png?classes=shadow)
+
+列名の間に列を入れたいなら、列名の間にコロンを入れてください。
+
+```{r select2}
+df2_narrow <- select(df1, State, OffAge:OffRace_value, Weapon_label)
+```
+
+
+```
+View(df2_narrow)
+```
+![](/wrangling/dplyr/images/df2.png?classes=shadow)
+
+
+列名の横に `-` を入れてドロップします（複数の列を一緒にドロップすることもできます）。
+
+```{r select3}
+# 上記で作成したデータフレームを修正する
+df3_narrow <- select(df2_narrow, -Weapon_label)
+```
+
+```
+View(df3_narrow)
+```
+
+![](/wrangling/dplyr/images/df3.png?classes=shadow)
+
+`select()` と一緒に仕えて、あなたの助けとなる多くの関数があります。
+```
+# "_label"を含むすべての変数を抽出する
+
+labels_only_columns <- select(murders, contains("_label"))
+str(labels_only_columns)
+```
+
+ `select()`オプションが [ここ](https://dplyr.tidyverse.org/reference/select_helpers.html)にあるのでチェックしてみてください。
+
+さあ、次に移りましょう。
+## arrange()
+
+![](/wrangling/dplyr/images/arrange.png)
+
+複数の変数（列）を含めることができます。最初の変数が優先され、後続の変数はタイブレーカーとして機能します。
+
+![](/wrangling/dplyr/images/arrange_syntax.png)
+
+
+```{r arrange}
+age_df1 <- arrange(murders, VicAge)
+
+age_df2 <- arrange(murders, VicAge, OffAge)
+
+age_df3 <- arrange(murders, VicAge, desc(OffAge))
+
+# 上と同じ結果
+age_df3b <- arrange(murders, VicAge, -OffAge)
+```
+
+これはとても役に立ちます。次に移りましょう。
+
+------
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/awZQR_j7CTI?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+
+## mutate()
+
+![](/wrangling/dplyr/images/mutate.png)
+
+`mutate()` 関数を使って新しい変数（新しい列）を作ることができます。
+
+![](/wrangling/dplyr/images/mutate_syntax.png)
+
+
+```{r mutate1}
+murders_ver2 <- mutate(murders,
+                       age_difference=OffAge-VicAge)
+```
+
+```
+View(murders_ver2)
+```
+
+![](/wrangling/dplyr/images/mutate1.png?classes=shadow)
+
+## 算術演算子
+
+| 演算子 | 説明 |
+| ------ | ------------------------ |
+| `+` | 足し算 |
+| `-` | 引き算 |
+| `*`    | 掛け算 |
+| `/`    | 割り算 |
+| `^`    | べき乗 |
+
+`mutate()`では、単なる計算以上のことができます。
+
+if_else文のように、`mutate()`の `case_when()` を使って、他の値に基づく新たな値を作り出すことができます。
+
+```{r mutate2}
+# age_difference 列を生成します
+# VicRace_label列に応じて値が設定されたvic_category 列を作成します
+
+murders_ver3 <- mutate(murders,
+                       age_difference=OffAge-VicAge,
+                       vic_category=case_when(
+                         VicRace_label == "White" ~ "White",
+                         VicRace_label != "White" ~ "Non-White"
+                       ))
+```
+
+
+{{% notice tip %}}
+ここで `~` (チルダ) 演算子が初めて出てきました。通常は統計モデル式において、片側式であることを意味します。 "[次第で](https://stackoverflow.com/questions/14976331/use-of-tilde-in-r-programming-language)" と記述できますが、チルダが必要な理由を詳しく理解する必要はありません。これが、この機能を正しく動作させるために必要だというだけです。
+{{% /notice %}}
+
+
+
+
+`mutate()` 関数内では、コンマで区切られた二つの変数が作られています。
+
+* 一つは **age_difference** で、 **OffAge** と **VicAge**　の値を引き算するだけです。
+* もう一つは **vic_category** で、**VicRace_label**　列の値が「White」であるか「White」では *ない* かで「White」または「Non-White」が割り当てられます。
+
+```
+View(murders_ver3)
+```
+
+
+![](/wrangling/dplyr/images/white.png?classes=shadow)
+
+これが実際にベクトル化された関数の例です。  `lag()` や `lead()` 、 `rank()` のように素晴らしいものがいくつかあり、後で紹介できるかもしれません。当面は [このリスト](https://dplyr.tidyverse.org/reference/mutate.html#useful-functions)を見ておいてください。
 
