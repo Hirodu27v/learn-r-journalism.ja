@@ -1,3 +1,132 @@
+なぜ **dplyr**　を使うのか？
+
+* ジャーナリストが使い慣れた形式でデータフレームを扱うように設計されています
+* データの調査と変換に最適です。
+* 特にパイプ演算子のチェーン構文を使用する際、直感的に読み書きできる。
+
+## 五つの基本動詞
+
+* `filter()`
+* `select()`
+* `arrange()`
+* `mutate()`
+* `summarize()` と `group_by()`
+
+
+## 私たちの扱うデータ
+
+私たちは何十年にも渡る殺人事件のビッグデータを集めています。
+
+このケースレベルのデータは、司法省の [Murder Accountability Project](http://www.murderdata.org/p/data-docs.html) によって取得されました。
+
+**dplyr** というVerb関数を使用してデータを分析し、追求すべきストーリーがあるかどうか確かめます。
+
+前の章でインポートした巨大なSPSSデータセットを覚えていますか？
+
+インポートするために書いたコードを保存して列の名前を変更し、値とラベルをRスクリプト *import_murders.R*　に結合しました。これは再現性のある動作です。
+
+[どのように見えるか](https://github.com/r-journalism/learn-chapter-3/blob/master/dplyr/import_murders.R)確認しましょう--  約100行のコードが続いていますが、以下のスクリプトを実行するのに必要なのは1行だけです。
+
+{{% notice warning %}}
+コマンドを実行する前に、スクリプトが作業ディレクトリのフォルダにあり、*data*　サブフォルダに **SHR76_16.sav.zip** があるようにしてください。 私のコンピュータには *import_murders.R* が *dplyr* 、 **SHR76_16.sav.zip** が *dplyr/data* に入っています。
+{{% /notice %}}
+
+**実行には数分かかります。**
+
+```{r importing_data, warning=F, message=F}
+source("import_murders.R")
+```
+
+ **import_murders.R** スクリプトは解凍されたデータをインポートし、それを実行可能なデータフレームに変換して、分析のためのオブジェクト **murders** として保存しました。 コンソールにいくつか警告が出ますが、問題ありません。
+
+```
+View(murders)
+```
+
+![](/wrangling/dplyr/images/murders.png?classes=shadow)
+
+
+これが [データ辞書](https://www.dropbox.com/s/lo6tgo8nnbpqeru/MAPdefinitionsSHR.pdf?dl=1)です。
+
+ここで何を扱うのでしょう？
+
+## 行数（事件数）は?
+
+```{r rows}
+nrow(murders)
+```
+
+## 自治体はいくつ？
+
+2つのベースR関数、 `unique()` と `length()`を使います。
+
+```{r cities}
+#  unique() 関数で都市のリストを作成します。
+how_many <- unique(murders$MSA_label)
+
+# リストに含まれている都市の数を数え上げます。
+length(how_many)
+```
+
+始めるにあたって、データに圧倒されないようにしましょう。
+
+新しいデータセットを入手したら、それが何であるのかを確認します。 そうすることで、どのように要約するか、またはそれを分解するかなんとなく分かるようになります。
+
+**dplyr**　の`glimpse()`関数から始めましょう-- データセット内の変数とデータ型を簡単に見ることができます。
+
+```{r glimpse}
+glimpse(murders)
+```
+
+それから、私が興味を持った変数にいくつの型があるのかを確認します。カテゴリカルなデータセットに含まれる変数（列）が多いほど、深い分析ができます。
+
+たとえば、給与のリスト（1変数）を含むデータセットがある場合は、次のようにします。
+
+* 平均給与を計算する
+* 給与の最高額と最低額の差を計算する
+
+給与と労働者の性別（2つの変数）のデータセットがある場合は、さらに次のことができます。:
+
+* 男性と女性の平均給与を把握する
+* 男女の中央値の差を計算する
+
+給与と労働者の性別を含むデータセットがあり、労働者がどこに住んでいるかを明記している場合（3つの変数）、さらに次のことができます。:
+
+* 州ごとの平均給与を調べる
+* 州ごとの男性と女性の平均給与を把握する
+* 最大の格差があるのはどの州か判断する
+* どの州の女性が男性よりも多い給与を支払われているか分かる
+
+これが、このデータセットを使ってやろうとしていることです。:
+`filter()` 関数を使って範囲を絞りましょう。
+
+![](/wrangling/dplyr/images/filter.png)
+
+フィルタは、設定した条件を満たす行を抽出します。
+
+![](/wrangling/dplyr/images/filter_specifics.png)
+
+まずデータフレームを変数として`filter()`に渡し、次に論理テストを追加します。
+
+
+{{% notice warning %}}
+Rでは一つの  `=` は、 `<-`と同じく値を代入します。論理テストは二つの等号  `==`で等価かどうかテストします。
+{{% /notice %}}
+
+```{r filter2}
+df1 <- filter(murders, Relationship_label=="Husband", VicAge > 60, Year==2016)
+
+df2 <- filter(murders, Relationship_label=="Husband" & VicAge > 60 & Year==2016) # same as the line above
+
+df3 <- filter(murders, Relationship_label %in% c("Husband", "Boyfriend") | Circumstance_label=="Lovers triangle")
+```
+
+RStudioのEnvironmentウィンドウで新しいオブジェクトをチェックしてください。
+
+![](/wrangling/dplyr/images/3dfs.png?classes=shadow?width=20pc)
+
+データフレームdf1とdf2はまったく同じです（夫が関与し、被害者が60歳を超え、2016年に発生した事例を検索しています） -  25件見つかりました。一方、d3には、夫またはボーイフレンドが関与していた、または三角関係の約32,000件の事件があります。
+
 ## 論理演算子
 
 | 演算子 | 説明 |
@@ -148,13 +277,6 @@ age_df3b <- arrange(murders, VicAge, -OffAge)
 
 これはとても役に立ちます。次に移りましょう。
 
-------
-
-
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/awZQR_j7CTI?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
-</div>
-
 
 
 ## mutate()
@@ -224,3 +346,361 @@ View(murders_ver3)
 ![](/wrangling/dplyr/images/white.png?classes=shadow)
 
 これが実際にベクトル化された関数の例です。  `lag()` や `lead()` 、 `rank()` のように素晴らしいものがいくつかあり、後で紹介できるかもしれません。当面は [このリスト](https://dplyr.tidyverse.org/reference/mutate.html#useful-functions)を見ておいてください。
+
+
+## 名前を付け替える
+
+`rename()`を使えば、変数（列）の名前を簡単に変更できます。
+
+```{r rename}
+colnames(df3_narrow)
+
+# OK、上記の列名が表示されます - いくつか変更しましょう
+
+df3_renamed <- rename(df3_narrow,
+                      offender_gender=OffSex_label,
+                      offender_age=OffAge)
+colnames(df3_renamed)
+```
+
+`select()`関数で変数（列）の名前を変えることもできます。こうすれば、余分なコード行を減らすことができます。
+
+```{r select_rename}
+colnames(df3_narrow)
+
+# 州の列と犯人の性別の列、年齢の列のみを保持し、OffSex_label列とOffAge列の名前を変更する
+
+df4_renamed <- select(df3_narrow,
+                      State,
+                      offender_gender=OffSex_label,
+                      offender_age=OffAge)
+
+df4_renamed
+```
+
+-----
+
+## summarize()
+
+![](/wrangling/dplyr/images/summarize.png)
+
+これはExcelでピボットテーブルを作成するのと同じです。
+
+テーブル全体を単純化して集約します。
+
+```{r summarize1}
+summarize(murders, average_victim_age=mean(VicAge))
+```
+
+要約したテーブルを作成できます。
+
+
+```{r summarize2}
+summarize(murders,
+          average_victim_age=mean(VicAge),
+          average_offender_age=mean(OffAge))
+```
+
+
+{{% notice warning %}}
+average_offender_age値がちょっとおかしいですね。何が起きたのでしょう。
+{{% /notice %}}
+
+**murders** のデータフレームを要約します。
+
+```{r summarize4}
+summarize(murders,
+          first=min(Year),
+          last=max(Year),
+          metro_areas=n_distinct(MSA_label),
+          cases=n())
+```
+
+-----
+
+## group_by()
+
+要約する前に、データをグループ別に集計できます。
+
+![](/wrangling/dplyr/images/groupby.png)
+
+```{r summarize3}
+# 以前と同じプロセスですが、データをまとめる前にRに地下鉄のエリアをグループ化するよう指示しています。
+
+murders <- group_by(murders, MSA_label)
+
+summarize(murders,
+          first=min(Year),
+          last=max(Year),
+          cases=n())
+```
+
+はじめは完全に理解するのは難しいかもしれませんが、他の例を見れば理にかなっていることが分かると思います。
+
+`group_by()` の対となる `ungroup()` があるということも後で必要かもしれないので指摘しておきます。
+
+とりあえず **dplyr**　パッケージに付属している非常に便利な機能に進みましょう。
+
+-----
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/cOaXB4JfyXw?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+## pipe %>%
+
+データ分析は、ほとんどの場合、複数のステップが必要です。
+
+データセットを使ってこの複数のステップを処理する **オプション** を調べ、 *最良の* 方法を選びましょう。
+
+ **murders** データフレーム上で実行する理論上のプロセス：
+
+1. ワシントンDCで発生した事件の　**行を抽出** し
+2. 年別に事件を　**まとめ**
+3. 事件数を　**数え**
+4. 事件を絞り込んで　**整理する**
+
+**Option 1**
+
+ステップごとに新しいデータフレームを作成します。
+
+
+```{r multi1}
+dc_annual_murders1 <- filter(murders, State=="District of Columbia")
+dc_annual_murders2 <- group_by(dc_annual_murders1, Year)
+dc_annual_murders3 <- summarize(dc_annual_murders2, total=n())
+dc_annual_murders4 <- arrange(dc_annual_murders3, desc(total))
+
+# looking at the first 6 rows of data
+
+head(dc_annual_murders4)
+```
+
+**Option 2**
+
+関数を入れ子にすることで、すべてを一行にまとめます。
+
+```{r multi2}
+dc_annual_murders <- arrange(summarize(group_by(filter(murders, State=="District of Columbia"), Year), total=n()), desc(total))
+
+# 最初の６行を見る
+
+head(dc_annual_murders)
+```
+
+最初の方法では、データフレームに何が起きているのか分かりやすいのですが、入力が煩雑なので、実務的ではありません。 2番目の方法もダメです。コーディングは効率的ですが、データに何が起こっているか追跡しにくいからです。
+
+パイプ演算子 `%>%`について話しましょう。
+
+ **dplyr** の関数がすべて同じように構造化されていることにお気づきでしょうか: *最初の引数は常にデータフレームなのです。*
+
+データフレームを取り込み、データフレームを吐き出します。
+
+この関数の構造は `%>%` が機能することを可能にしています。
+
+![](/wrangling/dplyr/images/pipe.png)
+
+これらのコマンドは同じ機能です。試してみてください。
+
+```{r pipes3}
+filter(murders, OffAge==2)
+
+murders %>% filter(OffAge==2)
+```
+
+ `%>%` は文法的に *それならば*　と同じといって良いのです。
+
+おさらいですが:
+
+* ワシントンDCで発生した事件の　**行を抽出** し
+* 年別に事件を　**まとめ**
+* 事件数を　**数え**
+* 事件を絞り込んで　**整理する**
+
+**Option 3**
+
+ `%>%` を使います。
+
+```{r pipes4}
+filter(murders, State=="District of Columbia") %>%
+  group_by(Year) %>%
+  summarize(total=n()) %>%    
+  arrange(desc(total)) %>%
+  head()
+```
+
+とても読みやすくてシンプルですね。
+
+RStudioで `%>%` を入力するショートカットです。:
+
+* Mac: Cmd + Shift + M
+* Windows: Ctrl + Shift + M
+
+なぜ「M」なのでしょう？きっとtefan Milton Bacheがこのパイプを [**magrittr** パッケージ](https://cran.r-project.org/web/packages/magrittr/README.html) で最初に導入したからなのでしょう。
+
+
+## 再びMutate
+
+`mutate()`でできる [面白いこと](https://dplyr.tidyverse.org/reference/mutate.html#useful-functions) はたくさんあります。
+
+`mutate()`に含まれる `lag()`を試してみてください  -- 前の行のベクトルに基づいて計算を行うことができます。
+
+たとえば、上のデータフレームでは、DCの殺人件数がわかりました。  `lag()` とちょっとした計算で、殺人件数の年ごとの変動を計算することができます。
+
+```{r pipes5}
+#以前のコードを保持できる一方、新しいmutate lineを追加することもできます
+filter(murders, State=="District of Columbia") %>%
+  group_by(Year) %>%
+  summarize(total=n()) %>%
+  mutate(previous_year=lag(total)) %>%
+  mutate(change=total-previous_year)
+```
+
+`mutate()` は入力と同じ長さのベクトルを返します。
+
+コードを要約してから、 `lag()` に基づいて新しい列を変更し、次に新しい列と古い列に基づいて2番目の列を変更しました。
+
+何度でもmutateを使うことができます。
+
+```{r pipes6}
+# Here's an example of the same code above but with mutate called just once
+# previous_year was able to be referenced a second time because it was created in first
+years <- filter(murders, State=="District of Columbia") %>%
+  group_by(Year) %>%
+  summarize(total=n()) %>%
+  mutate(previous_year=lag(total), change=previous_year-total)
+
+years
+```
+
+`mutate()` は、渡した式がベクトル化された出力を返すときに機能します。ですから、ベクトルに10個のインスタンスがあったら、式も10個のインスタンスを出力する必要があります。
+
+ `sum()` のような式を渡すとうまく行きません。
+
+```{r pipes7}
+years %>% mutate(all_murders=sum(total))
+```
+
+これが `mutate()`と `summarize()`の違いです。
+
+## Summary関数
+
+`summarize()` dは、さっき `sum()` がやったように入力としてベクトルを受け取り、単一の値を出力します。
+
+summary 関数の例を挙げてみます:
+
+
+| 関数 | 説明 |
+| ------ | ------------------------ |
+| `mean(x)` | 平均. `mean(c(1,10,100,1000))` は 277.75を返します |
+| `median(x)` | 中央値 `median(c(1,10,100,1000))` は 55です。 |
+| `sd(x)`    | 標準偏差 `sd(c(1,10,100,1000))` は 483.57です。 |
+| `quantile(x, probs)`    | xは分位数が必要な数値ベクトル、probsは確率の数値ベクトルです。 |
+| `range(x)`    | 範囲 `range(c(1,10,100,1000))` は c(1, 1000) 、 `diff(range(c(1,10,100,1000)))` は 999を返します。|
+| `sum(x)`    | 和 `sum(c(1,10,100,1000))` は 1111です。 |
+| `min(x)`    | 最小値 `min(c(1,10,100,1000))` は 1です。 |
+| `max(x)`    | 最大値 `max(c(1,10,100,1000))` は 1000です。 |
+| `abs(x)`    | 絶対値 `abs(-8)` は 8です。 |
+
+これは **dplyr** と `summarize()`固有のsummary関数です --[他の関数](https://dplyr.tidyverse.org/reference/summarise.html#useful-functions)も学びましょう。
+
+
+| 関数 | 説明 |
+| ------ | ------------------------ |
+| `n()` | 値/行数を返します |
+| `n_distinct()` | ユニーク数を返す |
+| `first()`    | 配置されたグループ内の最初の値のみを返します |
+| `last()`    | 配置されたグループ内の最後の値のみを返します |
+| `nth()`    | ベクトルのn番目の位置を返します |
+
+## 再びgroup_by()
+
+パーセンテージを計算することによって学んだことをまとめましょう。
+
+`group_by()`を複数の変数（列）に適用できます。
+
+違いを見ていきましょう。
+
+私たちは、女性と男性の殺害数の比を把握することができます。
+
+```{r group_by2a}
+murders %>%
+  group_by(VicSex_label) %>%
+  summarize(total=n())
+```
+
+*VicSex_label* をグループ化することで、その変数で利用可能なすべてのインスタンスのカウント(`n()`) を得ました。
+
+さらに深く掘り下げるために、 `group_by()` に別の変数（列）名を追加することができます。 *State*　を追加したら何が起こるでしょうか。
+
+```{r group_by2b}
+murders %>%
+  group_by(State, VicSex_label) %>%
+  summarize(total=n())
+```
+
+とても興味深い。ここにあるデータの構造は、見慣れないものかもしれません。このデータはきちんと整えられています。各変数は列で、各観測値（または事件数）は行です。こうしておけば、Rの中のデータを分析してチャートを作成することが容易になります。
+
+でも、あなたは以下のようなデータの方が見覚えがあるでしょう。
+
+```{r group_by2c, echo=F}
+library(tidyr)
+murders %>%
+  group_by(State, VicSex_label) %>%
+  summarize(total=n()) %>%
+  spread(VicSex_label, total)
+```
+
+大丈夫、プレゼンテーションにも使えます。これを行う方法は、次の章で後述します。
+
+ただし、従来の構造より、パーセンテージなどの計算を簡単に実行できます。
+
+## パーセント
+
+ここまで見てきたすべてのverbをまとめましょう。
+
+```{r percents}
+percent_murders <- murders %>%
+  group_by(State, VicSex_label) %>%
+  summarize(total=n()) %>%
+  # okay, we've got the total, now we can do some math with mutate
+  mutate(percent=total/sum(total, na.rm=T)*100)
+  # did you notice the na.rm=T added to the sum function? This removes NAs
+  # That's necessary because if you have a single NA then it will not sum correctly (thanks, statisticians!)
+
+percent_murders
+```
+
+よし。 興味のあるものを見つけるためにもっと多くの `dplyr()` を使うことが出来ます。女性の殺害率が高い州はどこなのでしょう？
+
+```{r percents2}
+percent_murders_women <- murders %>%
+  group_by(State, VicSex_label) %>%
+  summarize(total=n()) %>%
+  mutate(percent=total/sum(total, na.rm=T)*100) %>%
+  filter(VicSex_label=="Female") %>%
+  arrange(-percent)
+
+# Using the DT (DataTables) library that lets us create searchable tables with the plug-in for jQuery
+# If you don't have DT installed yet, uncomment the line below and run it
+#install.packages("DT")
+
+library(DT)
+datatable(percent_murders_women)
+```
+
+
+おめでとう、我々はデータを分析するためのたくさんの方法を習得しました。
+
+ツールが完成したので、データの整理と結合を含む他の方法を使い、データをさらに調べます。
+
+----
+
+## 演習
+
+ [これらの演習を通じて](http://code.r-journalism.com/chapter-3/#section-transforming-and-analyzing-data) 復習しましょう。
+
+エクササイズアプリの実行方法に関する説明は、このセクションの [紹介ページ](https://learn.r-journalism.com/en/wrangling/) にあります。
+
