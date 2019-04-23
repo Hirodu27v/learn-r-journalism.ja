@@ -185,10 +185,10 @@ filter(murders, 1980 < year < 1990)
 filter(murders, 1980 < year, year < 1990)
 ```
 
-4. ％in％を使用せず、多くのテストをつなぎ合わせる
+4. ％in％を使用せずに、多くのテストをつなぎ合わせる
 
 ```
-# 間違っていないが不十分
+# 間違ってはいないが不十分
 filter(murders, VicRace_label=="Black" | VicRace_label="Unknown" | VicRace_label=="Asian or Pacific Islander")
 
 # 理想
@@ -196,7 +196,7 @@ filter(murders, VicRace_label %in% c("Black", "Unknown", "Asian or Pacific Islan
 ```
 
 
-さて、私たちは計75万件の殺人事件から、2016年に60歳以上のパートナーを殺害した約25件と、夫またはボーイフレンドが関与し、または被害者が三角関係にあった約３万２０００件からなる新しいデータフレームを手に入れました。
+さて、私たちは計75万件もの殺人事件を絞り込み、2016年に夫が60歳を超えた配偶者を殺害した約25件と、夫またはボーイフレンドが関与し、または被害者が三角関係にあった約３万２０００件からなる新しいデータフレームを手に入れました。
 
 47個の変数（コラム）がありますが、基礎分析に全て必要なわけではありません。絞り込みましょう。
 
@@ -218,7 +218,7 @@ View(df1_narrow)
 
 ![](/wrangling/dplyr/images/df1.png?classes=shadow)
 
-列名の間に列を入れたいなら、列名の間にコロンを入れてください。
+列の間に別の列を入れたい時は、列名の間にコロンを入れてください。
 
 ```{r select2}
 df2_narrow <- select(df1, State, OffAge:OffRace_value, Weapon_label)
@@ -231,7 +231,7 @@ View(df2_narrow)
 ![](/wrangling/dplyr/images/df2.png?classes=shadow)
 
 
-列名の横に `-` を入れてドロップします（複数の列を一緒にドロップすることもできます）。
+列名の横に `-` を入れると、その列を省略します（複数の列を一緒に省くこともできます）。
 
 ```{r select3}
 # 上記で作成したデータフレームを修正する
@@ -255,6 +255,7 @@ str(labels_only_columns)
  `select()`オプションが [ここ](https://dplyr.tidyverse.org/reference/select_helpers.html)にあるのでチェックしてみてください。
 
 さあ、次に移りましょう。
+ー
 ## arrange()
 
 ![](/wrangling/dplyr/images/arrange.png)
