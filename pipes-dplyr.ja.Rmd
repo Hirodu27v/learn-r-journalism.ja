@@ -378,7 +378,6 @@ df4_renamed <- select(df3_narrow,
 df4_renamed
 ```
 
------
 
 ## summarize()
 
@@ -658,8 +657,7 @@ murders %>%
 
 ただし、従来の構造より、パーセンテージなどの計算を簡単に実行できます。
 
-――
-## パーセント
+## パーセントについて
 
 ここまで見てきたすべてのverbをまとめましょう。
 
@@ -667,15 +665,15 @@ murders %>%
 percent_murders <- murders %>%
   group_by(State, VicSex_label) %>%
   summarize(total=n()) %>%
-  # okay, we've got the total, now we can do some math with mutate
+  # 合計を得たので、mutateを使っていくつかの計算ができるようになりました。
   mutate(percent=total/sum(total, na.rm=T)*100)
-  # did you notice the na.rm=T added to the sum function? This removes NAs
-  # That's necessary because if you have a single NA then it will not sum correctly (thanks, statisticians!)
+  # sum関数にna.rm=Tが追加されているのに気付きましたか？これはNAを除去します。
+  # 一つでもNAがあると正確な合計が出せないので、これは必須です。(ありがとう統計学者たち！）
 
 percent_murders
 ```
 
-よし。 興味のあるものを見つけるためにもっと多くの `dplyr()` を使うことが出来ます。女性の殺害率が高い州はどこなのでしょう？
+興味のあるものを見つけるためにもっと多くの `dplyr()` を使うことが出来ます。女性の殺害率が高い州はどこでしょう？
 
 ```{r percents2}
 percent_murders_women <- murders %>%
@@ -685,8 +683,8 @@ percent_murders_women <- murders %>%
   filter(VicSex_label=="Female") %>%
   arrange(-percent)
 
-# Using the DT (DataTables) library that lets us create searchable tables with the plug-in for jQuery
-# If you don't have DT installed yet, uncomment the line below and run it
+# DT(データテーブル）ライブラリを使ってjQuery用のプラグインで検索可能なテーブルを作成することができます。
+#　DTをまだインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("DT")
 
 library(DT)
