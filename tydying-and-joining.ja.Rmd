@@ -1,0 +1,461 @@
+**殺人事件** のデータベースを掘り下げながら、**tidyr** と joinsという新しい概念を学びましょう。先に整理したデータについて簡単に述べましたが、このセクションで説明します。
+
+まだ **殺人事件** のデータフレームが手元にありますか？
+
+なければ、以下のコマンドを実行してください。
+
+```{r importing_data, warning=F, message=F}
+source("import_murders.R")
+```
+
+# tidyr
+
+データは面倒ですが、データをどのように積み重ねるかについての理想的な構造があります。
+
+それは
+
+1. 各 **変数** がそれぞれの **列**　にある
+2. それぞれの **事件** が **行**　にある
+3. それぞれの **値** が **セル**　にある
+ことです。
+```{r tidy1}
+murders %>%
+  group_by(State, Year) %>%
+  summarize(cases=n(), solved=sum(Solved_value))
+```
+
+この種のデータ構造は、変更や操作が簡単です。
+
+```{r tidy2}
+murders %>%
+  group_by(State, Year) %>%
+  summarize(cases=n(), solved=sum(Solved_value)) %>%
+  mutate(percent=solved/cases*100)
+```
+
+一方、以下のデータは整理されて **いません** 。
+
+
+```{r tidy3, echo=F, warning=F}
+library(tidyr)
+murders %>%
+  group_by(State, Year) %>%
+  summarize(cases=n(), solved=sum(Solved_value)) %>%
+  mutate(percent=solved/cases*100) %>%
+  gather("type", "n", 3:5) %>%
+  arrange(State, Year, desc(type))
+```
+
+いろいろな型があります-- *解決済みかどうか*, *パーセント*,  *事件* が同じ列にあってはいけません。
+
+Bしかし、この方式でソースからデータを取得したり、分析によってそのようなデータが生成されることがあります。
+
+**殺人事件** データベースをもう一度見てみましょう。
+
+データフレームを調べて、すべての変数（列）を検討するか[データ辞書](https://www.dropbox.com/s/lo6tgo8nnbpqeru/MAPdefinitionsSHR.pdf?dl=1)を調べます。
+
+私たちが持っている変数に関して、どんな質問をすることができるでしょう？
+
+* **MSA_label** は首都圏の統計領域です
+* **VicRace_label** は人種です
+    * Note: これはうのみにしてはいけません。 `murders %>% group_by(VicRace_label) %>% count()`を実行したら何が起きるでしょう？
+    * 回答：「ヒスパニック系」の被害者のためのラベルはありません
+* **Solved_label** は、事件が解決されたかどうかです。
+
+このデータから、どの都市圏が他の地域よりも高い割合で特定の人種に対する殺人事件を解決しているか把握できます。ワシントンポストの [Where Killings Go Unsolved](https://www.washingtonpost.com/graphics/2018/investigations/where-murders-go-unsolved/) のようなものです。 私たちが扱っているデータはワシントンポストほど明確ではありません。彼らは緯度と経度のデータを持っているので、特定の場所の下で殺人事件群を識別することができるのです。私たちには郡や大都市圏に一般化されたデータがあります。
+
+しかし、逮捕率の低い地域では未解決の殺人事件が暴力のサイクルが永続させる可能性があるため、問題となっている都市を特定するにはまだ十分です。
+
+このデータを処理するために **DT** パッケージを使用します。Rのテーブルとやり取りすることを簡単にする [DataTables](https://www.google.com/search?q=datatables+plugin&rlz=1C5CHFA_enUS749US749&oq=datatables+plug&aqs=chrome.0.69i59j69i57j0l4.3719j0j1&sourceid=chrome&ie=UTF-8) のjquery プラグインを呼び出します。
+
+過去10年間の各都市圏での事件解決の割合を見つけることから始めましょう。
+
+```{r investigate0}
+#  DT がまだインストールされていない場合は、以下の行のコメントを外して実行してください。
+#install.packages("DT")
+library(DT)
+
+unsolved <- murders %>%
+  group_by(MSA_label, Solved_label) %>%
+  filter(Year>2008) %>%
+  summarize(cases=n())
+
+datatable(unsolved)
+```
+
+さて、これまでに事件数とそれらが解決されたかどうかを数えました。
+
+`mutate()` 関数を使ってパーセントを計算しましょう。
+
+```{r investigate0b}
+murders %>%
+  group_by(MSA_label, Solved_label) %>%
+  filter(Year>2008) %>%
+  summarize(cases=n()) %>%
+  mutate(percent=cases/sum(cases)*100) %>%
+  datatable() # piping to the datatable function this time because it's more efficient
+```
+
+よく見ると、このデータは乱雑ではありませんが、提示するのはそれほど簡単ではありません。
+
+編集者が、どの主要都市圏が未解決事件の割合が最も高いか見たければどうしますか？
+
+このデータフレームは簡単です。
+
+* Fより小さいメトロエリアを排除するために10未満の事件があるケースを除外
+* **Solved_label** 列に「No」がある行のみをフィルタリングする
+* 冗長なので　**Solved_label** を削除する
+* 未解決のパーセント列を高から低に並べる
+
+```{r investigate0c}
+murders %>%
+  group_by(MSA_label, Solved_label) %>%
+  filter(Year>2008) %>%
+  summarize(cases=n()) %>%
+  filter(sum(cases)>10) %>%
+  mutate(percent=cases/sum(cases)*100) %>%
+  filter(Solved_label=="No") %>%
+  select(Metro=MSA_label, cases_unsolved=cases, percent_unsolved=percent) %>%
+  arrange(desc(percent_unsolved)) %>%
+  datatable()
+```
+
+興味深い結果です。
+
+シカゴは驚くにあたりませんが、カリフォルニア州サリナスもそうだとは思っていませんでした。
+
+続けましょう。
+
+これらの都市部で被害者の人種によって未解決率が異なるかどうかを確認してデータを集計するとどうなりますか。.
+
+`group_by()`に **VicRace_label** を追加して割合を計算しましょう。
+
+```{r investigate2}
+murders %>%
+  group_by(MSA_label, VicRace_label, Solved_label) %>%
+  filter(Year>2008) %>%
+  summarize(cases=n()) %>%
+  mutate(percent=cases/sum(cases, na.rm=T)*100) %>%
+  datatable()
+```
+
+繰り返しますが、編集者はあなたのたデータがきちんとしているか気にしません。
+
+彼らが物語を見つけるために素早く分類できるものを与えましょう。
+
+大都市圏の他のデータフレームと同じように整えましょう。
+
+
+```{r investigate3}
+# Also, we're going to round the percents with the round() function
+
+race <- murders %>%
+  group_by(MSA_label, VicRace_label, Solved_label) %>%
+  filter(Year>2008) %>%
+  summarize(cases=n()) %>%
+  mutate(percent=cases/sum(cases)*100) %>%
+  mutate(percent=round(percent, digits=2)) %>%
+  filter(Solved_label=="No") %>%
+  select(Metro=MSA_label, VicRace_label, cases_unsolved=cases, percent_unsolved=percent) %>%
+  arrange(desc(percent_unsolved))
+
+datatable(race)
+```
+
+終わりに近づいています。しかし、人種は選別していません。この高いデータを変換して広くする必要があります。
+
+
+## spread()
+
+![](/wrangling/tidyr_joins/images/spread.png)
+
+**tidyr** パッケージの `spread()` 関数は値を列名に移動します
+
+![](/wrangling/tidyr_joins/images/spread_syntax.png)
+
+**percent_unsolved** の値を維持しつつ、 **VicRace_label** の値を移動して列に変換したいと思います。
+
+```{r investigate4}
+# これまでの作業を "race"データフレームに保存しました。
+# 保存されたので、作業を続けることができます。
+
+race %>%
+  spread(VicRace_label, percent_unsolved) %>%
+  datatable()
+```
+
+あれまあ！
+
+何が起こったのでしょう！？
+
+`spread()` は一度に1つの列だけ変えることができます。
+
+これを正しく転置するには、**cases_unsolved** }列を削除する必要があります。
+
+まあいいでしょう。後でまた戻ってきます。
+
+もう一度やりましょう。
+
+```{r investigate5}
+# This time we'll drop the cases_unsolved column before spreading
+
+race_percent <- race %>%
+  select(-cases_unsolved) %>%
+  spread(VicRace_label, percent_unsolved)
+
+datatable(race_percent)
+```
+
+## gather()
+
+さて、ここでいくつか「魔法」をお見せしましたが、何かを消すには不十分です。それを取り戻さなければなりません。
+
+フォーマットで幅が広いデータがあり、それを分析や視覚化するため縦長にしたい場合はどうしますか？
+
+長い（背の高い）形式でデータを構造化しようと試みるべき3つの理由があります:
+
+* 列が多数ある場合、一目でデータに誤りがないかどうかを確認するのが難しい。
+* キーと値のペアによって概念が明確になる。
+* 長い形式のデータセットはグラフ化と高度な統計分析に必要。
+
+![](/wrangling/tidyr_joins/images/gather_syntax.png)
+
+最初の2つの引数はキーと値のペアを指定します: *race* はキーで *percent_unsolved* は値です。3番目の引数は、元のデータのどの変数をキーと値の組み合わせに変換するかを指定します (ここでは  *`Asian or Pacific Islander`* の全ての変数は *White*　へ).
+
+```{r gather_for_fun}
+
+# 2:6 は、列インデックス、つまり列がデータフレーム内のどこにあるかを表します。
+race_percent %>%
+  gather("Race", "Percent_Unsolved", 2:6) %>%
+  arrange(desc(Metro)) %>%
+  datatable()
+
+## 数字の代わりに列名を使用することができます。
+## 列名をスペースで参照するには、列名の前後に `バックティックを使用する必要があります。
+
+race_percent %>%
+  gather("Race", "Percent_Unsolved", `Asian or Pacific Islander`:White) %>%
+  arrange(desc(Metro)) %>%
+  datatable()
+```
+
+さて、ここまで十分掘り下げてきました。
+
+データ分析に戻りましょう。
+
+```{r back_to_race}
+race_percent %>% arrange(desc(Black)) %>% datatable()
+```
+
+何か面白いものがありますか？
+
+今回は未解決事件のパーセントが降順になるようデータフレームを配置しました。
+
+ジョージア州ダルトンとテキサス州マッカレン - エジンバーグ - ミッションの黒人被害者の解決率は100パーセントです。
+
+すごい成果ですね。
+
+まあ、それは被害者の合計人数によっても異なります - この表では提供されていません。
+
+以前はそのデータがありましたが、さっき `spread()` を使用したとき、データを削除する必要があったのです。
+
+私たちはそれを `race` として保存したので、それはまだ環境内にあるはずです。
+
+上からコードをコピーして貼り付けて復元しましょう（そう、これが再現性なのです！）。
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/Bp6gvhKe-ho?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+```{r back_to_race2}
+race_percent <- race %>%
+  select(-cases_unsolved) %>%
+  spread(VicRace_label, percent_unsolved)
+
+datatable(race_percent)
+```
+
+**cases_unsolved** を削除し、拡散するために **percent_unsolved** を保持したように見えます。
+
+これを逆に **percent_unsolved** を削除し **cases_unsolved** を保持するようにします。
+
+再び使用したコードをコピーして貼り付け、 `select()` and `spread()` functions:
+
+```{r back_to_race3}
+race_cases <- race %>%
+  select(-percent_unsolved) %>%
+  spread(VicRace_label, cases_unsolved)
+
+datatable(race_cases)
+```
+
+もともとの問題は、 **race_percent** が、 リストされたパーセンテージが有意であるかどうかを決定するためにどれだけのケースがあったかという情報を持っていなかったことでした。
+
+2つの新しいデータフレーム **race_percent** と **race_cases** を作成しました。それぞれに必要なものが含まれています。
+
+それでは、この2つをまとめてみましょう。
+# データの接合
+
+2つのデータセットを結合するには一方のデータセットの列と他方のデータセットの列、通常は2番目のデータセットの一部の行と最初のデータセットの一部の行を足し合わせます。
+
+うまく結合するには、2つのデータセット間で一致するものが必要になります。それはキーです。
+
+*race_percent** と　**race_cases** を結合させるキーは何ですか？ 見てみましょう。
+
+それぞれに共通しているものは何でしょう？ 列名？確かに。
+
+しかし地下鉄のエリアもそうですね。
+
+**dplyr** パッケージには、使用できる関数がたくさんあります。
+
+始めましょう：
+
+## left_join()
+
+すべての結合で、2つの変数を渡します。最初の変数は目標とするデータフレームで、2番目の変数はあなたが持ってきたデータフレームです。デフォルトでは、関数は同じ列名で結合しようとします（複数の列名で結合することもできます）。結合する列を個別に指定することもできます。
+
+![](/wrangling/tidyr_joins/images/leftjoin.png)
+
+`left_join()` を使用すると、ターゲットデータフレームと一致しない行は2番目のデータフレームから削除されます。
+
+試してみましょう。
+
+```{r left_Join}
+# If we don't use the by variable it would match nothing because the column names are the exact same for both data frames
+
+wide1 <- left_join(race_percent, race_cases, by="Metro")
+```
+
+```
+View(wide1)
+```
+
+![](/wrangling/tidyr_joins/images/left_wide.png)
+
+うまくいきました！ そして重複を避けるために、列名は自動的に変更されています。
+
+それではこれをクリアにしましょう。
+
+`select()` でデータフレームの列の名前を変更したり並べ替えたりして、人種のデータをグループ化することができます。
+
+上記の手順を踏まえて、黒人の未解決事件の割合を降順に並べてみましょう。
+
+```{r left_Join_select}
+# Don't forget: If there are spaces in the column names, you have to use the ` back tick.
+
+wide2 <- left_join(race_percent, race_cases, by="Metro") %>%
+  select(Metro,
+         `Asian cases`=`Asian or Pacific Islander.y`,
+         `Asian percent`=`Asian or Pacific Islander.x`,
+         `Native American cases`=`American Indian or Alaskan Native.y`,
+         `Native American percent`=`American Indian or Alaskan Native.x`,
+         `Black cases`=Black.y,
+         `Black percent`=Black.x,
+         `White cases`=White.y,
+         `White percent`=White.x,
+         `Unknown cases`=Unknown.y,
+         `Unknown percent`=Unknown.x
+         ) %>%
+  arrange(desc(`Black percent`))
+```
+
+```
+View(wide2)
+```
+
+![](/wrangling/tidyr_joins/images/better_wide.png)
+
+
+ジョージア州ダルトンとテキサス州のブラックの犠牲者に対する100％未解決の事件が大問題なのかどうか、疑問を呈したことを覚えていますか？被害者は１都市あたり1人だけになりました。こうして結果が歪められていたのです。
+
+しかし、4行目のニューヨーク、バッファロー - ナイアガラの滝までスキップしてください。黒人が犠牲となったのは353件で、246件（約70パーセント）が未解決です。 さらに2、3列移動すると、白人が犠牲となったのは３５件で、未解決の割合は30パーセントでした。かなり大きな格差です。
+
+１行下のシカゴでも、黒人と白人の未解決の割合はそれぞれ68パーセントと53パーセントです。 バッファローで何が起こっているのでしょう？この地域の出身であるか、全国でこのような格差を探しているのであれば、これは報道に値するストーリーかもしれません。
+
+データを結合するための他の方法を学ぶ必要があるにせよ、今は簡単な分析をしたい - これは既に　**dplyr**　で学んだことを使ってできます！
+
+新しい **wide2** データフレームを使って簡単に分析しましょう。
+
+見つけたいものは
+
+1. 犠牲者が黒人か白人かで未解決事件の割合に最も大きな差があるのはどの町なのか。
+2. 10未満の事件を除外する。
+3. 他の列を削除して探しているものに集中できるようにする。
+
+```{r inv}
+wide2 %>%
+  filter(`Black cases` >=10 & `White cases`>=10) %>%
+  mutate(Black_White=`Black percent`-`White percent`) %>%
+  select(Metro, `Black cases`, `White cases`, `Black percent`, `White percent`, Black_White) %>%
+  arrange(desc(Black_White)) %>%
+  datatable()
+```
+
+面白いことに、ニューヨーク州バッファロー - ナイアガラの滝は、差の大きさでは3番目です。
+
+アイオワ州とネブラスカ州にまたがるオマハーカウンシルブラフスとペンシルバニア州ピッツバーグが最悪です。
+
+よく分かりました、結合に戻りましょう。
+
+![](/wrangling/tidyr_joins/images/rightjoin.png)
+
+`right_join()`を使用すると、ターゲットのデータフレームと一致しない2番目のデータフレームの行は保持され、上の図のように、元のデータフレームと一致しない行は削除されます。
+
+```{r right_join}
+left <- data.frame(company=c("Mars", "Hershey", "Cadbury",  "Mondelez", "Haribo"),
+                   candy=c("Skittles", "M&Ms", "Starbar", "Toblerone", "Goldbaren"))
+right <- data.frame(company=c("Hershey", "Mondelez", "Cadbury", "Mars", "Colosinas Fini"),
+                    location=c("Pennsylvania", "Switzerland", "Britain", "New Jersey", "Spain"))
+left
+right
+
+# 今回はby = "column_name"を使用する必要はありません。両方のデータフレームに、一致する列名が　Company の1つしかないためです。
+
+right_join(left, right)
+```
+
+![](/wrangling/tidyr_joins/images/fulljoin.png)
+
+`full_join()` を使用すると、ターゲットのデータフレームと一致しない2番目のデータフレームの行は保持され、上の図のように元のデータフレームと一致しない行も保持されます。
+
+
+```{r full_join}
+full_join(left, right)
+```
+
+
+![](/wrangling/tidyr_joins/images/innerjoin.png)
+
+そして `inner_joins()` を使用すると、一致しない行は両方のデータセットから完全に削除されます。
+
+
+```{r inner_join}
+inner_join(left, right)
+```
+
+`semi_join()` や `anti_join()`のように、まだ紹介していない [他の結合の仕方](https://dplyr.tidyverse.org/reference/join.html) もあります。
+
+さて、私たちはこのセクションでたくさんのことを習得しました。
+
+* `gather()`
+* `spread()`
+* `left_join()`
+* `right_join()`
+* `full_join()`
+* `inner_join()`
+
+**murders** データセットを調べることによってきちんと学んできたのです。
+
+さらに詳しく調べて、犯罪心理分析官の気分を味わってみませんか？
+
+次のセクションに移りましょう。ここでは、データの詳細な説明とアルゴリズムの変換、そしていくつかのシリアルキラーの追跡を行います。
+
+
+----
+
+## 演習
+
+[これらの演習で](http://code.r-journalism.com/chapter-3/#section-tidying-and-joining-data)このセクションの知識を身につけましょう。
+
+エクササイズアプリの実行に関する説明は、このセクションの[紹介ページ](https://learn.r-journalism.com/en/wrangling/) にあります。
