@@ -444,7 +444,7 @@ inner_join(left, right)
 
 `semi_join()` や `anti_join()`のように、まだ紹介していない [他の結合の仕方](https://dplyr.tidyverse.org/reference/join.html) もあります。
 
-さて、私たちはこのセクションでたくさんのことを習得しました。
+さて、私たちはこのセクションでたくさんの関数を習得しました。
 
 * `gather()`
 * `spread()`
