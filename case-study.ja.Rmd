@@ -1,1 +1,317 @@
-FBIは、全国で過去40年間に発生した75万件以上の殺人事件のデータを保有しています。
+FBIは、全国で40年間にわたり75万件以上の殺人事件を捜査してきました。これには、警察が統計を送らなかった殺人事件は含まれていません。
+
+Thomas Hargroveは、Scripps Howard News Serviceの全国特派員で、FBIの殺人データを使用して、連続殺人を含む可能性が高い殺人事件が発生した地域を特定するアルゴリズムを開発しました。彼の仕事によってオハイオ州とインディアナ州の当局者は2010年の絞殺事件の調査を開始したのです。この事件は、Darren Deon Vannの逮捕につながりました。彼は数十年にわたって女性を殺害してきたと告白し、警察はこれらの未発見の犠牲者を見つけるため、インディアナ州ゲーリーの廃墟に向かうことになりました。
+
+ハーグローブは引退後、[Murder Accountability Project](http://www.murderdata.org/)に携わっています。
+
+彼のアルゴリズムを調べて再現しましょう。
+
+{{% notice warning %}}
+これはデータ内の利用可能な変数に基づいたアルゴリズムです。有能で、捜査に熟練した警察の仕事には敵いません。このセクションで説明されている方法論は、無関係なケース間で誤った一致を作ったり、既知のリンクされた事件を検出できなかったりして、誤った結果を生み出す可能性があります。調査結果を報道する場合は、不必要な [過剰反応](https://www.youtube.com/watch?v=kdpG92dsx1A)を回避するためにさらなる調査が必須です。殺人事件を関連づけるべきかどうかについての権限は、犯罪を調査する地方の法執行機関および裁判所にあるのです。
+{{% /notice %}}
+
+「グリーン・リバー・キラー」ゲイリー・リッジウェイの  [ケース](https://www.biography.com/people/gary-ridgway-10073409) を見てみましょう。
+
+> リッジウェイは1982年から殺害を始めました。その時から、若い家出少女や売春婦はワシントン州キング郡南部の州道99号線から姿を消し始めたのです。 彼は被害者の大半を彼の家に連れ込んで首を絞め、遺体を森のような人気のない場所に遺棄しました。当初、何体かの遺体は今では悪名高いグリーン川に沿って見つかりました。
+
+>リッジウェイは、ワシントン州キング郡南部の州道 99号線に沿って75-80人もの女性を殺害したと捜査官に語っています。彼は有罪判決を受け、終身刑を宣告されました。
+
+データセットから彼の犠牲者をどのように見つけたらよいのでしょう？
+
+明らかなパターンがありました。
+
+* ワシントン州キング郡
+* 期間は1982～2001年
+* 犠牲者は女性
+* おおむね絞殺
+* 離れた場所で見つかった
+
+まずデータをインポートします。
+
+```{r importing_data, warning=F, message=F}
+library(dplyr)
+library(tidyr)
+library(DT)
+source("import_murders.R")
+```
+
+上の条件をデータセットに適用しましょう。
+
+でも、このままでは問題があります。
+
+郡の変数がありません。 郡のFIPSコード列はありますが、郡の名前を識別する列はないのです。
+
+関係するファイルをアップロードしました。
+
+```{r prepping_data}
+# If you don't have readr installed yet, uncomment and run the line below
+#install.packages("readr")
+
+library(readr)
+
+county.fips <- read_csv("data/fips_counties.csv")
+
+head(county.fips)
+```
+
+**dplyr** から、前に使った`left_join()`を呼び出して結合させましょう。
+
+```{r pattern, warning=F, message=F}
+# FIPS change over time. Data tends to do that when you've got decades of stuff
+# We'll swap out some County Names (most are from Alaska) before we join the data sets
+
+murders  <- murders %>%
+  mutate(CNTYFIPS=as.numeric(as.character(CNTYFIPS))) %>%
+  mutate(CNTYFIPS=case_when(
+    CNTYFIPS==51560 ~ 51005,
+    CNTYFIPS==2232 ~ 2105,
+    CNTYFIPS==2280 ~ 2195,
+    CNTYFIPS==2201 ~ 2198,
+    TRUE ~ CNTYFIPS
+  )) %>%
+  left_join(county.fips, by=c("CNTYFIPS"="fips"))
+
+```
+
+```{r view1, eval=F}
+View(murders)
+```
+
+![](/wrangling/case_-_study/images/counties.png?classes=shadow)
+
+{{% notice tip %}}
+細心の注意が必要なところに来ました。結合はデータ分析の機能を拡張する上で非常に重要なので、これがどのように機能するのかしっかり理解しておいてください。
+{{% /notice %}}
+
+
+さて、うまくいきました。これで、この条件に基づいてフィルタリングできます。
+
+* ワシントン州キング郡
+* 期間は1982～2001年
+* 犠牲者は女性
+* おおむね絞殺
+* 離れた場所で見つかった
+
+```{r ridge_filter2, warning=F, message=F}
+greenway1 <- murders %>%
+  filter(State=="Washington" & name_of_county=="King") %>%
+  filter(Year >=1982 & Year <=2001) %>%
+  filter(VicSex_label=="Female")
+
+```
+
+```{r view2, eval=F}
+View(greenway1)
+```
+
+![](/wrangling/case_-_study/images/510.png?classes=shadow)
+
+「キング」郡と「ワシントン」州でフィルタリングし、510件に絞り込みました。1982～2001年の間に発生し、犠牲者は女性の事件を探しました。
+
+そのうちの何人が首を絞められましたか。 違いはありますか？武器の種類はどのようにラベル付けされていますか？
+
+```{r labels}
+murders %>%
+  select(Weapon_label) %>%
+  unique()
+```
+
+では、リッジウェイの殺害方法にはどのようなものが適合するのでしょうか。
+
+たぶん“絞殺 - 首吊り”か“その他またはタイプ不明”がよいでしょう。
+
+```{r ridge_filter, warning=F, message=F}
+greenway2 <- greenway1 %>%
+  filter(Weapon_label=="Strangulation - hanging" |
+           Weapon_label=="Other or type unknown")
+```
+
+```{r view3, eval=F}
+View(greenway2)
+```
+
+![](/wrangling/case_-_study/images/116.png?classes=shadow)
+
+絞り込みました。
+
+116件あります。
+
+これらの殺人事件はどんな状況で起きたのでしょう？屋外に絞り込むことはできますか？
+
+```{r greenway2, warning=F, message=F}
+greenway2 %>%
+  group_by(Circumstance_label) %>%
+  count() %>%
+  arrange(desc(n))
+```
+
+選択肢にはないようです。「状況未確定」と曖昧な「その他」のみです。
+
+```{r greenway_clearance}
+greenway2 %>%
+  group_by(Solved_label) %>%
+  summarize(total=n()) %>%
+  mutate(percent=round(total/sum(total)*100,2))
+```
+
+このデータセットで、私たちが抽出したデータがすべてゲイリー・リッジウェイの犠牲者であることを判断する方法がないことは明らかです。それぞれの犠牲者の事件ファイルを調べるか、彼の裁判で提示された証拠を精査することが必要でしょう。 しかし、彼の犠牲者のうちの何人かが上のリストにいるチャンスはあります。
+### マインドハンター
+
+探偵や犯罪プロファイラーのように考えてみましょう。
+
+あなたは被害者のリストを絞り込み、シリアルキラーが逮捕を免れて殺害を続けている可能性のある地域に適用するプロセスをリバースエンジニアリングできますか。
+
+データを飼い馴らす可能性があるパターンのリストとは何でしょうか？
+
+* 殺人事件の解決率が低い地域
+* 殺人が何年も、何十年にも及び続けられている
+* 被害者の性別がだいたい同じ
+* 殺害の方法はしばしば繰り返される
+
+### アルゴリズム
+
+トーマス・ハーグローブは、ジャーナリストとしてこれらのパターンをつかみ、こうした兆候を示す殺人事件群を見つけるアルゴリズムを開発しました。
+
+ [in SPSS](https://www.dropbox.com/s/49i2mw0caswn8y0/Algorithm.pdf?dl=0)でプログラムされている通りです。この構文は既に扱ったことを思い出せると思います。
+
+R、具体的には **dplyr**　に変換しましょう。
+
+1. 事件の状態
+    * Solved: *0* | Unsolved: *1*
+    * dplyr verb: `mutate()` and `case_when()`
+2. 犠牲者の性別
+    * Male:* 1 | *Female*: 2 | *Unknown*:
+    * dplyr verb: `mutate()` and `case_when()`
+3. クラスタリング番号の作成
+    * Counties and MSA
+    * gender
+    * weapon value assigned by factor
+
+
+```{r msagrp}
+msagrp <- murders %>%
+  mutate(solved_num = ifelse(Solved_label=="Yes", 1, 0)) %>%
+  group_by(MSA_label, VicSex_label, Weapon_label) %>%
+  summarize(cases=n(), solved=sum(solved_num)) %>%
+  mutate(clearance=round(solved/cases*100,2))
+```
+
+```{r view_msagrp, eval=F}
+View(msagrp)
+```
+
+![](/wrangling/case_-_study/images/msagrp.png?classes=shadow)
+
+私たちは10,000以上のクラスタを持っています。
+
+ハーグローブによれば、それをさらに絞り込むことができます。
+
+女性の犠牲者を探してください。解決率は33パーセント未満です。 複数の犠牲者がいるところです。
+
+```{r msagrp_filtered}
+msagrp_filtered <- msagrp %>%
+  filter(VicSex_label=="Female" & clearance <= 33 & cases > 1)
+datatable(msagrp_filtered)
+```
+
+10,000個のクラスタを99個に絞り込みました。
+
+範囲を変更し、MSAに対して行ったことを郡にも適用しましょう。
+
+なぜこの区別が重要なのでしょうか。メトロ統計エリアは少なくとも1つの郡、時には全体の郡またはその一部で構成されているのです。
+
+郡は非常に大きいので、町の警察署や州警察、保安官代理など、さまざまな管轄区域を持つ複数の機関がカバーしていることがよくあります。 これらの機関はさまざまですが、郡とMSAは異なることには注意が必要です。データを **識別** または分類するための方法なのです。
+
+連続殺人犯は地理的条件の制限を受けないので、行動範囲に柔軟に対応することが重要です。
+
+
+
+```{r countygrp}
+countygrp <- murders %>%
+  mutate(solved_num = ifelse(Solved_label=="Yes", 1, 0)) %>%
+  group_by(county_state, VicSex_label, Weapon_label) %>%
+  summarize(cases=n(), solved=sum(solved_num)) %>%
+  mutate(clearance=round(solved/cases*100,2)) %>%
+  filter(VicSex_label=="Female" & clearance <= 33 & cases > 1) %>%
+  arrange(desc(cases))
+
+datatable(countygrp)
+```
+
+325のクラスターを持っています。
+
+検索バーに「King、WA」と入力します。
+
+Cases: 108. Solved: 31. Clearance: 28.7.
+
+リッジウェイが殺害した75～80人はおそらくそれらの中にいます。
+
+ぞっとしますね。
+### 検索範囲の拡大
+
+この「アルゴリズム」の基本を理解したところで（これは基本的にデータをグループ化して前処理する方法です）、追加で調整することができます。
+
+まだ男性や性別不明のものを除外していません。
+
+範囲を直近10年間のデータに絞ることができます。
+
+この全てはフィルタを追加または調整することによって可能になります。
+
+```{r countygrp2}
+countygrp2 <- murders %>%
+  # year filter here | remember ":" stands for "through", so 2006:2016 is 2006 2007 2008 etc
+  filter(Year %in% 2006:2016) %>%
+  mutate(solved_num = ifelse(Solved_label=="Yes", 1, 0)) %>%
+  group_by(county_state, VicSex_label, Weapon_label) %>%
+  summarize(cases=n(), solved=sum(solved_num)) %>%
+  mutate(clearance=round(solved/cases*100,2)) %>%
+  filter(clearance <= 33 & cases > 1) %>%
+  arrange(desc(cases))
+
+datatable(countygrp2)
+```
+
+殺人犯は特定の年齢層をターゲットにしていると思いませんか？
+
+年と同じように年齢をフィルタリングすることも、データを使用して年齢カテゴリを作成することもできます。
+
+カテゴリカルデータは非常に役に立ちましたね。バイナリに分割するように、年齢のような連続変数をカテゴリカル変数に変えることができます。
+
+**dplyr**　の `case_when()`と `mutate()` を使います。
+
+**murders** に立ち戻って新しい変数　*age_group*　を追加しましょう。
+
+その新しいグループ化変数を使用して、前に作成したコードを再実行します。
+
+
+{{% notice tip %}}
+ "："は「〇から〇まで」を表すので覚えておいてください。 0:14 は 0 から 14ということです。
+{{% /notice %}}
+
+```{r age_bins}
+murders <- mutate(murders,
+                  age_group=case_when(
+                  VicAge %in% 0:14 ~ "0-14",
+                  VicAge %in% 15:19 ~ "15-19",
+                  VicAge %in% 20:50 ~ "20-50",
+                  VicAge %in% 51:99 ~ "51-99",
+                  TRUE ~ "Unknown"))
+
+countygrp3 <- murders %>%
+  filter(Year %in% 2006:2016) %>%
+  mutate(solved_num = ifelse(Solved_label=="Yes", 1, 0)) %>%
+  group_by(county_state, VicSex_label, age_group, Weapon_label) %>%
+  summarize(cases=n(), solved=sum(solved_num)) %>%
+  mutate(clearance=round(solved/cases*100,2)) %>%
+  filter(VicSex_label=="Female" & clearance <= 33 & cases > 1) %>%
+  arrange(desc(cases))
+
+datatable(countygrp3)
+```
+
+よくできました。
+
+これが、データを洞察するアプローチの方法を示すことを願っています。
+
+頑張って！
+
