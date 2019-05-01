@@ -1,3 +1,5 @@
+##文字列を扱う
+
 **stringr** パッケージを使ってテキストを操作しましょう。
 
 ```{r install, warning=F, message=F}
@@ -26,11 +28,11 @@ messy
 **タスク**
 
 1. 氏名を名と姓に分割する
-2. 名前をタイトルケースに変換する
+2. 名前を全て大文字に変換する
 3. 欠陥があるEメールアドレスを識別する新しい変数を作成する
 4. 収入を米ドルに変換する
 5. 市外局番を含む新しい変数を作成する
-6. 一人一人が行っている活動を数える変数を作成する
+6. ぞれぞれの人が行う活動をカウントする変数を作成する
 7. 活動を一連の有用なダミーコードに分割する
 
 | 日時をめぐる命令 | パース機能 |
@@ -60,7 +62,7 @@ str_length(x)
 
 `str_c(strings, sep="")`
 
-これは、Excelの= concatenateに相当します。
+これは、Excelのconcatenate関数に相当します。
 
 しかし、いくつかの特徴があります。
 
@@ -82,17 +84,17 @@ data
 ```
 
 ```
-# A couple options that would've done the same thing:
+# 同じ機能を持つオプションがいくつかあります。
 
 data$combined <- str_c("Num: ", data$number)
 
-# or
+# または
 
 data <- data %>%
   mutate(combined=str_c("Num", number, sep=": "))
 ```
 
-文字列の配列を1つにする場合は、変数 `collapse` を `str_c()` に渡します。
+文字列の配列を一つにする場合は、変数 `collapse` を `str_c()` に渡します。
 
 ```{r str_c3}
 data <- data.frame(place=c("HQ", "HQ", "HQ"),
