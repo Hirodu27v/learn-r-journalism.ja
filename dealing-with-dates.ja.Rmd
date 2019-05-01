@@ -1,0 +1,129 @@
+ほとんどの場合、日付は文字として入力されます。
+
+それらを日付変数に変換する必要があります。
+
+**lubridate** パッケージを使用します。
+
+これは、データフレーム内の **文字変数** の例です。
+
+```{r ex1}
+some_date <- "12-31-1999"
+```
+
+**mdy()**　関数を使って **日付変数** に変換します。
+
+```{r ex2, warning=F, message=F}
+# If you don't have lubridate installed yet uncomment the line below and run it
+#install.packages("lubridate")
+
+# NOTE: IF YOU GET AN ERROR ABOUTZ NOT HAVING A PACKAGE CALLED stringi
+# UNCOMMENT AND RUN THE LINES BELOW IF YOU HAVE A WINDOWS MACHINE
+
+#install.packages("glue", type="win.binary")
+#install.packages("stringi", type="win.binary")
+#install.packages("stringr", type="win.binary")
+#install.packages("lubridate", type="win.binary")
+
+# UNCOMMENT AND RUN THE LINES BELOW IF YOU HAVE A MAC MACHINE
+
+#install.packages("glue", type="mac.binary")
+#install.packages("stringi", type="mac.binary")
+#install.packages("stringr", type="mac.binary")
+#install.packages("lubridate", type="mac.binary")
+
+library(lubridate)
+
+mdy(some_date)
+```
+
+The `mdy()` 関数は非常に強力です。月―日―年を表します。
+
+情報の順序がその通りであるならば、（スラッシュ、コンマ、またはダッシュで区切られた）どんなバージョンでも解析することができるでしょう。
+
+見てください。
+
+```{r ex3}
+
+data <- data.frame(First=c("Charlie", "Lucy", "Peppermint"),
+                   Last=c("Brown", "van Pelt", "Patty"),
+                   birthday=c("10-31-06", "2/4/2007", "June 1, 2005"))
+
+data$DOB <- mdy(data$birthday)
+
+data
+
+```
+
+## 日付を読み込む
+
+| 命令 | 関数 |
+| ------ | ------------------------ |
+| 年, 月, 日 | `ymd()` |
+| 年, 日, 月 | `ydm()` |
+| 月, 日, 年    | `mdy()` |
+| 日, 月, 年    | `dmy()` |
+| 時, 分    | `hm()` |
+| 時、 分,秒    | `hms()` |
+| 年, 月, 日, 時, 分, 秒    | `ymd_hms()` |
+
+## 日付にアクセスする
+
+| 日付コンポーネント | 関数 |
+| ------ | ------------------------ |
+| 年 | `year()` |
+| 月 | `month()` |
+| 週    | `week()` |
+| 年間通算日  | `yday()` |
+| 月間通算日  | `mday()` |
+| 週刊通算日 | `wday()` |
+| 時  | `hour()` |
+| 分  | `minute()` |
+| 秒  | `ymd_hms()` |
+| タイムゾーン  | `ymd_hms()` |
+
+正しい形式の日付ができました。上記の関数を使用して日付データを抽出できます。
+
+```{r example_more}
+data$year <- year(data$DOB)
+data$month <- month(data$DOB, label=TRUE)
+data$day <- day(data$DOB)
+data$weekday <- wday(data$DOB, label=TRUE, abbr=FALSE)
+
+data
+```
+
+## 日付の計算
+
+`difftime()`関数は、渡された2つの日付の間の日数を計算します。
+
+```{r math}
+# We're going to use the now() function which brings in the date for today
+
+today <- now()
+data$age <- difftime(today, data$DOB)
+
+data
+```
+
+どのようにして年に変換しますか？
+
+いくつかの計算でできます。まずは列を数値に変換します。
+
+```{r math2}
+data$age_years <- as.numeric(data$age) / 365.25 #.25 because of leap years
+
+data
+```
+
+良いスタートを切りました。より多くの機能と例を見るには、**lubridate**　をめぐる[挿話](https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html) をチェックしてください。
+
+
+
+----
+
+## 演習
+
+[これらの演習で](http://code.r-journalism.com/chapter-3/#section-dealing-with-dates) このセクションの知識を身につけましょう。
+
+エクササイズアプリの実行に関する説明は、このセクションの [紹介ページ](https://learn.r-journalism.com/en/wrangling/) にあります。
+
