@@ -1,4 +1,6 @@
-ほとんどの場合、日付は文字として入力されます。
+##日付データを扱う
+
+ほとんどの場合、日付は文字として入力されています。
 
 それらを日付変数に変換する必要があります。
 
@@ -13,18 +15,17 @@ some_date <- "12-31-1999"
 **mdy()**　関数を使って **日付変数** に変換します。
 
 ```{r ex2, warning=F, message=F}
-# If you don't have lubridate installed yet uncomment the line below and run it
+# lubridateをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("lubridate")
 
-# NOTE: IF YOU GET AN ERROR ABOUTZ NOT HAVING A PACKAGE CALLED stringi
-# UNCOMMENT AND RUN THE LINES BELOW IF YOU HAVE A WINDOWS MACHINE
-
+# NOTE: stringiというパッケージがないというエラーが出たら
+# ウィンドウズの人は以下の行のコメントを外して実行してください。
 #install.packages("glue", type="win.binary")
 #install.packages("stringi", type="win.binary")
 #install.packages("stringr", type="win.binary")
 #install.packages("lubridate", type="win.binary")
 
-# UNCOMMENT AND RUN THE LINES BELOW IF YOU HAVE A MAC MACHINE
+# MACユーザーはこちら。
 
 #install.packages("glue", type="mac.binary")
 #install.packages("stringi", type="mac.binary")
@@ -38,7 +39,7 @@ mdy(some_date)
 
 The `mdy()` 関数は非常に強力です。月―日―年を表します。
 
-情報の順序がその通りであるならば、（スラッシュ、コンマ、またはダッシュで区切られた）どんなバージョンでも解析することができるでしょう。
+情報の順序がその通りならば、（スラッシュ、コンマ、またはダッシュで区切られた）どんなバージョンでも解析することができるでしょう。
 
 見てください。
 
@@ -94,7 +95,7 @@ data
 
 ## 日付の計算
 
-`difftime()`関数は、渡された2つの日付の間の日数を計算します。
+`difftime()`関数は、渡された二つの日付の間の日数を計算します。
 
 ```{r math}
 # We're going to use the now() function which brings in the date for today
