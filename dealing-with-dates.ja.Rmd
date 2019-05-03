@@ -57,7 +57,7 @@ data
 
 ## 日付を読み込む
 
-| 命令 | 関数 |
+| 命令文 | 関数 |
 | ------ | ------------------------ |
 | 年, 月, 日 | `ymd()` |
 | 年, 日, 月 | `ydm()` |
@@ -98,7 +98,7 @@ data
 `difftime()`関数は、渡された二つの日付の間の日数を計算します。
 
 ```{r math}
-# We're going to use the now() function which brings in the date for today
+# 今日の日付を取得するnow（）関数を使用します。
 
 today <- now()
 data$age <- difftime(today, data$DOB)
