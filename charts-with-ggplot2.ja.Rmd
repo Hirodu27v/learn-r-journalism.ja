@@ -1,0 +1,91 @@
+データをロードしてチャートを作成し、レイヤーを細分化しましょう。
+
+[Vulture.com](http://www.vulture.com/2013/04/leading-men-age-but-their-love-interests-dont.html) から、映画の主演男優と恋の相手の年齢を比較したデータをいくつか紹介します。
+
+
+```{r importing_data, warning=F, message=F}
+library(readr)
+
+ages <- read_csv("data/ages.csv")
+
+head(ages)
+```
+これが私たちが扱うデータです。
+
+変数/列は、映画の題名、ジャンル、俳優、俳優の年齢、女優、女優の年齢、予算です。
+
+これがチャートです。 コンソールで実行してください。
+
+```{r chart_example, warning=F, message=F}
+# If you haven't installed the ggplot2 package yet, uncomment and run the line below
+#install.packages("ggplot2")
+
+library(ggplot2)
+
+ggplot(data=ages) +
+   geom_point(mapping=aes(x=actor_age, y=actress_age)) +
+   expand_limits(x = 0, y = 0) +
+   geom_abline(intercept=0, col="light gray")
+
+```
+
+このチャートは何を示していますか？映画の中で、男性は女性よりもはるかに年上です。
+
+このチャートの構成要素を分解しましょう。
+
+![](/visualizing/charts_with_ggplot/images/gg1.png)
+
+まずは　**データフレーム**　からです。 **年齢**　を`ggplot()`に渡して初期化しました。
+
+
+![](/visualizing/charts_with_ggplot/images/gg1c.png)
+
+![](/visualizing/charts_with_ggplot/images/gg2.png)
+
+次に、視覚化するために選択したデータがドットでx軸とy軸に表示されます。
+
+マッピングは、aestheticsがデータ内の変数とどのように関連するかを記述します。
+
+![](/visualizing/charts_with_ggplot/images/gg2c.png)
+
+データを視覚的特性として表す　**aesthetics** (`aes()`) を設定します。
+
+デフォルトの幾何学的オブジェクトと色を使用していますが、これらはカスタマイズ可能です。
+
+* ポジション
+* サイズ
+* 色
+* 形状
+* 透明度
+* 塗りつぶし
+
+それぞれの **aesthetic**　に対して、 視覚的特性をどのように表示値に変換するか **scales** を設定できます。後でやってみましょう。
+
+`ggplot()`に追加した `geom_`関数を見てみましょう。
+
+![](/visualizing/charts_with_ggplot/images/gg2d.png)
+
+**ggplot2** では関数の間にプラスを忘れずに。
+
+`%>%` パイピングを実装した **dplyr** の前に作成されました。
+
+パイピングのショートカットは私には条件反射的なので、とても混乱しがちです。
+
+ggplotを使っているのであれば、プラス！
+
+そうでなければ、パイプ！
+
+
+![](/visualizing/charts_with_ggplot/images/gg2e.png)
+
+So `geom_point()` は `geom_bar()` や `geom_boxplot()`のように *geom_functions*　のうちの１種類です。
+
+*geom_function* に関わらず *mappings* に渡す必要があります。
+
+このチャートのインスタンスでは、**ages**　の **actor_age** と **actress_age** に当たります。
+
+これがRで`ggplot()` とデータ、`geom_`と`aes()`を使って.チャートを作成する基本です。この例にある他の2行を実行する必要はありません。
+
+さらにわかりやすくするために説明を追加しました。
+
+![](/visualizing/charts_with_ggplot/images/gg3.png)
