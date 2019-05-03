@@ -1,3 +1,5 @@
+##ggplot2でチャートを作る
+
 データをロードしてチャートを作成し、レイヤーを細分化しましょう。
 
 [Vulture.com](http://www.vulture.com/2013/04/leading-men-age-but-their-love-interests-dont.html) から、映画の主演男優と恋の相手の年齢を比較したデータをいくつか紹介します。
@@ -89,3 +91,66 @@ So `geom_point()` は `geom_bar()` や `geom_boxplot()`のように *geom_functi
 さらにわかりやすくするために説明を追加しました。
 
 ![](/visualizing/charts_with_ggplot/images/gg3.png)
+
+![](/visualizing/charts_with_ggplot/images/gg3.png)
+
+次の行は拡大・縮小のオプションです。
+
+スケーリングは *geom_function*　の`aes()`に渡してもできますが、チャート全体にも適用できます。
+
+
+![](/visualizing/charts_with_ggplot/images/gg3c.png)
+このチャートでは、 `expand_limits()` 関数でX軸とY軸を０からスタートするように表示できます。
+
+そうしない場合、 `ggplot()`はチャート内の点がチャート全体を埋めるようにスケールをシフトします。データが含まれていない余計な余白が求められていないと仮定するのです。
+
+しかし、このデータは０から始めることで年齢の格差を強調します。 さらに、（いくつかの例外があるものの）ベースをゼロから開始しないことで見落とすかもしれないデータ視覚化の上での長所がたくさんあります。
+
+
+![](/visualizing/charts_with_ggplot/images/gg4.png)
+
+これまでに見てきたたくさんの関数の最後を飾るのは `ab_line()`です。 必須ではありませんが、 **ggplot2**　の階層化オプションの一部です。
+
+![](/visualizing/charts_with_ggplot/images/gg4c.png)
+
+ **ggplot2** の `geom_abline()` のような関数は追加の変数を渡すことができます。 この例では、切片を1、バーの色を「ライトグレー」に指定します。  `geom_abline()` に変数を渡さず、行はデフォルト幅にしましょう。
+
+
+![](/visualizing/charts_with_ggplot/images/gg5.png)
+
+それでは、他にもチャートを作ってみましょう。
+
+しかしまずは、データについて考えてみましょう。
+
+## データ
+
+ `ggplot2()`の使用に際し、手元のデータの構造を理解することはとても重要です。
+
+```{r head}
+
+head(ages)
+
+```
+
+このデータフレームには6つの変数（列）があります。
+
+各行は単一の映画のデータを表しており、とても整っています。
+
+きちんとしたフォーマットがあるように見えますが、すべてのデータセットがデフォルトでこの構造を持つわけではありません。
+
+広いデータと長いデータを扱った前の章を思い出してください。
+
+![](/visualizing/charts_with_ggplot/images/wide.png)
+
+各人種の変数は列に分散されています。
+
+スプレッドシートの見栄えがよくなるだけで、 **ggplot2** ではうまくいきません。
+
+![](/visualizing/charts_with_ggplot/images/long.png)
+
+これでよし。各行には異なる変数が入っています。このようにして、メトロと人種あたりの解決率、事件数の合計に別の変数を追加できます。
+
+より多機能です。
+
+ `ggplot()`では、データは整えられ、長い（背が高い）フォーマットが最もうまくいくのです。
+
