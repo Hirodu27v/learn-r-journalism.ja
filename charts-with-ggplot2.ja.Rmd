@@ -157,12 +157,11 @@ head(ages)
 ## Geom
 新しい `geom_` タイプを見てみましょう。
 
-### Simple bar plot
+### シンプルな棒グラフ
 
 
-We'll start with `geom_bar()` which is the most common type of chart you'll need to make starting out.
-
-Notice that we are nesting `aes()` into `ggplot()` this time and not using the `method=` or the `data=` because they are not necessary.
+`geom_bar()`から始めましょう。これは、チャートの最も一般的なタイプです。
+今回は`ggplot()`に `aes()`をネストしており、`method=` や`data=`を必要がないので使っていないことに注意してください。
 
 
 ```{r bar, fig.width=9, fig.height=5}
