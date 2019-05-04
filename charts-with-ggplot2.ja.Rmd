@@ -236,7 +236,7 @@ ggplot(data=ages,
   geom_bar()
 ```
 
-Do you see it?
+分かりますか?
 
 It's the parenthesis in `aes()` -- it closed off before including `fill=Genre` so it wasn't included. Try it this time correctly.
 
