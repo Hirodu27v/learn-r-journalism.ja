@@ -222,11 +222,12 @@ ggplot(data=ages,
 
 
 ![](/visualizing/charts_with_ggplot/images/autocolor.png)
-This is the default color list. There are ways to customize the colors, but we'll go over that in the next section.
+これがデフォルトのカラーリストです。色をカスタマイズする方法はいくつかありますので、次のセクションで説明します。
 
-Let's go back to `fill=Genre` but this time with a twist.
+`fill=Genre` に戻りますが、今度は少し工夫してみます。
 
-Take a look at the code and see if you can spot why it didn't work like it did earlier.
+コードをのぞいて、前のように機能しなかった理由を見つけることができますか？
+
 
 ```{r stacked_bar_fill_fail, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -236,7 +237,7 @@ ggplot(data=ages,
 
 分かりますか?
 
-It's the parenthesis in `aes()` -- it closed off before including `fill=Genre` so it wasn't included. Try it this time correctly.
+ `aes()` の中の括弧が、 `fill=Genre` を含まずに閉じられていました。修正して試してみましょう。
 
 ```{r stacked_bar_fill_fail2, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -244,7 +245,7 @@ ggplot(data=ages,
   geom_bar()
 ```
 
-### Grouped bar plot
+### グループ化された棒グラフ
 
 ```{r grouped_bar_plot, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -252,15 +253,17 @@ ggplot(data=ages,
   geom_bar(position="dodge")
 ```
 
-So this chart was similar to the stacked bar plot above, but this time `position="dodge"` was passed to the `geom_bar()` function.
+このチャートは上の積み上げ棒グラフと似ていますが `geom_bar()` 関数に`position="dodge"` が渡されています。
+これはggplotに棒グラフをグループ化するように伝えるものです。
 
-This tells ggplot to group the bar plot.
 
-This is useful for easier comparison within groups.
+このチャートでは、グループ内の比較が容易にできます。
 
-### Spinogram
 
-It's simple to turn a stacked bar plot into a percent-based chart.
+### スピノグラム
+
+積み上げ棒グラフをパーセントベースのグラフに変換するのは簡単です。
+
 
 ```{r spinogram, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -268,7 +271,8 @@ ggplot(data=ages,
   geom_bar(position="fill")
 ```
 
-This type of chart allows for a greater understanding of the proportion compared to other groups.
+このタイプのチャートを使うと、比率を他のグループと比較しやすい利点があります。
+
 
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
@@ -276,11 +280,13 @@ This type of chart allows for a greater understanding of the proportion compared
 </div>
 
 
-### Box plot
+### 箱ひげ図
 
-You'll see this type of chart often in research papers.
+この種のチャートは研究論文でよく見かけます。
 
-It succinctly summarizes the distribution of numbers in each category we've set: actors.
+
+私達が設定した各カテゴリーにおける数の分布を簡潔に要約したものです。例えば「俳優」ではこうなります。
+
 
 
 ```{r box_whiskers}
@@ -288,16 +294,17 @@ ggplot(ages, aes(x=actor, y=actress_age)) +
   geom_boxplot()
 ```
 
-The height of the line is the max and min of the numbers in the y axis: actress ages.
+行の高さは、y軸、つまり女優の年齢の最大値と最小値によって定められています。
 
-The top of the box is the top quartile and the bottom of the box is the bottom quartile. The line in the middle is the median age. That floating dot? Considered an outlier.
 
-Common `geom_boxplot()` options:
+ボックスの一番上は第一四分位数、一番下は第三四分位数、中央の線は中央値を示しています。周りに浮遊している点は？異常値とみなされた値です。
 
-* fill
-* color
-* notch (=TRUE or FALSE)
-* outlier. color shape size
+ `geom_boxplot()` のオプションはここでも同じです。
+
+* 塗りつぶし
+* 色
+* ノッチ (TRUE か FALSEを示し、標本間の中央値の変動性を示します)
+* 外れ値の色、形状、サイズ
 
 ### Violin plot
 
