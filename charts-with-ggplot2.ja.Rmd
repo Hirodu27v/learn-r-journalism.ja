@@ -170,18 +170,17 @@ ggplot(ages,
     geom_bar()
 ```
 
-Start keeping track of how many variables we're using in each of these charts.
+それぞれのチャートで使用している変数の数を見てみましょう。
+上の例では **一つの変数** から始め、データフレームに表示されるインスタンスを数えることによって新しい変数を作成しました。
+チャートを機能させるために、データフレーム自体を変更したり要約したりする必要はありませんでした。
+一般的な `geom_bar()` オプションは以下の通りです。
 
-For the one above, we started with **one variable** and sort of created a new one by counting the instances they appear in the data frame. We didn't have to alter the data frame at all or summarize it for this chart to work.
-
-Common `geom_bar()` options:
-
-* width
-* fill
-* color (border)
+* 幅
+* 塗りつぶし
+* 色 (境界線)
 * position_dodge()
 
-### Stacked bar plot
+### 積み上げ棒グラフ
 
 ```{r stacked_bar, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -189,26 +188,24 @@ ggplot(data=ages,
   geom_bar()
 ```
 
-## Aesthetics
+## 美学
+他の種類のチャートに移る前に、上のチャートで起こったことについて話しましょう。
+棒グラフと積み上げ棒グラフの唯一の違いは、`aes()` 関数に `, fill=Genre` が付け加えられたことです。
 
-Before we move on to other chart types, let's talk about what just happened in the chart above.
+**変数の数:** 2 (すなわち俳優とジャンルです)
 
-The only difference between the bar plot and the stacked bar plot was that `, fill=Genre` was added to the `aes()` function.
-
-**Variable count:** 2 (actor & genre, if you don't count the count of actor)
-
-Here's a reminder that these are the aesthetic properties that can be set:
+チャートの以下の外見は変更可能でしたね。
     
-* position
-* size
-* color
-* shape 
-* transparency
-* fill
+* ポジション
+* サイズ
+* 色
+* 形状 
+* 透明度
+* 塗りつぶし
 
 ![](/visualizing/charts_with_ggplot/images/aes.png)
 
-What if we changed the `aes()` from `fill` to `color`?
+ `fill` を `color`に変更してみたらどうなるでしょうか?
 
 
 ```{r stacked_bar_color, fig.width=9, fig.height=5}
@@ -217,11 +214,12 @@ ggplot(data=ages,
   geom_bar()
 ```
 
-Yikes, not as effective. But now you know about the option.
+それほど効果的ではないようです。でもまあ、オプションについて知ることができました。
 
-When would this be a good option? Line charts or dots.
+どんな時に使うのがいいのでしょうか? 折れ線グラフかドットプロットがよいでしょう。
 
-Notice how the color and legend was added automatically?
+色と凡例が自動的に追加されたことに注意してください。
+
 
 ![](/visualizing/charts_with_ggplot/images/autocolor.png)
 This is the default color list. There are ways to customize the colors, but we'll go over that in the next section.
