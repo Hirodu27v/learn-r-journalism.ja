@@ -299,64 +299,64 @@ ggplot(ages, aes(x=actor, y=actress_age)) +
 
 ボックスの一番上は第一四分位数、一番下は第三四分位数、中央の線は中央値を示しています。周りに浮遊している点は？異常値とみなされた値です。
 
- `geom_boxplot()` のオプションはここでも同じです。
+一般的な `geom_boxplot()` のオプションです。
 
 * 塗りつぶし
 * 色
 * ノッチ (TRUE か FALSEを示し、標本間の中央値の変動性を示します)
 * 外れ値の色、形状、サイズ
 
-### Violin plot
+### バイオリン図
 
-This is another way to show distribution of numbers.
+これは数の分布を示す方法の一つです。
 
 ```{r violin, fig.width=9, fig.height=5}
 ggplot(ages, aes(x=actor, y=actress_age)) +
   geom_violin()
 ```
 
-The wider the diameter, the more numbers there are. It's a bit more intuitive to follow.
+直径が大きいほど、数値は大きくなります。箱ひげ図より直感的です。
 
-**Variable count:** 2 - *actress_age* and *actor*
+**変数:** 2 - *actress_age* と *actor*
 
-## Scaling
+## 拡大と縮小
 
-Useful to transform or rescale the data with.
+データを変換または拡大縮小するのに役立ちます。
 
-## geom_histogram
+## geom_histogram（ヒストグラム関数）
 
 ```{r scaling1, warning=F, message=F}
 ggplot(data=ages, aes(x=actor_age)) +
   geom_histogram(binwidth=1)
 ```
 
-Common `geom_histogram()` options:
+一般的な `geom_histogram()` オプションです。
 
-* binwidth
-* color (border)
-* fill
+* ヒストグラムのビンの幅
+* 色 (境界線)
+* 塗りつぶし
 
-**Applying a logorithmic scale**
+**対数スケールの適用**
 
-It makes more sense to apply scalar transformations to while plotting rather than altering the data set itself.
+データセット自体を変更するよりも、プロットにスカラー変換を適用する方が合理的です。
 
 ```{r scaling2}
 ggplot(data=ages, aes(x=actor_age)) +
   geom_histogram() + scale_x_log10()
 ```
 
-### Kernel density plot
+### カーネル密度分布
 
 ```{r kernel, fig.width=9, fig.height=5}
 ggplot(data=ages,
   aes(x=actress_age)) +
   geom_density(fill="red")
 ```
-Common `geom_density()` options:
+一般的な `geom_density()` オプション：
 
-* fill
-* color
-* alpha
+* 塗りつぶし
+* 色
+* アルファ
 
 ```{r kernel2, fig.width=9, fig.height=5}
 ggplot(data=ages,
