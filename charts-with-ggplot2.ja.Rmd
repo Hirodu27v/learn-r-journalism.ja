@@ -364,7 +364,7 @@ ggplot(data=ages,
   geom_density(alpha=.3)
 ```
 
-## Dot plot
+## 散布図
 
 ```{r dotplot, fig.width=8, fig.height=8}
 ggplot(ages,
@@ -372,9 +372,9 @@ ggplot(ages,
   geom_point()
 ```
 
-### Line plot
+### 折れ線グラフ
 
-Let's start by summarizing the ages of the actresses per actor.
+俳優に対する女優の年齢をまとめることから始めましょう。
 
 ```{r lineplot, fig.width=9, fig.height=5, warning=F, message=F}
 library(dplyr)
@@ -388,11 +388,11 @@ ggplot(avg_age, aes(x=actor, y=average_age_diff, group=1)) +
   geom_line()
 ```
 
-**Variable count:** 2 - the new mutated variable *average_age_diff* and **actor**
+**変数:** 2 - 新たに変化した変数である *average_age_diff* と **actor**です。
 
-Don't forget, we can add more layers.
+より多くのレイヤを追加することもできます。
 
-Let's make the same chart above but with dots, too.
+上記と同じチャートをドットで作ってみましょう。
 
 ```{r dot_line, fig.width=9, fig.height=5}
 ggplot(avg_age, aes(x=actor, y=average_age_diff, group=1)) +
@@ -400,23 +400,22 @@ ggplot(avg_age, aes(x=actor, y=average_age_diff, group=1)) +
   geom_point()
 ```
 
-Does this make sense as a visualization? Mmm... nah.
+データ可視化としての意味があるかというと…。
 
-Never use a line chart to chart anything across an axis that doesn’t represent something continuous.
+折れ線グラフを使用して、連続的なものではないものをグラフ化することは絶対やめましょう。
+一般的な `geom_point()` オプション:
 
-Common `geom_point()` options:
+* 色
+* 塗りつぶし
+* アルファ
+* 形状
+* サイズ
 
-* color
-* fill
-* alpha
-* shape
-* size
+### フィットのある散布図
 
-### Scatterplot with fit
+先ほど散布図を作成しました。
 
-We've made a scatter plot before.
-
-This time, let's add a `geom_smooth()` layer.
+今度は `geom_smooth()` レイヤを追加しましょう。
 
 ```{r scatter_fit}
 ggplot(ages,
@@ -426,7 +425,7 @@ ggplot(ages,
   geom_smooth()
 ```
 
-We can customize it and throw in a linear regression line. Notice the `~` which is used often in statistical analysis formulas.
+チャートをカスタマイズして回帰直線を入れることができます。統計分析ではよく使われる`~` に注目してください。
 
 ```{r scatter_fit_lm}
 ggplot(ages,
@@ -437,7 +436,7 @@ ggplot(ages,
               formula=y~x)
 ```
 
-## Grouping
+## グルーピング
 
 ```{r grouping1}
 ggplot(data=ages,
@@ -447,15 +446,14 @@ ggplot(data=ages,
   geom_point()
 ```
 
-**Variable count:** 3! We're working with *actor_age*, *actress_age*, and *actor*.
+**変数:** 3!  *actor_age*と *actress_age*、 *actor*を取り扱っています。
 
-See how we're able to start packing more information into a chart with a line of code?
+より多くの情報を1行のコードでチャートにまとめる方法があります。
 
-When you're exploring data visually, this might help surface insights you wouldn't notice by just looking at the raw data.
+データを視覚的に調査すると、生データを見るだけでは気付きにくい洞察を得ることがあります。
+このチャートはかなりクラスター化されているので、左下にあるトム・クルーズやジョニー・デップのような異常値にしか気付かないかもしれません。しかし、真ん中にあるものはちょっとやり過ぎです。
 
-Everything's still pretty clustered in this chart so you might only be able to notice outliers like Tom Cruise and Johnny Depp on the bottom left. But everything in the middle is kinda just too much.
-
-Let's go crazy and add another variable.
+情熱的に別の変数を追加することにしましょう。
 
 
 ```{r grouping2}
@@ -467,13 +465,13 @@ ggplot(data=ages,
   geom_point()
 ```
 
-**Variable count:** 4! We're working with *actor_age*, *actress_age*, *actor*, and now *Genre*.
+**変数:** 4!  *actor_age*、*actress_age*。*actor*に加えて *Genre*です。
 
-This looks not good.
+あまり良くないようです。
 
-Why did we do this?? I just wanted to show you that the shapes option exist. You'll probably never use it.
+なぜやったかというと、あなたに形状のオプションがあることを教えたかったからです。
 
-Okay, what if we try keeping the color and shapes to one variable: *actor*?
+それでは、*actor*を目立たせるために色と形を変えたらどうなるでしょう?
 
 ```{r grouping3}
 ggplot(data=ages,
@@ -484,9 +482,9 @@ ggplot(data=ages,
   geom_point()
 ```
 
-Nope, still not great. Plus, there are only a limited amount of shapes to pull from.
+まだ完璧じゃないし、引き出すことができる形状は限られています。
 
-Did you see that warning?
+警告をご覧になりましたか？
 
 ```
 ## Warning: Removed 10 rows containing missing values (geom_point).
