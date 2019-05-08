@@ -356,7 +356,7 @@ ggplot(data=ages,
 
 * 塗りつぶし
 * 色
-* アルファ
+*不透明度
 
 ```{r kernel2, fig.width=9, fig.height=5}
 ggplot(data=ages,
@@ -407,7 +407,7 @@ ggplot(avg_age, aes(x=actor, y=average_age_diff, group=1)) +
 
 * 色
 * 塗りつぶし
-* アルファ
+* 不透明度
 * 形状
 * サイズ
 
@@ -487,19 +487,19 @@ ggplot(data=ages,
 警告をご覧になりましたか？
 
 ```
-## Warning: Removed 10 rows containing missing values (geom_point).
+## Warning: 欠損値を含む10行を削除しました (geom_point)。
 ```
 
-That's because it couldn't find a shape for Tom Hanks. Hanks was left off the chart.
+というわけでトム・ハンクスは含まれていません。
 
-Don't you feel horrible? Tom Hanks is the nicest guy ever.
+とんでもない！トム・ハンクスは史上最高の男です。
 
-Like colors, you should limit the palette so it doesn't confuse readers. 
+色のように、パレットを制限して読者を混乱させないようにする必要があります。
 
 
-### Scatterplot with color and size
+### 散布図の色とサイズ
 
-Let's swap out *Genre* for another variable that might make more sense to add to the visualization: *budget*.
+ *Genre* を、より意味のある可視化に役立つ変数*budget*と入れ替えましょう。
 
 ```{r grouping4}
 ggplot(data=ages,
@@ -510,21 +510,20 @@ ggplot(data=ages,
   geom_point()
 ```
 
-**Variable count:** 4! We're working with *actor_age*, *actress_age*, *actor*, and now *Genre*.
+**変数は** 4!  *actor_age*, *actress_age*, *actor*,そして *Genre*です。
 
-Lots of data being communicated to readers here. The legends were auto-generated.
+たくさんのデータを読者に伝えることができています。
 
-## Coords
+## 座標
 
-You'll see **stats** in the `geom_bar()` function. This is the statistical transformations that summarize data. In this instance we're setting it to `"identity"` because we want the bars to represent the numbers in the `y` in `aes()`, not the count of it.
+`geom_bar()`関数に **stats** が表示されます。これはデータを要約する統計的な変換です。この事例では、 because we want the bars to represent the numbers in the`aes()`の `y`の値をバーとして表したいので`"identity"`を設定します。
 
 * counts
 * means
-* trend lines
+* トレンドライン
 
-We're going to alter the coordinates of the chart so that we get a horizontal chart instead of the default vertical one.
-
-The `coord_flip()` option flips a chart you've been working on from vertical to horizontal or horizontal to vertical. 
+デフォルトは垂直チャートですが、水平チャートを作成するように座標を変更します。
+`coord_flip()` オプションは作業中のチャートの垂直と水平を変換します。 
     
 ```{r coords}
 ggplot(data = avg_age, aes(x= actor, y=average_age_diff)) +
@@ -533,18 +532,14 @@ ggplot(data = avg_age, aes(x= actor, y=average_age_diff)) +
 ```
 
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/xjnj-rJwd6A?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
-</div>
 
 
-## Facets
+## ファセット
 
-Remember how that big scatter plot above had all the different colors on one viz and it was all clustered together?
+上の大きな散布図で、色が異なるデータ群が、混然一体となっていたことを思い出してください。
+これを個々のグラフに分割するのは簡単です。
 
-It's simple to break those out into individual charts.
-
-This is sometimes referred to as "small multiples".
+"small multiples"と呼ばれています。
 
 
 
@@ -557,14 +552,13 @@ ggplot(data=ages) +
 ```
 
 
-**Variable count:** 4! - We're working with *actor_age*, *actress_age*, *actor*, and also *Genre*.
+**変数は** 4! - *actor_age*, *actress_age*, *actor*,そして *Genre*。
 
 {{% notice note %}}
-Take a moment to appreciate how easy this was. This is a pain in the ass in other languages, like D3. 
+これがどんなに便利か想像してください。D3のような言語ではうんざりするほど面倒な作業です。 
 {{% /notice %}}
 
-
-Want to add another variable? Let's do it. Add `size=budget` the `geom_point()`.
+別の変数を追加してみましょう。`geom_point()`に `size=budget` を加えます。
 
 ```{r facet_grid_more, fig.width=9, fig.height=7}
 ggplot(data=ages) +
@@ -574,18 +568,17 @@ ggplot(data=ages) +
    facet_grid(Genre~actor)
 ```
 
-**Variable count:** 5! - We're working with *actor_age*, *actress_age*, *actor*, and also *Genre* AND *budget*. The sizing kinda jumbles up the circles in some, but keep playing around with alpha or change the size of the chart, maybe. You can see it's quite easy to play around with the options until you find the right balance.
+**変数は** 5! -  *actor_age*, *actress_age*, *actor*, そして *Genre* と *budget*です。サイジングはちょっと不安定ですが、不透明度やチャートのサイズ変更を試してみてください。正しいバランスが見つかるまで、オプションを簡単に試してみることができます。
+これは、データ構造が整っているから可能なことです。
 
-This is all possible thanks to the tidiness of the data structure.
+変数には複数のグループを含めることができますが、それぞれの映画ごとにすべて行に関連付けられています。
 
-The variables might contain more than one group but it's all tied back to rows with each individual movie.
-
-Here are other types of ways to create "small multiples" through facets.
+ファセット別に"small multiples"を作成する別の方法があります。
 
 * `facets_grid(genre~actor)`
-* `facets_grid(. ~ actor)` - just columns
-* `facets_grid(actor ~ .)` - just rows
-* `facets_wrap(~ var, ncol=#)` - one classification variable wrapped to fill page
+* `facets_grid(. ~ actor)` - 列のみ
+* `facets_grid(actor ~ .)` - 行のみ
+* `facets_wrap(~ var, ncol=#)` - ページいっぱいにラップされた1つの分類変数
 
 
 ```{r facet_grid2}
@@ -596,11 +589,10 @@ ggplot(data=ages) +
    facet_grid(.~actor)
 ```
 
-You don't have to use two variables in `facet_grid()` -- you can just use one and it'll break out the charts based on where the `~` is in relation to the variable and the `.`.
+`facet_grid()`では二つの変数を用いる必要はありません。その変数は、変数と.に関して〜がどこにあるかに基づきチャートを分解します。
+上のチャートは `facet_wrap(.~actor)` があるので垂直に分割されます。
 
-The chart above had `facet_wrap(.~actor)` so the grid is split vertically.
-
-If it was swapped to `facet_wrap(actor~.)` then the grid will split by row.
+`facet_wrap(actor~.)` に変換された場合、行で分割されることになります。
 
 
 ```{r facet_grid3}
@@ -611,8 +603,7 @@ ggplot(data=ages) +
    facet_grid(actor~.)
 ```
 
-
-I find myself using `facet_wrap()` more often because I can customize the number of columns in the small multiples with `ncol=`.
+ncol =を使ってsmall multiplesの列数をカスタマイズできるので、私はfacet_wrap（）を一層愛用しています。
 
 
 ```{r facet_wrap, fig.width=9, fig.height=6}
@@ -623,11 +614,11 @@ ggplot(data=ages) +
    facet_wrap(~actor, ncol=4)
 ```
 
-## Global versus Local
+## グローバル変数vs.ローカル変数
 
-The layers in your `ggplot()` chart can be customized in nuanced ways.
+`ggplot()` で作ったチャートのレイヤは微妙なカスタマイズも可能です。
 
-Everything nested in the initial `ggplot()` call will be considered global and apply to the rest of the layers.
+最初に `ggplot()` でネストされたものは全てグローバル変数とみなされ、全てのレイヤに適用されます。
 
 
 ```{r global, fig.width=9, fig.height=6}
@@ -638,9 +629,9 @@ ggplot(ages,
 ```
 
 
-So in the chart above, `aes()` with *actor_age* and *actress_age* are in the x and y globally.
+上のチャートでは*actor_age* と *actress_age*を持つ`aes()` はグローバル変数として存在します。
 
-But I can also pass `aes()` to the `geom_point()` layer, which will make that local and apply to that layer only.
+しかし、 `aes()` を`geom_point()` レイヤに渡し、そのレイヤにのみ作用するローカル変数とすることもできます。
 
 ```{r local, fig.width=9, fig.height=6}
 ggplot(ages,
@@ -648,14 +639,12 @@ ggplot(ages,
           y=actress_age)) +
       geom_point(aes(color=actor))
 ```
+データをローカルに設定することもできます。 
 
-You can also set data locally. 
-
-This is very useful if you want to highlight a specific subset from the data.
+データから特定のサブセットを強調表示したい場合、これは非常に便利です。
 
 ```{r local2, fig.width=9, fig.height=6}
-# Let's make a copy of the  minus the actor variable so it can't be faceted
-
+# ファクタリングできないようにマイナスのアクター変数をコピーしましょう。
 ages_copy <- ages %>% select(-actor)
 
 ggplot(data=ages,
@@ -665,41 +654,38 @@ ggplot(data=ages,
       geom_point(data=ages_copy, color="grey") +
       geom_point() +
       facet_wrap(~actor) +
-      theme(legend.position="none") # This removes the legend
+      theme(legend.position="none") # legendを削除します。
 ```
 
 
-We were able to use different data sets. Globally, we wanted to use the **ages** data frame because we were going to facet it.
+異なるデータセットを使用することができました。ファセットを作成するため、 **ages** データフレームを使いたいと思います。
 
-We needed a second data set without the *actor* variable to plot in a background layer and set the color manually to "grey" (go back to the code above and this time put `color="grey"` in `aes()` and see the difference). This was the first `geom_point()` layer referenced locally.
+背景レイヤーにプロットして手動で色を「グレー」に設定するには、 {0}アクター{/0}変数のない2番目のデータセットが必要でした(上のコードの`aes()`で `color="grey"` にして、違いを確かめてください)。 これはローカルで参照される最初の `geom_point()` レイヤです。
 
-The second `geom_point()` built a scatter plot based on the global data set in `ggplot()`.
+2番目の`geom_point()`は、`ggplot()`のグローバルデータセットに基づいて散布図を作成しました。
 
-This type of chart really improves on that first grouped scatter plot because it makes it easier to see each individual group in the context to the rest of the data.
+このタイプのチャートは、最初のグループ化された散布図を改善し、コンテキスト内の個々のグループを他のデータと比べて見やすくします。
 
 
 ----
 
-## Your turn
+## 演習
+ [これらの演習で](http://code.r-journalism.com/chapter-4/#section-ggplot2) このセクションの知識を身につけましょう。
 
-Challenge yourself with [these exercises](http://code.r-journalism.com/chapter-4/#section-ggplot2) so you'll retain the knowledge of this section.
-
-Instructions on how to run the exercise app are on the [intro page](https://learn.r-journalism.com/en/visualizing/) to this section.
+エクササイズアプリの実行に関する説明は、このセクションの [紹介ページ](https://learn.r-journalism.com/en/visualizing/) にあります。
 
 
 ---
 
-## Next steps
+## 次のステップ
 
-With some practice and understanding of [basic geom-types](https://ggplot2.tidyverse.org/reference/#section-layer-geoms) you can quickly iterate through different ways to visualize your data.
+[基本的なgeom型](https://ggplot2.tidyverse.org/reference/#section-layer-geoms)を理解し、実践していれば、データを素早く、さまざまな方法で可視化することができるようになります。
 
-Once your data is structured correctly, you can use **ggplot2** to slice, group, and facet data visually multiple ways until you find something worth elaborating on.
+データが正しく構造化されていたら、**ggplot2** を使って複雑なデータを詳しく調べる価値があるものが見つかるまで複数の方法で切り出し、グループ化し、ファセット化することができます。
 
-What is being communicated? What information is left out or obscured?
+何が伝えられ、どんな情報が潜んでいるでしょう。
 
-Going through these examples, you saw how shapes, layout, the number of variables, etc, all matter. Swapping out geoms and aesthetics. Different combinations communicated better than others. It all depends on the structure of the data and what it contains.
+これらの例を見ていくと、形状、レイアウト、変数の数などがすべて重要であることがわかりました。グラフィックスの文法でデータを視覚化することで、柔軟な新しい方法でデータにアプローチできます。
 
-By visualizing data with the grammar of graphics, you'll approach data in a flexible new way.
-
-Great, now let's do more with charts including how to move beyond exploring the data visually and how to turn get these charts to publication quality.
+それでは、データを視覚的に探索することを超えて移動する方法や、これらのグラフを公開する方法などに取り組んでみましょう。
 
