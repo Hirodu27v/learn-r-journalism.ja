@@ -293,7 +293,7 @@ Did you know that someone made a [Wes Anderson color palette package](https://gi
 
 ## アノテーション機能
 
-You can annotate charts with `annotate()` and `geom_hline()` or `geom_vline()`.
+ `annotate()` や `geom_hline()` 、 `geom_vline()`を使ってチャートに注釈を付けることができます。
 
 
 ```{r palette3}
@@ -303,16 +303,16 @@ ggplot(ages, aes(x=actor_age, y=actress_age)) +
   annotate("text", x=40, y=51, label="Random text for some reason", color="red")
 ```
 
-## Themes
+## テーマ
 
-You've seen an example of a theme used in a previous chart. `theme_bw()`.
+前のチャートでテーマを使用した例を見ました。`theme_bw()`.
 
-But there are many more that have been created and collected into the **ggthemes** library.
+しかし、 **ggthemes** ライブラリには他のテーマがたくさんあります。
 
-Here's one for the economist
+経済学者向けの一例を紹介します。
 
 ```{r theme1}
-# If you don't have ggthemes installed yet, uncomment the line below and run it
+# ggthemesをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("ggthemes")
 
 library(ggthemes)
@@ -322,7 +322,7 @@ ggplot(ages, aes(x=actor_age, y=actress_age, color=actor)) +
   scale_colour_economist()
 ```
 
-Here's one based on FiveThirtyEight's style (though it's not the official one).
+これはFiveThirtyEightのスタイルに基づいたものです (ただし、公式のものではありません)。
 
 ```{r theme2}
 
@@ -331,20 +331,19 @@ ggplot(ages, aes(x=actor_age, y=actress_age, color=actor)) +
   theme_fivethirtyeight()
 ```
 
-Check out all the [other ones currently available](
-https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
+[現在利用可能な他のテーマは](
+https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html)これです。
 
-It's not difficult to make your own. It's just time consuming.
+自分自身で作るのも難しくありません。時間はかかりますが…。
 
-It involves tweaking every little detail, like text, and colors, and how the grids should look.
+テキスト、色、グリッドの外観など、細部の調整がすべて含まれます。
 
-Check out the [theme](https://github.com/associatedpress/aptheme/blob/master/R/theme_ap.R) that the Associated Press uses. They posted it on [their repo](https://github.com/associatedpress/aptheme) and by loading their own package, they can just add `theme_ap()` at the end of their charts to transform it to AP style.
+これはAP通信が使っている [テーマ](https://github.com/associatedpress/aptheme/blob/master/R/theme_ap.R)です。 彼らは [リポに](https://github.com/associatedpress/aptheme) 投稿し、自分たちのパッケージをロードすることで、チャートの末尾に `theme_ap()` を追加してAP通信のやり方に沿ったチャートに作り替えることができるのです。at the end of their charts to transform it to AP style.
 
 
 ----
 
-## Your turn
+## 演習
 
-Challenge yourself with [these exercises](http://code.r-journalism.com/chapter-4/#section-customizing-charts) so you'll retain the knowledge of this section.
-
-Instructions on how to run the exercise app are on the [intro page](https://learn.r-journalism.com/en/visualizing/) to this section.
+[これらの演習で](http://code.r-journalism.com/chapter-4/#section-customizing-charts) このセクションの知識を身につけましょう。
+エクササイズアプリの実行方法に関する説明は、このセクションの [紹介ページ](https://learn.r-journalism.com/en/visualizing/) にあります。
