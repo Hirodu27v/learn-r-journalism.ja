@@ -1,0 +1,350 @@
+##チャートのカスタマイズ
+
+データに戻りましょう。
+
+```{r importing_data, warning=F, message=F}
+library(readr)
+
+ages <- read_csv("data/ages.csv")
+
+```
+
+先ほど作った散布図を覚えていますか？
+
+```{r dotplot, fig.width=8, fig.height=8}
+library(ggplot2)
+
+ggplot(ages,
+       aes(x=actress_age, y=Movie)) +
+  geom_point()
+```
+
+あまり良くない点がありました。アルファベットの逆順になっていましたね。
+年齢に基づいて並べ替えましょう。
+
+## チャートラベルの並べ替え
+
+これにはデータの変換が必要です。
+
+最も簡単な方法は [**forcats**](https://forcats.tidyverse.org/index.html)パッケージを使うことです。驚くべきことにtidyverseの一部です。
+
+ここで使う関数は`fct_reorder()`で、このように機能します。
+
+![](/visualizing/customizing_charts/images/fct_reorder.png)
+
+
+```{r dotplot2, fig.width=8, fig.height=8}
+#  forcatsをインストールしていなければ、以下の行のコメントを外して実行してください。
+# install.packages("forcats")
+
+library(forcats)
+ggplot(ages,
+       aes(x=actress_age, y=fct_reorder(Movie, actress_age, desc=TRUE))) +
+  geom_point()
+```
+
+そう悪くありません。さらに微調整します。
+
+## ロリポップチャート
+
+ここでは新しい`geom_`、`geom_segment()`を使います。
+
+```{r lollipop_chart, fig.width=8, fig.height=8}
+ggplot(ages,
+       aes(x=actress_age, y=fct_reorder(Movie, actress_age, desc=TRUE))) +
+  geom_segment(
+       aes(x = 0,
+           xend = actress_age,
+           yend = fct_reorder(Movie, actress_age, desc=TRUE)),
+           color = "gray50") +
+           geom_point()
+```
+
+興味深い結果が出ました。
+
+これをWebサイトで公開したり、ソーシャルメディアで共有したい場合は、ラベルを整理してタイトルを追加し、ソース行を追加する必要があります。
+簡単にできます。
+
+
+```{r lollipop_chart_clean, fig.width=8, fig.height=8}
+ggplot(ages,
+       aes(x=actress_age, y=fct_reorder(Movie, actress_age, desc=TRUE))) +
+  geom_segment(
+       aes(x = 0,
+           y=fct_reorder(Movie, actress_age, desc=TRUE),
+           xend = actress_age,
+           yend = fct_reorder(Movie, actress_age, desc=TRUE)),
+           color = "gray50") +
+           geom_point() +
+# 新しいコード
+  labs(x="Actress age", y="Movie", 
+       title = "Actress ages in movies",
+       subtitle = "for R for Journalists class",
+       caption = "Data from Vulture.com and IMDB") +
+  theme_minimal()
+```
+
+`labs()` 関数に x, y, タイトル、サブタイトル、キャプションなど多くの情報を付加しました。
+
+`theme_minimal()`も追加して、グリッド背景を灰色にするなどのスタイル変更も行いました。
+
+さらに調整すべき点は？
+
+縦に長すぎるので、 ロリポップによって表される実際の年齢を追跡するの困難な点です。
+
+グリッドをやめて、各ドットの右側に数字を追加しましょう。
+
+
+```{r lollipop_chart_annotated, fig.width=8, fig.height=8}
+ggplot(ages,
+       aes(x=actress_age, y=fct_reorder(Movie, actress_age, desc=TRUE))) +
+  geom_segment(
+       aes(x = 0,
+           y=fct_reorder(Movie, actress_age, desc=TRUE),
+           xend = actress_age,
+           yend = fct_reorder(Movie, actress_age, desc=TRUE)),
+           color = "gray50") +
+           geom_point() +
+  labs(x="Actress age", y="Movie", 
+       title = "Actress ages in movies",
+       subtitle = "for R for Journalists class",
+       caption = "Data from Vulture.com and IMDB") +
+  theme_minimal() +
+  # NEW CODE BELOW
+  geom_text(aes(label=actress_age), hjust=-.5) +
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.line = element_blank(),
+        axis.text.x = element_blank())
+```
+
+二つの**ggplot2**エレメント、`geom_text()`と`theme()`を加えました。
+
+ `label`に *actress_age* 変数を渡し、 `hjust=`を使いました。これは位置を水平方向に調整します。一方、`vjust` は垂直方向に調整するものです。
+
+`theme()`には*panel.border* や *axis.text.x*など多くのものが渡されたので、*element_blank()*とイコールにしました。
+
+チャートの各部分は *element_blank()を使ってカスタマイズや削除ができます。
+
+悪くない仕上がりです。
+
+保存しましょう。
+
+## ggplotsの保存
+
+**ggplot2**パッケージの`ggsave()`を使います。
+
+エクスポートできるファイルタイプは
+
+* png
+* tex
+* pdf
+* jpeg
+* tiff
+* bmp
+* svg
+です。
+画像の幅は "インチ"、"cm"または" mm"で指定することができます。
+
+指定がない場合は画面に表示されるサイズで保存します。
+
+```{r ggsave}
+ggsave("actress_ages.png")
+```
+どんな感じでしょう。
+
+![](/visualizing/customizing_charts/actress_ages.png)
+
+そうですね、ちょっと調整が必要です。デフォルトの表示は使えません。
+
+```{r ggsave2}
+ggsave("actress_ages_adjusted.png", width=20, height=30, units="cm")
+```
+
+![](/visualizing/customizing_charts/actress_ages_adjusted.png)
+
+格段に良くなりました。
+
+ .svg ファイルとして保存し、Adobe IllustratorまたはInkscapeでさらに調整することができます。
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/RZrYEv7xAw0?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+さて、私は今度は俳優の年齢を追加してみるつもりです。 `geom_segment()`と `geom_point()` レイヤを調整して*actor_age* 変数を使えるようにしなければなりません。
+
+```{r lollipop_chart_annotated_men, fig.width=8, fig.height=9, warning=F, message=F}
+#まず、データフレームを並べ替えてfct_reorderを使わなくてもいいようにしましょう。
+
+library(dplyr)
+
+ages_reordered <- ages %>% 
+  mutate(Movie=fct_reorder(Movie, desc(actor_age)))
+
+ggplot(ages_reordered) +
+  geom_segment(
+       aes(x = actress_age,
+           y = Movie,
+           xend = actor_age,
+           yend = Movie),
+           color = "gray50") +
+  geom_point(aes(x=actress_age, y=Movie), color="dark green") +
+  geom_point(aes(x=actor_age, y=Movie), color="dark blue") +
+  labs(x="", y="", 
+       title = "Actor and actress ages in movies",
+       subtitle = "for R for Journalists class",
+       caption = "Data from Vulture.com and IMDB") +
+  theme_minimal() +
+  geom_text(aes(x=actress_age, y=Movie, label=actress_age), hjust=ifelse(ages$actress_age<ages$actor_age, 1.5, -.5)) +
+  geom_text(aes(x=actor_age, y=Movie, label=actor_age), hjust=ifelse(ages$actress_age<ages$actor_age, -.5, 1.5)) +
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.line = element_blank(),
+        axis.text.x = element_blank())
+```
+今回はx軸とy軸のラベルを空白のままにしました。
+
+## スケール
+
+スケールでチャートを調整することについて説明します。
+
+**軸**
+
+* `scale_x_continuous()`
+* `scale_y_continuous()`
+* `scale_x_discrete()`
+* `scale_y_discrete()`
+
+**色**
+
+* `scale_color_continuous()`
+* `scale_color_manual()`
+* `scale_color_brewer()`
+
+**塗りつぶし**
+
+* `scale_fill_continuous()`
+* `scale_fill_manual()`
+
+```{r scales1}
+ggplot(ages, aes(x=actor_age, y=actress_age)) + geom_point() +
+  scale_x_continuous(breaks=seq(20,30,2), limits=c(20,30)) +
+  scale_y_continuous(breaks=seq(20,40,4), limits=c(20,40))
+```
+
+`scale_x_continuous()`に*breaks*を設定することで、X軸を*limit*で20から30の範囲にし、間隔を２にしました。
+これ以外のデータのポイントは削除しました。
+
+
+また、`scale_y_continuous()`でもX軸を20から40の範囲にし、間隔を４ずつにしました。そしてここでも、他のデータポイントは消しました。
+
+離散データに制限を設定する方法は次のとおりです。
+
+```{r discrete}
+ggplot(ages, aes(x=actor)) + geom_bar() +
+  scale_x_discrete(limits=c("Tom Hanks", "Tom Cruise", "Denzel Washington"))
+```
+
+## 色と塗りつぶしのスケール
+
+チャートの色を手動で変更することもできます。
+
+16進記号や[色名](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf)が使えます。
+
+`scale_fill_manual()`を使ってみましょう。
+
+```{r color, fig.width=9, fig.height=5}
+library(dplyr)
+
+avg_age <- ages %>% 
+  group_by(actor) %>%
+  mutate(age_diff = actor_age-actress_age) %>% 
+  summarize(average_age_diff = mean(age_diff))
+
+ggplot(avg_age, aes(x=actor, y=average_age_diff, fill=actor)) + 
+  geom_bar(stat="identity") +
+  theme(legend.position="none") + # This removes the legend
+  scale_fill_manual(values=c("aquamarine", "darkorchid", "deepskyblue2", "lemonchiffon2", "orange", "peachpuff3", "tomato"))
+```
+`scale_fill_brewer()` か `scale_color_brewer()`を使ってカラーパレットを指定することも可能です。
+
+```{r palette1, fig.width=9, fig.height=5}
+ggplot(avg_age, aes(x=actor, y=average_age_diff, fill=actor)) + 
+  geom_bar(stat="identity") +
+  theme(legend.position="none") + 
+  scale_fill_brewer()
+```
+
+別の [パレットオプション](https://learnr.wordpress.com/2009/04/15/ggplot2-qualitative-colour-palettes/) もご覧ください。
+
+
+```{r palette2, fig.width=9, fig.height=5}
+ggplot(avg_age, aes(x=actor, y=average_age_diff, fill=actor)) + 
+  geom_bar(stat="identity") +
+  theme(legend.position="none") + 
+  scale_fill_brewer(palette="Pastel1")
+```
+
+Did you know that someone made a [Wes Anderson color palette package](https://github.com/karthik/wesanderson) based on his different movies? 
+
+## アノテーション機能
+
+You can annotate charts with `annotate()` and `geom_hline()` or `geom_vline()`.
+
+
+```{r palette3}
+ggplot(ages, aes(x=actor_age, y=actress_age)) + 
+  geom_point() +
+  geom_hline(yintercept=50, color="red") +
+  annotate("text", x=40, y=51, label="Random text for some reason", color="red")
+```
+
+## Themes
+
+You've seen an example of a theme used in a previous chart. `theme_bw()`.
+
+But there are many more that have been created and collected into the **ggthemes** library.
+
+Here's one for the economist
+
+```{r theme1}
+# If you don't have ggthemes installed yet, uncomment the line below and run it
+#install.packages("ggthemes")
+
+library(ggthemes)
+ggplot(ages, aes(x=actor_age, y=actress_age, color=actor)) + 
+  geom_point() +
+  theme_economist() +
+  scale_colour_economist()
+```
+
+Here's one based on FiveThirtyEight's style (though it's not the official one).
+
+```{r theme2}
+
+ggplot(ages, aes(x=actor_age, y=actress_age, color=actor)) + 
+  geom_point() +
+  theme_fivethirtyeight()
+```
+
+Check out all the [other ones currently available](
+https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
+
+It's not difficult to make your own. It's just time consuming.
+
+It involves tweaking every little detail, like text, and colors, and how the grids should look.
+
+Check out the [theme](https://github.com/associatedpress/aptheme/blob/master/R/theme_ap.R) that the Associated Press uses. They posted it on [their repo](https://github.com/associatedpress/aptheme) and by loading their own package, they can just add `theme_ap()` at the end of their charts to transform it to AP style.
+
+
+----
+
+## Your turn
+
+Challenge yourself with [these exercises](http://code.r-journalism.com/chapter-4/#section-customizing-charts) so you'll retain the knowledge of this section.
+
+Instructions on how to run the exercise app are on the [intro page](https://learn.r-journalism.com/en/visualizing/) to this section.
