@@ -1,6 +1,8 @@
+チャートの補足
+
 We're going to go over some examples of visualizations created with packages that people have created to build on top of **ggplot2**. People love improving and building upon things. The latest version of **ggplot2** was released recently and more than [300 people contributed](https://twitter.com/hadleywickham/status/1014514026208989185)-- either by adding pieces from their add-on packages or by suggesting fixes.
 
-## gghighlight
+## gghighlight 
 
 The **gghighlight** package is a relatively new addition. In the previous section, I showed a way to surface important data while keeping the background data for context. This package simplifies it. Learn more on [their site](https://cran.r-project.org/web/packages/gghighlight/vignettes/gghighlight.html).
 
