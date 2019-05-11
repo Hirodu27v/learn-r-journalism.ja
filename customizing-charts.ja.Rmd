@@ -289,7 +289,7 @@ ggplot(avg_age, aes(x=actor, y=average_age_diff, fill=actor)) +
   scale_fill_brewer(palette="Pastel1")
 ```
 
-Did you know that someone made a [Wes Anderson color palette package](https://github.com/karthik/wesanderson) based on his different movies? 
+ [ウェス・アンダーソン作品のカラーパレットパッケージ](https://github.com/karthik/wesanderson)を作った人をご存知ですか? 
 
 ## アノテーション機能
 
@@ -338,8 +338,7 @@ https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html)これ�
 
 テキスト、色、グリッドの外観など、細部の調整がすべて含まれます。
 
-これはAP通信が使っている [テーマ](https://github.com/associatedpress/aptheme/blob/master/R/theme_ap.R)です。 彼らは [リポに](https://github.com/associatedpress/aptheme) 投稿し、自分たちのパッケージをロードすることで、チャートの末尾に `theme_ap()` を追加してAP通信のやり方に沿ったチャートに作り替えることができるのです。at the end of their charts to transform it to AP style.
-
+これはAP通信が使っている [テーマ](https://github.com/associatedpress/aptheme/blob/master/R/theme_ap.R)です。 彼らは [リポに](https://github.com/associatedpress/aptheme) 投稿し、自分たちのパッケージをロードすることで、チャートの末尾に `theme_ap()` を追加してAP通信のやり方に沿ったチャートに作り替えることができるのです。
 
 ----
 
