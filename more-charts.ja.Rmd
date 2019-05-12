@@ -120,7 +120,7 @@ ggplot(temps, aes(x=month, y=Value, color=Year)) +
 ```{r importing_ages, warning=F, message=F}
 ages <- read_csv("data/ages.csv")
 
-# ２人のトムに焦点を当てます。
+# トムに焦点を当てます。
 
 # dplyr や stringr をインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("dplyr")
