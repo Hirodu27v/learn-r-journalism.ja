@@ -241,7 +241,7 @@ ggplot(anom, aes(y=Year, x=month_label, fill=Value)) +
   theme(legend.position="top")
 ```
 
-## Mr. Rogers
+## ミスター・ロジャース
 
 （アメリカの国民的子供番組）「Mister Rogers' Neighborhood」の司会者ロジャース氏が来ていた[全てのセーターの色](https://web.archive.org/web/20110525014454/http://neighborhoodarchive.blogspot.com/2011/05/sweater-colors.html) を誰かが記録していたことをご存知ですか?
 
@@ -274,7 +274,7 @@ na.omit(rogers) %>% ggplot(aes(x=episodenumbers)) + geom_bar(aes(fill = factor(c
   theme(legend.position = "none") + ylim(0,1)
 ```
 
-## 時間軸を円形にしたチャート
+## 時間軸を円形にしたチャート 
 
 これはワシントンポスト紙の John Muyskensが作ったチャートです。学校で発生した銃撃事件について、D3で制作して[公開する](https://www.washingtonpost.com/graphics/2018/local/school-shootings-database/) 前に、[探索的なグラフィック](https://gist.github.com/jmuyskens/80b277db4c0606c9d4c4a9b8db730975) を作ったのです。 最終的なチャートでは、ここに示されているものとは異なり、入学者数に基づいて出席率を見積もる方法を使用しています。
 
