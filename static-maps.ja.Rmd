@@ -39,19 +39,19 @@ CRSを持つ空間データはベクターかラスターのいずれかです�
 
 {{% notice note %}}
 このクラスではベクタデータと **sf** パッケージを扱います。以前の **sp**パッケージではベクターとラスタの両方が使えました。
-システムを準備するのに手間がかかります。 **sp** と **sf** の最大の違いはCRS情報の格納方法です。
-**sp** は特別なuses spatial sub classes, **sf** stores data in data frames, allowing it to interact with **dplyr** methods we've learned so far. 
-I encourage you to check out other spatial data analysis and modeling [classes](http://www.rspatial.org/) if you remain interested in this afterward.
+システムを準備するのに手間がかかります。 **sp** と **sf** の主な違いはCRS情報の格納方法です。
+**sp** は空間サブクラスを使用しますが、 **sf** はデータをデータフレームに格納し、先に学習した**dplyr** を使えるようにします。 
+興味がある方は、他の空間データ分析とモデリングについての [クラス](http://www.rspatial.org/) を調べてみてください。
 {{% /notice %}}
 
-## Shape files
+## シェープファイル
 
-R can handle importing different kinds of file formats for spatial data, including KML and geojson. We'll focus on shape files, which was created by ESRI in the '90s.
+Rは、KMLやgeojsonなど、多様なファイル形式の空間データをインポートすることができます。90年代にESRIが作成したシェープファイルに焦点を当てます。
 
-Though we refer to a shape file in the singular, it's actually a collection of at least three basic files: 
+シェープファイルは、単数のファイルのように呼ばれていますが、少なくとも三つの基本ファイルの集合体です。
 
-* .shp - lists shape and vertices
-* .shx - has index with offsets
+* .shp - 図形の情報をリストする
+* .shx - インデックス情報を保持する
 * .dbf - relationship file between geometry and attributes (data)
 
 All files must be present in the directory and named the same (except for the file extension) to import correctly.
