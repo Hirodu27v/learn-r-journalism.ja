@@ -52,11 +52,11 @@ Rは、KMLやgeojsonなど、多様なファイル形式の空間データをイ
 
 * .shp - 図形の情報をリストする
 * .shx - インデックス情報を保持する
-* .dbf - relationship file between geometry and attributes (data)
+* .dbf - 図形の属性（データ）ファイル
 
-All files must be present in the directory and named the same (except for the file extension) to import correctly.
+正しくインポートするには、すべてのファイルがディレクトリ内に存在し、同じ名前（ファイル拡張子を除く）でなければなりません。
 
-## The plan
+## これからやること
 
 We'll walk through several methods for dealing with spatial data, each time improving on the style a little bit.
 
