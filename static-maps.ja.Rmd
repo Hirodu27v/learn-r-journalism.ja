@@ -238,20 +238,19 @@ ggplot(tx) +
   <iframe src="//www.youtube.com/embed/fyt7UqYEESs?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
+-- 
 
+## APIを介した国勢調査データのRへのダウンロード
 
-## Downloading Census data into R via API
-
-Instead of downloading data from the horrible-to-navigate Census [FactFinder](https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml) or pleasant-to-navigate [CensusReporter.org](https://censusreporter.org/) we can pull the code with the [**censusapi** package](https://hrecht.github.io/censusapi/articles/getting-started.html) from Hannah Recht, of Bloomberg.
-
-First, sign up for a [census key](https://api.census.gov/data/key_signup.html).
+操作性に乏しい国勢調査の [FactFinder](https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml) や、快適に操作できる [CensusReporter.org](https://censusreporter.org/) の代わりに、ブルームバーグのハンナ・ヒリトによる [**censusapi** パッケージ](https://hrecht.github.io/censusapi/articles/getting-started.html) を使ってコードを取得できます。
+まずは [census key](https://api.census.gov/data/key_signup.html)をサインアップします。
 
 ```{r census_key, eval=F}
-# Add key to .Renviron
+# .Renvironにキーを追加します。
 Sys.setenv(CENSUS_KEY="YOURKEYHERE")
-# Reload .Renviron
+#  .Renvironをリロードします。
 readRenviron("~/.Renviron")
-# Check to see that the expected key is output in your R console
+# Rコンソールに期待通りのキーが出力されているか確認してください。
 Sys.getenv("CENSUS_KEY")
 ```
 
@@ -262,13 +261,12 @@ readRenviron("~/.Renviron")
 ```
 
 ```{r load_censusapi, warning=F, message=F}
-# If you don't have censusapi installed yet, uncomment the line below and run
+# censusapiをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("censusapi")
 
 library(censusapi)
 ```
-
-Check out the dozens of data sets you have access to now.
+今すぐアクセスできる多数のデータセットをチェックしましょう。
 
 ```{r vewapi, eval=F}
 apis <- listCensusApis()
@@ -277,28 +275,28 @@ View(apis)
 
 ![](/mapping/static_maps/images/apis.png)
 
-We won't get too deep into the usage of **censusapi**, though I recommend the [excellent documentation](https://hrecht.github.io/censusapi/articles/getting-started.html) later.
+ **censusapi**の使い方に深入りしませんが、後で[素晴らしい文献](https://hrecht.github.io/censusapi/articles/getting-started.html)に目を通すことをお勧めします。
 
-We'll focus on using the `getCensus()` function form the package. It makes an API call and returns a data frame of results.
+ `getCensus()`に焦点を当てます。APIを呼び出し、データフレームを返します。
 
-These are the arguments you'll need to pass it:
+これらの引数を渡す必要があります。
 
-* `name` - the name of the Census data set, like "acs5" or "timeseries/bds/firms"
-* `vintage` - the year of the data set
-* `vars` - one or more variables to access (remember *B02001001* from above?)
-* `region` - the geography level of data, like county or tracts or state
+* `name` - 「acs5」や「timeseries / bds / firms」などの国勢調査データセットの名前
+* `vintage` - データセットの年
+* `vars` - アクセスしたい変数 (*B02001001*を覚えていますか?)
+* `region` - 郡、土地の一区画、州などのデータの地理的レベル
 
-You can use `listCensusMetadata()` to see what tables might be available from the ACS Census survey.
+`listCensusMetadata()`を使用して、ACS Censusサーベイから使用可能なテーブルを確認できます。
 
 
 {{% notice warning %}}
-The following lines of code using listCensusMetadata will take a very long time to load, so you can skip this step for now. Also, at the moment of this class this line of code won't work unless you have the developer version.
+listCensusMetadataを使用する次のコード行はロードするのに長い時間がかかるので、このステップを飛ばしても構いません。また、このクラスの時点では、開発者バージョンがないとこのコード行は機能しません。
 {{% /notice %}}
 
 
 ```{r metadata, warning=F, message=F, eval=F}
-# The lines below will make sure you have the developer version
-# of censusapi so listCensusMetaData() will work correctly
+# 以下のコードはlistCensusMetaData()がうまく機能するよう
+# censusapiの開発者バージョンがあることを確認します。
 
 install.packages("devtools")
 devtools::install_github("hrecht/censusapi")
@@ -309,9 +307,9 @@ View(acs_vars)
 ```
 ![](/mapping/static_maps/images/race.png)
 
-It takes quite a few minutes to download the list of this data set (23,000 rows!) but once you get it, you can explore it to see what sort of data you might like to download. You can also refer to the Census for [some guidance](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html).
+このデータセットのリストをダウンロードするのにかなりの時間がかかります（23,000行！）しかし、いったん入手すれば、どの種類のデータをダウンロードしたいのかを調べることができます。[いくつかのガイダンスを](https://www.census.gov/programs-surveys/acs/guidance/which-data-tool/table-ids-explained.html)参照可能です。
 
-We'll pull median income: *B21004_001E*
+収入の中央値を引き出します。変数は*B21004_001E*。
 
 ```{r median_income, warning=F, message=F}
 tx_income <- getCensus(name = "acs/acs5", vintage = 2016, 
@@ -320,11 +318,11 @@ tx_income <- getCensus(name = "acs/acs5", vintage = 2016,
 head(tx_income)
 ```
  
-Alright, time to join it to our **tx** spatial data frame and map it.
+それでは、それを **tx** 空間データフレームに結合してマッピングしましょう。
 
 ```{r, tx_income, warning=F, message=F}
-# Can't join by NAME because tx_income data frame has "County, Texas" at the end
-# We could gsub out the string but we'll join on where there's already a consistent variable, even though the names don't line up
+# データフレームの末尾に "County, Texas" があるためNAMEでは結合できません。
+# 文字列を削除することもできますが、名前が一致していなくても、一貫した変数がある場所で結合できます。
 
 tx4ever <- left_join(tx, tx_income, by=c("COUNTYFP"="county"))
 
@@ -339,25 +337,22 @@ ggplot(tx4ever) +
 ```
 
 
-### Download Census data and shapefiles together
+### 国勢調査データとシェープファイルを一緒にダウンロードする
 
-The most recent package dealing with Census data is [**tidycensus**](https://walkerke.github.io/tidycensus/index.html) and it brings together what we've done above-- the data and the geography. It's also created by Kyle Walker.
+国勢調査データを扱う最新のパッケージ[**tidycensus**](https://walkerke.github.io/tidycensus/index.html) は、私たちが上で行ったこと、つまりデータと地理をめぐる操作をまとめたものです。 カイル・ウォーカーが開発しました。
 
-You can use it to pull data only like with **censusapi** or you can use it to pull shape files only, like with **tigris**.
 
-But with **tidycensus**, you can download the shape files with the data you want already attached. No joins necessary. 
+ **tidycensus**を使えば、結合操作なしですでにデータを持った状態のシェープファイルをダウンロードすることができます。
 
-I won't get into the particulars of looking up geography types and Census variables.
-
-Let's get right into mapping. We'll calculate unemployment percents by Census tract in Jersey City. It'll involve wrangling some data. But querying the data with `get_acs()` will be easy and so will getting the shape file by simply passing it `geometry=T`.
+マッピングに取り掛かりましょう。国勢調査地域であるジャージーシティ（ニュージャージー州）の失業率を計算します。そのためには、いくつかのデータをラングリングする必要があります。とはいえ、 `get_acs()` でデータを紹介するのは難しくありません。 `geometry=T`を渡すだけでシェープファイルを取得できます。
 
 ```{r tidycensus, warning=F, message=F}
-# if you don't have tidycensus installed yet, uncomment and run the line below
+#  tidycensusをダウンロードしていなければ、以下の行のコメントを外して実行してください。
 
 #install.packages("tidycensus")
 library(tidycensus)
 
-# Pass it the census key you set up before
+#  census key を渡します。
 ```
 
 ```{r key, eval=F}
@@ -377,9 +372,9 @@ jersey <- get_acs(geography="tract", year=2016, variables= jobs, county = "Hudso
 head(jersey)
 ```
 
-Time for some math. Can you follow what's happening in the code based on what you've learned in previous chapters?
+演算に時間がかかります。前の章で学んだことに基づいて、コード内で何が起こっているのかを追跡できますか？
 
-We can string the **dplyr** wrangling and **ggplot2** code together. Just watch and look out for the transition from `%>%` to `+`.
+**dplyr** ラングリングと **ggplot2** コードをまとめることができます。 `%>%` から `+`へ移行するところを見ていてください。
 
 ```{r unemployed_nj, warning=F, message=F}
 library(tidyr)
@@ -401,11 +396,11 @@ ggplot(aes(fill=percent_unemployed)) +
   
 ```
 
-### Faceting maps
+### ファセットマップ
 
-One more example.
+別の例を挙げます。
 
-We'll pull the population of non-Hispanic whites, non-Hispanic blacks, non-Hispanic Asians, and Hispanics by Census tract for the 2010 Census. The function is `get_decennial()` and we'll also add the `summary_var` argument to get multi-group denominators.
+2010年の国勢調査から、非ヒスパニック系白人、非ヒスパニック系黒人、非ヒスパニック系アジア人、およびヒスパニック系の人口を調べます。 `get_decennial()` 関数に複数グループの分母を取得するため `summary_var`変数を追加します。
  
 ```{r facet, warning=F, message=F, quietly=T, echo=T, results='hide'}
 racevars <- c(White = "P0050003", 
@@ -419,14 +414,12 @@ harris <- get_decennial(geography = "tract", variables = racevars,
 
 head(harris)
 ```
-
-This is a very tidy data frame. 
-
-And looks like we've have some grouping material.
+とても整ったデータフレームになりました。
+そして、いくつかのグループ化されたマテリアルがあるようです。
 
 
 ```{r faceting, warning=F, message=F}
-# If you dont have the viridis package installed yet, uncomment and run the line below
+# viridisをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("viridis")
 
 library(viridis)
@@ -443,18 +436,17 @@ harris %>%
   theme(panel.grid.major = element_line(colour = 'transparent')) +
   labs(title="Racial geography of Harris County, Texas", caption="Source: US Census 2010")
 ```
+たくさんのマッピングの技術を見てきました。
 
-Well, we've gone over a lot of mapping techniques that do pretty much the same thing.
+あなたは全ての選択肢を持っています。
 
-But now you've got a grasp of all the options.
+目的にふさわしいものを選んでください。
 
-Pick which one works best for your case.
+### アラスカとハワイ
 
-### About Alaska and Hawaii
+そうそう。
 
-Oh yeah.
-
-If you pass `shift_geo=T` to the `get_acs()` function in **tidycensus** then the states will be re positioned.
+**tidycensus**で`shift_geo=T` を `get_acs()`に渡すと、アラスカとハワイは再配置されます。
 
 ```{r alaska_hawii, warning=F, message=F, quietly=T, echo=T, results='hide'}
 county_pov <- get_acs(geography = "county",
@@ -475,7 +467,6 @@ ggplot(county_pov) +
 
 ```
 
-So, why not use **tidycensus** every time instead of **tigris**? 
-
-Well, you don't need a Census key API to use **tigris**.
+なぜ全ての場合に **tidycensus** を **tigris**の代わりにしないのでしょう? 
+それは、 **tigris**にはCensus key APIが必要ないからです。
 
