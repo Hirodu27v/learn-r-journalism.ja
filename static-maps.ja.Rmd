@@ -58,24 +58,24 @@ Rは、KMLやgeojsonなど、多様なファイル形式の空間データをイ
 
 ## これからやること
 
-We'll walk through several methods for dealing with spatial data, each time improving on the style a little bit.
+空間データを扱う方法をいくつか見ていき、スタイルを少しずつ改良します。
 
-1. Map blank shape file after downloading
-2. Join Census data to blank shape file and map
-3. Use R package **Tigris** to download shape file
-4. Use R package **censusapi** to download census data and join to new shape file
-5. Use **tidycensus** to download Census data and the shape file all at once
+1. ダウンロードした後、空白のシェープファイルをマッピングする
+2. 国勢調査データを空白のシェープファイルに結合してマッピングする
+3. Rの **Tigris** パッケージでシェープファイルをダウンロードする
+4. **censusapi** パッケージで国勢調査データをダウンロードし、新しいシェープファイルに結合する
+5. **tidycensus**を使って国勢調査データとシェープファイルを一括してダウンロードする
 
-Let's use the **sf** package in conjunction with **ggplot2** to visualize the data.
+データを可視化するために **sf** パッケージを **ggplot2** と組み合わせて使いましょう。
 
 {{% notice important %}}
-There are performance issues when creating maps with the **sf** package **if you're using a Mac**. To fix, download and install [XQuartz](https://www.xquartz.org/). Restart and then run these commands: options(device = "X11") and then X11.options(type = "cairo")
+**Macを使っているなら**、**sf**を使って地図を作成するとパフォーマンス上の問題が発生します。修正するには[XQuartz](https://www.xquartz.org/)をダウンロードし、再起動して次のコマンドを実行します。 options(device = "X11")、そして X11.options(type = "cairo")
 {{% /notice %}}
 
 
-### Mapping a simple shape file
+### 単純なシェープファイルのマッピング
 
-We'll start by reading in a shape file of state boundaries from the [Census](https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html). 
+まず、 [国勢調査](https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html)から州の境界のシェープファイルを読み込むことから始めます。
 
 ```{r simple_states, warning=F, message=F}
 # If you haven't installed ggplot2 or sf yet, uncomment and run the lines below
