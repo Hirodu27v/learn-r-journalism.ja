@@ -1,4 +1,4 @@
-### Geolocating addresses in R
+### Rにおける住所の位置情報
 
 
 
@@ -7,12 +7,12 @@
 </div>
 
 
-We're going to start with geolocating municipal police stations in Connecticut.
+コネチカット州警の警察署の位置を特定することから始めましょう。
 
-We'll be using the [`ggmap` package](https://github.com/dkahle/ggmap) for a lot of functions, starting with geolocating addresses with Google Maps.
+ [`ggmap` パッケージ](https://github.com/dkahle/ggmap) には多くの機能があり、まずはGoogleマップで位置情報を取得します。
 
 ```{r loading_packages, warning=F, message=F}
-# if you don't have the following packages installed, uncomment and run the lines below
+# 下のパッケージをインストールしていなければ、以下の行のコメントを外して実行してください。
 
 #install.packages(c("dplyr", "ggplot2", "tidyr", "ggmap", "DT", "knitr", "readr"))
 
@@ -24,8 +24,7 @@ library(ggmap)
 library(DT)
 library(knitr)
 ```
-
-After we import the data, let's use the `glimpse()` function which lists out the variables for the data frame.
+データをインポートしたら、データフレームの変数を一覧表示する `glimpse()` 関数を使います。
 
 ```{r geolocating}
 stations <- read_csv("data/Police_Departments.csv")
@@ -33,13 +32,12 @@ glimpse(stations)
 ```
 
 ----
+住所の緯度と経度を調べるには、Googleマップに入力するのと同じく完全な住所が必要です。このデータフレームには、アドレスの各部分ごとが別々の列に分かれています。
 
-To find the latitude and longitude of an address, we need a full address like you would put into Google Maps. This data frame has a separate column for each piece of the address.
-
-We need a single column for addresses, so we'll concatenate *ADDRESS*, *CITY*, *STATE*, and *ZIP*. 
+住所を一列にまとめたいので、*ADDRESS*, *CITY*, *STATE*,と *ZIP*を連結します。 
 
 {{% notice important %}}
-Did you notice the zip code is numeric and has only 4 digits out of 5 for zip code? That's because Connecticut zip codes all start with 0. We'll need to put that 0 back for the geocoding to work successfully.
+郵便番号は数字ですが、5桁の郵便番号が4桁しかないことに気付きましたか？これは、コネチカット州の郵便番号がすべて0で始まるためです。ジオコーディングを正しく機能させるには、この0を元に戻す必要があります。
 {{% /notice %}}
 
 ```{r geolocating2, eval=F}
@@ -48,51 +46,50 @@ stations <- stations %>%
   mutate(location = paste0(ADDRESS, ", ", CITY, ", CT ", ZIP))
 ```
 
-The function to geocode a single address is `geocode()` but we've got a bunch of addresses, so we can use `mutate_geocode()`.
+一つの住所に対しては `geocode()` が使えますが、多数の住所には`mutate_geocode()`を適用します。
 
 ```{r geocode, eval=F}
 geo <- mutate_geocode(stations, location)
 ```
 
 ```{r geo, warning=F, message=F}
-# If it's taking too long, you can cancel and load the output by uncommenting the line below
+# 時間がかかりすぎる場合は、以下の行のコメントを外してください。
 geo <- read_csv("data/geo_stations.csv")
 
-# Bringing over the longitude and latitude data
+# 経度と緯度データを取得します。
 stations$lon <- geo$lon
 stations$lat <- geo$lat
 ```
 
-This is using Google's service, and last I checked there were about 2,500 queries allowed per day if you don't have a key. If you do get a key, check out the documentation at the bottom of [this page](https://github.com/dkahle/ggmap).
+これはGoogleのサービスを使用しています。APIキーがなければ1日約2,500のクエリが上限です。キーをお持ちの場合は [このページの](https://github.com/dkahle/ggmap)下部にあるドキュメントをお読みください。
 
-**Also** did you know that Google let's you reverse geocode?
-
-If you pass latitude and longitude data to `revgeocode()` it will return an address.
+**また、** Googleが緯度と経度から住所を教えてくれることを知っていますか。
+緯度と経度のデータを`revgeocode()` に渡すとアドレスが返ってきます。
 
 ```{r reverse_geocode, warning=F, message=F}
 revgeocode(c(lon = -77.030137, lat = 38.902986))
 ```
 
 
-### Plotting points with ggplot2
+### ggplot2を使ってプロットする
 
-Let's pull town shapes for Connecticut with **tigris**.
+コネチカット州の形を **tigris**を使って描きましょう。
 
 ```{r tigris_ct, warning=F, message=F, quietly=T, echo=T, results='hide'}
-# If you don't have tigris or ggplot2 or sf installed yet, uncomment and run the line below
+# tigrisとggplot2とsfをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("tigris", "sf", "ggplot2")
 
 library(tigris)
 library(sf)
 library(ggplot2)
 
-# set sf option
+# sfオプションの設定
 
 options(tigris_class = "sf")
 
 ct <- county_subdivisions("CT", cb=T)
 
-#If cb is set to TRUE, download a generalized (1:500k) counties file. Defaults to FALSE (the most detailed TIGER file).
+#cbがTRUEに設定されている場合(1:500k)の縮尺の郡のファイルをダウンロードします。デフォルトはFALSです。(最も詳細なTIGERファイル).
 
 ggplot(ct) + 
   geom_sf() +
@@ -101,9 +98,9 @@ ggplot(ct) +
   labs(title="Connecticut towns")
 ```
 
-Okay, we've got the shape file. 
+シェープファイルを手に入れました。 
 
-We just add the geolocated points like it was dots on a chart. Because that's essentially what latitude and longitude is.
+チャート上の点のように、位置情報を追加するだけです。位置情報は緯度と経度で定められるからです。
 
 ```{r map_chart, fig.width=9, fig.height=5, warning=F, message=F}
 
@@ -115,9 +112,9 @@ ggplot(ct) +
   labs(title="Police stations")
 ```
 
-Alright, I'll throw in grouping for Description.
+さて、記述を試みるためにグループ化します。
 
-And generate some random numbers for staffing for each station so we can make some circle plots.
+そして、各署に配置された人員として乱数を生成し、円プロットを作成します。
 
 ```{r map_chart2, fig.width=9, fig.height=5, warning=F, message=F}
 set.seed(7)
@@ -133,7 +130,7 @@ ggplot(ct) +
   coord_sf()
 ```
 
-I also threw in `coord_sf()` in there at the end. It makes sures that all layer are using a common *CRS*. It sets it based on the first layer.
+最後に`coord_sf()`を入れておきました。こうすることで、全てのレイヤが共通の *CRS*を使っていることが確認できます。最初のレイヤに基づき設定します。
 
-You can set other [projections](That https://ggplot2.tidyverse.org/reference/ggsf.html) easily.
+そうすると、他の [投影法](That https://ggplot2.tidyverse.org/reference/ggsf.html) を設定しやすくなります。
 
