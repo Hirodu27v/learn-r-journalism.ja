@@ -1,10 +1,12 @@
-We're going to take what we've learned so far and do some spatial analysis of traffic stops. 
+交通渋滞のケーススタディ
 
-**Goal:** We’ll figure out which town and census tract each stop occurred in and then pull in demographic data from the Census to determine what types of neighborhoods police tend to pull people over more often.
+これまでに学んだことを踏まえ、交通渋滞の空間分析を行います。
 
-You could conduct this analysis using software like ArcGIS or QGIS, but we’re going to be doing it all in R.
+**目標** 渋滞が発生した街や国勢調査区域を把握し、国勢調査の人口統計データをしようして渋滞が発生しやすい地域の種類を特定します。
 
-It is better to stay in a single environment from data importing, to analysis, to exporting visualizations because the produced scripts make it easier for others (including your future self) to replicate and verify your work in the future.
+ ArcGISやQGISを使ってもできますが、ここではRだけで完結させましょう。
+
+他の人（将来の自分を含む）が将来自分の作業を複製して検証するのを容易にするため、スクリプトはデータのインポートから分析、ビジュアライゼーションのエクスポートまで、単一の環境で作成することをお勧めします。
 
 Start with the data. It’s raw traffic stops between 2013 and 2014. It includes race, reasons for the stop, and many other factors. The state of Connecticut collects this information from all police departments but only a handful of them included location-specific information. Researchers at Central Connecticut State University’s Center for Municipal and Regional Policy geolocated as many as possible, focusing on eight departments that showed signs of racial profiling.
 
