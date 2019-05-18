@@ -1,24 +1,23 @@
-交通渋滞のケーススタディ
+検問のケーススタディ
 
-これまでに学んだことを踏まえ、交通渋滞の空間分析を行います。
+これまでに学んだことを踏まえ、検問の空間分析を行います。
 
-**目標** 渋滞が発生した街や国勢調査区域を把握し、国勢調査の人口統計データをしようして渋滞が発生しやすい地域の種類を特定します。
+**目標** 検問が発生した街や国勢調査区域を把握し、国勢調査の人口統計データから、どんな人がよく地元の警察に車を止められているのかを分析します。
 
  ArcGISやQGISを使ってもできますが、ここではRだけで完結させましょう。
 
 他の人（将来の自分を含む）が将来自分の作業を複製して検証するのを容易にするため、スクリプトはデータのインポートから分析、ビジュアライゼーションのエクスポートまで、単一の環境で作成することをお勧めします。
 
-Start with the data. It’s raw traffic stops between 2013 and 2014. It includes race, reasons for the stop, and many other factors. The state of Connecticut collects this information from all police departments but only a handful of them included location-specific information. Researchers at Central Connecticut State University’s Center for Municipal and Regional Policy geolocated as many as possible, focusing on eight departments that showed signs of racial profiling.
+データ解析を始めましょう。これは2013～14年に発生した検問の生データです。人種、検問の理由、その他の要因が含まれています。コネチカット州は全警察署からこれらの情報を収集していますが、地域が特定できる情報を含んでいるものはほんの一握りでした。セントラルコネチカット州立大学の地方自治体および地域政策センターの研究者は、人種プロファイリングが可能な八つの署に焦点を絞り、なるべく多くの位置情報を特定しました。
 
-About 34,000 stops were geolocated.
+約34,000件の検問の位置情報が入手できました。
+今回のケーススタディでは、ハムデンでの5500件を中心に検討します。後で他の街も見てみます。
 
-We’re looking specifically at Hamden for this case study— so about 5,500 stops. We'll revisit the other towns later.
-
-Let's load the packages and data we'll need.
+必要なパッケージとデータをロードしましょう。
 
 
 ```{r import, warning=F, message=F}
-# if you don't have any of these packages installed yet, uncomment and run the lines below
+# これらのパッケージをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("tidycensus", "ggplot2", "dplyr", "sf", "readr")
 
 library(tidycensus)
@@ -36,28 +35,28 @@ View(stops)
 
 ![](/mapping/case_study/images/stops_view.png)
 
-Let's get rid of some of the bad data-- where there was no latitude or longitude data (Don't worry, that's only about two percent of the data).
+緯度や経度のデータがないデータを取り除きましょう（心配しないでください。データ全体の約2％に過ぎません）。
 
 ```{r filter_na}
 stops <- filter(stops, InterventionLocationLatitude!=0)
 ```
 
-Let's map what we've got. Let's download the Census tract shape files in Hamden's county-- New Haven County-- with **tigris**.
+得られたデータをマッピングしましょう。ハムデンがある、ニューヘイブン郡の国勢調査地域のシェープファイルを **tigris**でダウンロードします。
 
 
 ```{r tigris_install, warning=F, message=F, quietly=T, echo=T, results='hide'}
-# If you don't have tigris installed yet, uncomment the line below and run
+# tigrisをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("tigris")
 
 library(tigris)
 
-# set sf option
+# sfオプションの設定
 
 options(tigris_class = "sf")
 
 new_haven <- tracts(state="CT", county="New Haven", cb=T)
 
-#If cb is set to TRUE, download a generalized (1:500k) counties file. Defaults to FALSE (the most detailed TIGER file).
+
 ```
 
 ```{r map1, fig.width=9, fig.height=5}
@@ -69,26 +68,24 @@ ggplot(new_haven) +
   theme(panel.grid.major = element_line(colour = 'transparent')) +
   labs(title="Traffic stops in Hamden")
 ```
+これが出発点になります。
 
-Alright, it's a start.
+### より深い分析
 
-### Deeper analysis
+緯度と経度の情報を含むデータセットがあるなら、インスタンスに対応するドットを地図に配置するだけです。
+しかし、それは何を示しているのでしょう?密度の違う点の集まりが見えるでしょう。
 
-If you have a data set with latitude and longitude information, it’s easy to just throw it on a map with a dot for every instance.
+でも、文脈や説明がなければ、単に派手なビジュアライゼーションでしかないのです。
 
-But what would that tell you? You see the intensity of the cluster of dots over the area but that’s it.
+### ヒートマップ
 
-If there’s no context or explanation it’s a flashy visualization and that’s it.
+まず思いつく方法は、検問の分布を視覚化することです。
 
-### Heat map
-
-One way is to visualize the distribution of stops.
-
-We’ll use the `stat_density2d()` function within ggplot2 and use `coord_map()` and `xlim` and `ylim` to set the boundaries on the map so it’s zoomed in more.
+ggplot2の `stat_density2d()` 、 `coord_map()` 、 `xlim` と `ylim`を使って地図をより拡大して境界を設定します。
 
 
 {{% notice tip %}}
-When you're stacking ggplots or dplyr commands, the line can't end with a + or a %>% normally, right? Well, if you stick a NULL at the last line, you can have the + or %>% precede it. This is kind of an advanced tip for folks who play around with scripts and are tired of commenting out before the + or %>%.
+ggplotsやdplyrコマンドをスタックしている場合、行を+や％>％で終わらせることはできません。 最後の行にNULLを付けると、前に+または％>％を付けることができます。スクリプトを試す際、+または％>％の前にコメントアウトするのにうんざりしている人にとっては、役立つヒントです。
 {{% /notice %}}
 
 ```{r heatmap1}
@@ -105,14 +102,14 @@ ggplot() +
   theme(panel.grid.major = element_line(colour = 'transparent'))
 ```
 
-That’s interesting.
+興味深い結果が出ました。
 
-What’s nice about ggplot2, is the functionality called `facets`, which allows the construction of small multiples based on factors.
+ggplot2の優れた点は `ファセット`にあります。これは、要素に基づいて小さな倍数を構築できます。
 
-Let’s try this again but faceted by race.
+人種をファセットしてみます。
 
 ```{r faceted_heatmap}
-# Creating a race column
+# 人種の列をつくる
 stops$race <- ifelse(stops$SubjectEthnicityCode=="H", "H", stops$SubjectRaceCode)
 stops <- stops %>% 
   mutate(race=case_when(
@@ -140,11 +137,11 @@ ggplot() +
 
 ```
 
-Interesting.
+いいですね。
 
-But it still doesn’t tell the full story because it’s still a bit misleading.
+それでもまだ少し誤解を招く可能性があるので、完璧ではありません。
 
-Here’s what I mean.
+つまり、こういうことです。
 
 ```{r table}
 stops %>% 
@@ -152,9 +149,8 @@ stops %>%
   count()
 ```
 
-The distribution is comparative to its own group and not as a whole.
-
-Gotta go deeper.
+分布は全体ではなく別のグループと比較されます。
+さらに掘り下げましょう。
 
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
@@ -162,18 +158,17 @@ Gotta go deeper.
 </div>
 
 
-Let’s look at which neighborhoods police tend to pull people over more often and compare it to demographic data from the Census.
+どの地域の警察が頻繁に人々の車を止めているかを調べ、国勢調査の人口統計データと比較してみましょう。
 
-So we need to count up the instances with the `st_join()` function from the **sf** package.
+それには、**sf**パッケージの `st_join()`でインスタンスを数え上げる必要があります。
 
 
-### Points in a Polygon
+### ポリゴンの点
 
-We already have the shape file of Census tracts in Hamden.
+すでにハムデンの国勢調査地域のシェープファイルを用意していました。
+それぞれの道路で何回検問が発生したかをカウントするだけです。
 
-We just need to count up how many times a traffic stop occurred in each tract.
-
-First, let's make sure it will match the correct coordinate reference system (CRS) as the shape file we've just downloaded. We'll use the `st_as_sf()` function to create a new geometry with the latitude and longitude data from the **stops** data frame. And we'll transform the CRS so it matches the CRS from the **new_haven** shape file we downloaded.
+まず、先ほどダウンロードしたシェープファイルが正しい座標参照系（CRS）と一致することを確認しましょう。`st_as_sf()` 関数で**stops**データフレームから緯度と経度のデータを使い、新しいジオメトリを描画します。そして、ダウンロードした **new_haven** シェープファイルと一致するようCRSを変換します。
 
 ```{r set_crs, warning=F, message=F}
 stops_spatial <- stops %>% 
@@ -181,7 +176,7 @@ stops_spatial <- stops %>%
   st_transform(crs=st_crs(new_haven))
 ```
 
-Now we use the `spatial_join()` function that sees where the geometries we've set in **stops_spatial** fall into which polygon in **new_haven**.
+ここで、`spatial_join()` を使って、**stops_spatial**で設定したジオメトリが**new_haven**のどのポリゴンに入るのかを確認します。
 
 ```{r spatial_join, warning=F, message=F}
 points_in <- st_join(new_haven, stops_spatial, left=T)
@@ -193,11 +188,11 @@ View(points_in)
 
 ![](/mapping/case_study/images/joined_spots.png)
 
-This is great.
+素晴らしい。
 
-What just happened: Every point in the original **stops** data frame now has a corresponding census tract and has been saved in the **points_in** data frame.
+何が起きたのかというと、 **stops**の各点は国勢調査の道路に対応し、 **points_in** データフレームに保存されました。
 
-Now, we can summarize the data by count and merge it back to the shape file and visualize it.
+これで、データをカウントで要約し、それをシェープファイルにマージして視覚化することができます。
 
 ```{r aggregate_table}
 by_tract <- points_in %>%
@@ -208,10 +203,10 @@ by_tract <- points_in %>%
 head(by_tract)
 ```
 
-We have enough here to visualize it.
+これで可視化する準備ができました。
 
 ```{r viz_aggregate, warning=F, message=F, fig.width=9, fig.height=5}
-# If you don't have viridis installed yet, uncomment and runt he line below
+# viridisをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("viridis")
 
 library(viridis)
@@ -225,10 +220,9 @@ ggplot(by_tract) +
        fill = "Total stops") +
   scale_fill_viridis(option="magma", direction=-1)
 ```
+どの部分がハムデンで、どの部分が他の町の部分であるかわかりません。
 
-Pretty, but we're unclear which part is Hamden and which are parts of other towns.
-
-That's fine because we can layer in a tract of Hamden only with **tigris**.
+**tigris**でハムデンの道路図を重ねることができるので、問題はありません。
 
 ```{r tigris_town, warning=F, message=F, quietly=T, echo=T, results='hide'}
 
@@ -236,7 +230,7 @@ new_haven_towns <- county_subdivisions(state="CT", county="New Haven", cb=T)
 hamden_town <- filter(new_haven_towns, NAME=="Hamden")
 ```
 
-We've got a single polygon for Hamden now. Let's place it on top of our other map layers with a second `geom_sf()`.
+ハムデン用のポリゴンは一つだけです。 二つ目の`geom_sf()`を使って他のレイヤの上に重ねましょう。
 
 ```{r hamden_and, fig.width=9, fig.height=5}
 ggplot() +
@@ -250,12 +244,10 @@ ggplot() +
   scale_fill_viridis(option="magma", direction=-1) +
 NULL
 ```
+上出来です。
 
-Alright, excellent.
-
-It's much clearer now that the bulk of the traffic stops occur at the southern border of Hamden.
-
-We can go deeper by going to our joined data frame and summarize by race and adding more variables to `group_by()`
+検問の大部分がハムデンの南の境で発生していることがはるかに明確になりました。
+データフレームを結合し、人種でデータフレームを要約し、`group_by()`で新たな変数を加えることでより深い分析ができます。
 
 ```{r summary_race}
 by_tract_race <- points_in %>%
@@ -266,9 +258,9 @@ by_tract_race <- points_in %>%
 head(by_tract_race)
 ```
 
-Very tidy data frame! 
+なんと整ったデータフレームでしょう! 
 
-We can repurpose the map code above and add a single line of code to facet it.
+上記のマップコードを再利用して、ファセットするためにコードを1行追加します。
 
 
 ```{r hamden_and_facet, fig.width=9, fig.height=5}
@@ -283,10 +275,8 @@ ggplot() +
   scale_fill_viridis(option="magma", direction=-1) +
   facet_wrap(~race)
 ```
-
-Well, that's pretty revealing.
-
-So these are raw numbers. Let's try to figure out the percent breakdown of drivers who are White versus those who aren't per Census tract. We just have to wrangle *by_tract_race* data frame a little bit. We've done this before in previous sections.
+かなり明らかになってきました。
+これが生の数字です。道路ごとに白人とそれ以外の運転手の割合を見てみましょう。 先のセクションで*by_tract_race*データフレームをラングリングしました。 
 
 ```{r easy_wrangle}
 by_tract_race_percent <- by_tract_race %>% 
@@ -300,7 +290,7 @@ by_tract_race_percent <- by_tract_race %>%
 head(by_tract_race_percent)
 ```
 
-We can easily plot this.
+簡単にプロットできます。
 
 ```{r hamden_min_facet, fig.width=9, fig.height=5}
 ggplot() +
@@ -315,27 +305,25 @@ ggplot() +
   facet_wrap(~type)
 ```
 
-So that's even more stark difference. 
+大きな違いが見えてきました。
 
-What's it tell us? Most of the stops up north are White drivers.
+何でしょう？ ハムデンの北部で止められるのは大半が白人で、南部、特に町境では少数派の人種の運転手です。
 
-Most of the stops in the southern part of the town, particularly by the town border, are Minority drivers.
+どんな理由が考えられるでしょう?
 
-What's one argument that could explain this?
+「たぶん少数派がそこに住んでいるからでしょう」
 
-"Well, maybe that's where minorities live."
+おそらくそうでしょう。国勢調査のおかげで、これを確かめることができます。
 
-Perhaps. But we can measure that thanks to the Census.
+ハムデンの交通量に占める割合を知ることが可能です。
 
-We know the percent make up of traffic steps in Hamden.
+近隣の住民構成との割合を比較してみましょう。 
 
-Let's calculate the percent make up of residents in those neighborhoods and compare them. 
+うまくいけば、車を止められる率と住民の人種の割合はほぼ同じになるはずですよね。
 
-Ideally, the rate of traffic stops should match the rate of residents, right?
+**tidycensus**パッケージを使います。
 
-We'll use the **tidycensus** package.
-
-Don't forget to load your Census API key.
+国勢調査のAPIキーを忘れずにロードしてください。
 
 ```{r key, eval=F}
 census_api_key("YOUR API KEY GOES HERE")
@@ -356,9 +344,9 @@ hamden_pop <- get_acs(geography = "tract", variables = racevars,
 head(hamden_pop)
 ```
 
-Great, we have total population and white population per tract. 
+合計人口と道路ごとの白人の数が分かりました。
 
-Let's summarize this data by *GEOID*.
+ *GEOID*でデータを要約します。
 
 
 ```{r pop_summary, warning=F, message=F}
@@ -368,7 +356,7 @@ hamden_pop_perc <- hamden_pop %>%
   mutate(variable=case_when(
     variable=="B02001_001" ~ "Total",
     variable=="B02001_002" ~ "White")) %>% 
-  # dropping Margin of Error-- I know this is not ideal but for this purpose, we'll get rid of it for now
+  # エラーのマージンを外す - 理想的ではありませんが、今はエラーを取り除きます。
   select(-moe) %>% 
   spread(variable, estimate) %>% 
   mutate(white_residents=round(White/Total*100,2), minority_residents=100-white_residents)
@@ -376,7 +364,7 @@ hamden_pop_perc <- hamden_pop %>%
 head(hamden_pop_perc)
 ```
 
-Nice. Let's join it back to the *by_tract_race_percent* dataframe so we can calculate the gap.
+ギャップを計算できるように*by_tract_race_percent* データフレームに結合します。
 
 
 
@@ -392,10 +380,10 @@ stops_population <- left_join(by_tract_race_percent_spread, hamden_pop_perc)
 ```
 ![](/mapping/case_study/images/gap_df.png)
 
-Great. Let's do some math real quick and visualize what we have with a diverging color palette from the **scales** package.
+ちょっとした計算をして、**scales**パッケージで運転手のカラーパレットを可視化しましょう。
 
 ```{r gap_map, warning=F, message=F, fig.width=9, fig.height=5}
-# If you don't have scales installed yet, uncomment and run the line below
+# scalesをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("scales")
 
 library(scales)
@@ -418,10 +406,9 @@ NULL
 ```
 
 
-### Add annotations to graphic
+### グラフに注釈を加える
 
-We’ll use the annotate() function with a combination of segments, points, and text.
-
+ 線や点、テキストを組み合わせてannotate() 関数を使います。
 
 
 
