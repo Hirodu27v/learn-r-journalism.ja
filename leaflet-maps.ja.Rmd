@@ -1,24 +1,22 @@
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/279WR2zOU90?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
-</div>
+インタラクティブなマップ
 
 
-Let's create a locator map like you would when searching for an address on Google Maps.
+Googleマップのようなロケーターマップを作成しましょう。
 
-Sometimes it's necessary to zoom in or pan around a map for greater comprehension while exploring data spatially.
+データを空間的に探索しながら理解を深めるには、地図をズームインまたはパンする必要があります。
 
-The Leaflet R package was created by the folks behind RStudio to integrate with the popular opensource JavaScript library. 
+Leaflet Rパッケージは、人気のあるオープンソースのJavaScriptライブラリと統合するためにRStudioを支える人々が作成しました。
 
-It’s great for journalists who have little knowledge of JavaScript who want to make interesting interactives using R. And there is [excellent documentation](https://rstudio.github.io/leaflet/) if you want to dig deeper into its functionality after this introduction.
+JavaScriptの知識があまりないけれど、Rを使用して面白いインタラクティブを作成したいジャーナリストには最適です。そして、その機能をさらに深く知りたい場合は、  [よい資料](https://rstudio.github.io/leaflet/) があります。
 
-Essentially, this package lets you make maps with custom map tiles, markers, polygons, lines, popups, and geojson. Almost any maps you can make in Google Fusion Tables or Carto(DB), you can make in R using the Leaflet package.
+基本的に、このパッケージはあなたがカスタムマップタイル、マーカー、ポリゴン、ライン、ポップアップ、そしてgeojsonでマップを作ることを可能にします。Google Fusion TablesやCarto（DB）で作成できるほとんどのマップは、Leafletパッケージを使用してRでも作成できます。
 
 ```{r loading_packages, warning=F, message=F}
-# Uncomment and run "install.packages" functions below if you have not yet installed these packages
+# 以下のパッケージをインストールしていなければ、コメントを外し"install.packages"を実行してください。
 
 #install.packages("leaflet")
 
-# IF YOU GET AN ERROR BECAUSE THERE IS NO PACKAGE CALLED httpuv
+# httpuvを持っていないとエラーが出たら
 #install.packages("httpuv")
 #install.packages("leaflet")
 
@@ -33,89 +31,87 @@ library(dplyr)
 
 
 
-## Putting a marker on a map
+## 地図上にマーカーを置く
 
-Let's begin by finding a latitude and longitude to map.
+マッピングする緯度と経度を見つけることから始めましょう。
 
-Go to [Google Maps](https://www.google.com/maps/) and search for any address.
+[Googleマップ](https://www.google.com/maps/) で任意の場所を検索してください。
 
-Right click on the map until you get this menu.
+このメニューが出るまで右クリックします。
 
 ![](/mapping/leaflet_maps/images/right_map.png)
 
-Select "What's here?" and at the bottom copy and paste that latitude and longitude.
+ "この場所について"を選択し、その下の緯度と経度をコピーします。
 
 ![](/mapping/leaflet_maps/images/lat_lon.png)
 
 
 
-1. Create a map widget by calling the `leaflet()` function
-2. Add *layers* (such as features) to the map by using layer functions
+1. `leaflet()` 関数を呼び出して地図ウィジェットを作成する
+2. レイヤ機能で(フィーチャーのような)*レイヤ*を追加する
     * like `addTiles`, `addMarkers`, `addPolygons`
-3. Print the map widget
-4. Customize the view port zoom and center location with `setView()`
+3. 地図ウィジェットを印刷
+4. `setView()`でビューポートのズームと中心位置をカスタマイズする
 
 ```{r first_map_simplified,  fig.width=8, fig.height=4, warning=F, message=F}
-# Insert your latitude and longitude in the code below
-# NOTE: Don't get them reversed otherwise you'll end up in the South Pole.
+# 緯度と経度を挿入してください
 
-# Initialize and assign m as the leaflet object
+#　mを初期化し、リーフレットオブジェクトとして割り当てる
 m <- leaflet() %>%
-# Now add tiles to it
+# タイトルを追加
     addTiles() %>%  
-# Setting the middle of where the map should be and the zoom level
+# 地図の中央とズームレベルを決める
     setView(lng=-77.030137, lat=38.902986, zoom = 16) %>%
-# Now, add a marker with a popup, 
+# マーカーとポップアップの追加
     addMarkers(lng=-77.030137, lat=38.902986, popup="<b>Hello</b><br><a href='https://www.washingtonpost.com'>-Me</a>")
 
 m 
 ```
 
-Go ahead and click the blue marker.
+青いマーカーをクリックしてください。
 
-**Explaining the R code**
+**Rコードの説明**
 
-* `leaflet()` initializes the leaflet work space
-* `addTiles()` by itself will bring in the default OpenStreetMap tiles
-    * Here's [a list](http://leaflet-extras.github.io/leaflet-providers/preview/) of free leaflet tiles you can use
-    * **Note:** OpenStreetMaps is a wonderful and free open-source service. Their only stipulation for using their tiles is to be sure to credit and link to them in the map.
-* `setView()` is pretty self-explanatory but is simpler to implement
-* `addMarkers()` with some specific parameters.
+* `leaflet()` はleaflet作業スペースを初期化します。
+* `addTiles()`はデフォルトのOpenStreetMapタイルを取り込みます。
+    * これは無料のリーフレットタイル[のリスト](http://leaflet-extras.github.io/leaflet-providers/preview/) です。
+    * **Note:** OpenStreetMapsは素晴らしい無料のオープンソースサービスです。タイルを使うための唯一の決まりは、地図にクレジットを表示し、リンクすることだけです。
+* `setView()`は、実装が簡単です。
+* `addMarkers()`は特定のパラメータを付加します。
 
-**Note:** The order of commands is important. A view can’t be set unless there are tiles established first.
+**Note:** コマンドの順序は重要です。最初に設定されたタイルがない限り、ビューは設定できません。
 
-## How to put the map online
+## 地図をオンラインにする
 
-Run the code in your RStudio console and it will appear in your Viewer tab.
+RStudioコンソールでコードを実行すると、Vewerタブに表示されます。
 
-Click on **Export > Save as Web page**.
+**Export > Save as Web page**の順にクリックしてください。
 
 ![Export](/mapping/leaflet_maps/images/export.png)
 
-Give it a file name and click save.
+ファイル名を付け、保存してください。
 
 ![Save as](/mapping/leaflet_maps/images/filename.png)
 
-You have the map now as a full screen html file.
+フルスクリーンのhtmlファイルの地図ができました。
 
 
 ![File](/mapping/leaflet_maps/images/file.png)
 
-You can upload the file wherever you like and then iframe to it if you want to embed it into website like the code below.
+以下のコードのようにウェブサイトに埋め込む場合は、iframe（インラインフレーム）にアップロードします。
 
 `<iframe src="leaflet_map.html" frameborder="0" width="100%" height="300px"></iframe>`
 
-Or you can leave it embedded in an R Markdown file as the raw R code, like I have in this file.
+あるいは、私がこのファイルに書いているように、RのコードとしてR Markdownファイルに埋め込んでおくこともできます。
 
 
 {{% notice note %}}
-When comparing the size of the HTML files, the R-produced version of the map is larger in size because it is bringing all the JavaScript and CSS inline into the HTML. However, when looking at how much data is actually downloaded to load the map html, the differences aren’t as drastic.
-{{% /notice %}}
+HTMLファイルのサイズを比較すると、Rバージョンのマップは、JavaScriptとCSSのすべてをHTMLにインライン化するため、サイズが大きくなります。ただし、HTMLをロードするために実際にダウンロードされるデータ量を調べると、違いはそれほど大きくありません。{{% /notice %}}
 
 
-## Multiple locations from a csv
+## csvから複数の場所を取り入れる
 
-Let's bring in some new data.
+新しいデータを取り入れましょう。
 
 ```{r import1}
 library(readr)
@@ -124,23 +120,22 @@ dunkin <- read_csv("data/dunkin.csv")
 glimpse(dunkin)
 ```
 
-We've imported nearly 8,000 rows of Dunkin' Donuts store location data.
-
-Let's limit it a bit because 8,000 dots on a slippy map is taxing on a browser.
+ダンキンドーナツ 8,000店舗の位置情報データをインポートしました。
+スクロール地図に 8,000の点を置くとブラウザに負荷をかけるので、少し制限します。
 
 ```{r filtered_dd}
-# Pick a state, any state.
-# I'll use Massachusetts here because that's where Dunkin started
+# どれでもいいので州を選択します。
+# ここでは、ダンキンの発祥の地マサチューセッツ州を選びます。
 
 dd_state <- dunkin %>% 
   filter(state=="MA")
 ```
 
-Let's make a map with a new tile set. Instead of leaving `addTiles()` empty, we'll pass on some new data to some third-party tiles with the `addProviderTiles()` function. Check out all the neat [tile options](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
+新しいタイルセットで地図を作りましょう。`addTiles()`を空のままにする代わりに、`addProviderTiles()`関数を使用していくつかの新しいデータをサードパーティのタイルに渡します。[タイルのオプションを](http://leaflet-extras.github.io/leaflet-providers/preview/index.html)チェックしておいてください。
 
-Some options to use with `addCircles` includes the data to pull in for `popup` and `color`, which we've made bright orange. We've also set `radius` and `weight` and `fillOpacity`.
+`addCircles`のいくつかのオプションには `popup`や`color`の設定があります。色は明るいオレンジにしましょう。 `radius` と `weight`、`fillOpacity`もあります。
 
-If we wanted to change the radius of the circle based on some data point, you could replace `40` with some column with numeric values in it.
+円の半径を40に変更したいときは、こうします。
 
 ```{r dunk_map1, fig.width=9, fig.height=4, warning=F, messag=F, eval=F}
 m <- leaflet(dd_state) %>% addProviderTiles(providers$CartoDB.DarkMatter) %>% 
@@ -152,9 +147,7 @@ m
 
 <iframe src="//learn.r-journalism.com/iframes/dunk_map1.html" frameborder=0,  height=400, width="100%", scrolling="no"></iframe>
 
-Why stop there?
-
-Let's bring in some competition. 
+ここで立ち止まらず、競合店のデータも取り入れましょう。 
 
 ```{r import2}
 starbucks <- read_csv("data/starbucks.csv")
@@ -162,29 +155,29 @@ starbucks <- read_csv("data/starbucks.csv")
 glimpse(starbucks)
 ```
 
-We should filter it so it's only the state for which we already filtered for Dunkin data.
+すでにフィルタリングしたダンキンのデータでフィルタリングします。
 
 
 ```{r filter2}
 sb_state <- starbucks %>% 
   filter(Province=="MA")
 ```
-The data is structured a bit differently, but at least it has `type` and location data.
+データの構造は少し異なりますが、 `type` と位置情報データはあります。
 
-Also, let's switch from `addCircles` to `addCircleMarkers`.
+`addCircles`を`addCircleMarkers`に切り替えましょう。
 
 ```{r dunk_map2, fig.width=8, fig.height=4, warning=F, message=F, eval=F}
-# isolating just the 3 columns we're interested in-- type, lat, and lon
+# 興味のある３列を分離する- type, lat, と lon
 sb_loc <- select(sb_state, type, lat, lon)
 dd_loc <- select(dd_state, type, lat, lon)
 
-# joining the two data frames together
+# 二つのデータフレームを結合する
 ddsb <- rbind(sb_loc, dd_loc)
 
-# creating a coffee color palette
+# コーヒーカラーパレットを作る
 
 cof <- colorFactor(c("#ffa500", "#13ED3F"), domain=c("Dunkin Donuts", "Starbucks"))
-# mapping based on type
+# タイプに基づきマッピングする
 m <- leaflet(ddsb) %>% 
   addProviderTiles(providers$CartoDB.DarkMatter) %>% 
   setView(-71.931180, 42.385453, zoom = 7) %>% 
@@ -196,15 +189,15 @@ m
 
 <iframe src="//learn.r-journalism.com/iframes/dunk_map2.html" frameborder=0,  height=400, width="100%", scrolling="no"></iframe>
 
-Play around with the slippy map. Interesting, right?
+スクロール地図は面白いでしょう?
 
-The file size is only 1.3 m even though there are more than 1,300 points on the map.
+地図には1300ポイントあるにもかかわらず、ファイルサイズはたった 1.3 mです。
 
-Still, that's a lot of points to process. I don't recommend more.
+とはいえ、これ以上ポイントを増やすのはお勧めしません。
 
-# Add a legend
+# 凡例を追加する
 
-Let's add a legend with the function `addLegend()` and options for where to place it and colors and labels.
+凡例の場所、色、ラベルを`addLegend()`で追加します。
 
 ```{r add_legend, fig.width=8, fig.height=4, warning=F, message=F, eval=F}
 m <- leaflet(ddsb)  %>% 
