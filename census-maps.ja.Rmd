@@ -3,24 +3,22 @@
   <iframe src="//www.youtube.com/embed/M1AQ7ri7AfE?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-Sometimes there are just too many dots on a map. If the point of your map is to know the location of every single data point [because of its significance](https://www.washingtonpost.com/graphics/2018/national/migrant-child-shelters/), then fine. Dots can also demonstrate the distribution of data geographically [very effectively](https://www.washingtonpost.com/graphics/2018/national/segregation-us-cities/).
+地図上のドットが多すぎることがあります。すべてのデータポイントの位置を知ることに[重要性がある](https://www.washingtonpost.com/graphics/2018/national/migrant-child-shelters/)地図なら、それでいいでしょう。ドットは地理的な分布を[とても効果的に](https://www.washingtonpost.com/graphics/2018/national/segregation-us-cities/)示すことが出来ます。
 
-Choropleth or thematic maps are an effective and popular way to show geographic data. 
+コロプレスまたは主題図は、地理データを表示するための効果的で一般的な方法です。
+インタラクティブであれば、視覚的には表現しにくい情報を表示しうるので、情報の探索には便利です(ただ、読者はふつう地図をクリックしないので、読者向けのインタラクティブな地図は慎重に検討する必要があります)。
 
-And if it's interactive, it's useful for exploratory purposes because it can surface information that can't be expressed visually easily (Interactive maps for reader purposes need carefully considered, though, because readers will usually not click around).
+### コロプレスマップを作る
 
-### Making choropleths
+コロプレスマップには、まず、入力しているポリゴンのシェープファイルまたはgeojsonが必要です。
 
-To make a choropleth map, you first need a shape file or geojson of the polygons that you're filling in. 
+### 国勢調査のシェープファイルをインポートする
 
-### Importing shapefiles from the Census
-
-You could download and import the shape file into R [yourself](/mapping/static_maps/static-maps/index.html), but there's a package that brings in Census shape files for you called [**Tigris**](https://github.com/walkerke/tigris).
-
-This is what the U.S. states looks like on in leaflet R.
+シェープファイルをダウンロードしてRに [手動で](/mapping/static_maps/static-maps/index.html)インポートする方法もありますが、シェープファイルを 取り込むための[**Tigris**](https://github.com/walkerke/tigris)というパッケージがあります。
+リーフレットRで米国の州はこのように表示されます。
 
 ```{r choropleth1, warning=F, message=F, quietly=T, echo=T, results='hide'}
-# If you don't have the following packages installed yet, uncomment and run the lines below
+# 下のパッケージをインストールしていなければ、以下の行のコメントを外して実行してください。
 #install.packages("tigris")
 #install.packages("dplyr")
 #install.packages("leaflet")
@@ -29,16 +27,16 @@ library(tigris)
 library(dplyr)
 library(leaflet)
 
-# Downloading the shapefiles for states at the lowest resolution
+# 最低の解像度で州のシェープファイルをダウンロードする
 states <- states(cb=T)
 ```
 
-We can use **dplyr** `>%>` pipes because the **leaflet** package developers incorporated its function structure. We need three functions starting out:
+**リーフレット**パッケージの開発者が配慮してくれたので **dplyr** `>%>` パイプを使うことが出来ます。最初に三つの関数が必要です。
 
-* `leaflet()` - initializes the leaflet function
-* `addTiles()` - the underlying map tiles
-* `addPolygons()` - instead of dots, we're adding Polygons, or shapes
-    * Passing the argument `popup` to the function with the variable *NAME* from the shape file
+* `leaflet()` -  leaflet関数を初期化する
+* `addTiles()` - 基礎となる地図タイル
+* `addPolygons()` - ドットの代わりに追加するポリゴンまたは図形
+    * 変数 *NAME*を使用してシェープファイルから引数`popup`を関数に渡す
     
 ```{r viz_states, fig.width=8, fig.height=4, eval=F}
 states %>% 
@@ -49,73 +47,68 @@ states %>%
 
 <iframe src="//learn.r-journalism.com/iframes/choro1.html" frameborder=0,  height=400, width="100%", scrolling="no"></iframe>
 
-This is how it looks raw. The Census shape files also include territories, like Guam and Puerto Rico.
+加工していないとこのようになります。国勢調査のシェープファイルには、グアムやプエルトリコなどの地域も含まれます。
 
-When mapping, we'll have to remember to exclude them if they show up.
+マッピングするとき、それらが現れたら除外することを忘れないでください。
 
-## Joining data to a shapefile
+## データをシェープファイルに結合する
 
-**Let's make a choropleth map based on number of Starbucks per state.**
+**州ごとのスターバックスの数に基づいてコロプレスマップを作成しましょう。**
 
-We'll use the same data as the previous section where we mapped every location in Massachusetts.
-
+マサチューセッツ州の前のセクションと同じデータを使用しすべての店をマッピングします。
 ```{r sb_chor, warning=F, message=F}
 starbucks <- read.csv("data/starbucks.csv", stringsAsFactors=F)
 
-# First, we'll use dplyr to summarize the data
-# count by state
+# dplyrでデータを要約する
+# 州ごとに数える
 sb_state <- starbucks %>%
   group_by(Province) %>%
   summarize(total=n()) %>% 
-# Some quick adjustments to the the dataframe to clean up names
+# データフレームを調整して名前を整理する
   mutate(type = "Starbucks") %>%  
   rename(state=Province)
 ```
 
-Alright, we've summarized the the Starbucks data by state and we can now join it to the downloaded data frame. 
+スターバックスのデータを州別にまとめました。これで、ダウンロードしたデータフレームに結合することができます。
 
-**Tigris** includes a useful function called `geo_join()` to bring together shape files and data frames. Though we've used **dplyr** joins before, `geo_join()` lets you join to non dataframe shape files.
+**Tigris** にはシェープファイルとデータフレームをまとめることができる `geo_join()` という関数があります。以前、 **dplyr** でデータフレーム同士を結合したことがありましたが、 `geo_join()` はデータフレームでないシェープファイルにも結合可能です。
 
-We'll also use a **leaflet** function called `colorNumeric()` that will turn the continuous variable of numbers of stores into a categorical variable by dividing it into bins and assigning it a hue of color we want. In this instance: Greens. Because, obviously.
-
-Also setting up a separate array of pop up text for the map.
+ `colorNumeric()`という**leaflet**関数も使ってみます。これは、店舗数の連続変数をビンに分割し、必要な色の色相を割り当てることによってカテゴリ変数に変換するものです。ここではやっぱり緑を使いましょう。
+マップ用のポップアップテキストの別の配列も設定します。
 
 ```{r tigris_join, fig.width=8, fig.height=4, warning=F, message=F}
-# Now we use the Tigris function geo_join to bring together 
-# the states shapefile and the sb_states dataframe -- STUSPS and state 
-# are the two columns they'll be joined by
+# Tigris関数geo_joinを使用して州のシェープファイルとsb_statesデータフレームを結合します -  STUSPSとstateはそれらが結合される二つの列です。
 
 states_merged_sb <- geo_join(states, sb_state, "STUSPS", "state")
 
-# Creating a color palette based on the number range in the total column
+# 列の番号の範囲に基づいてカラーパレットを作成する
 pal <- colorNumeric("Greens", domain=states_merged_sb$total)
 
-# Getting rid of rows with NA values
-# Using the Base R method of filtering subset() because we're dealing with a SpatialPolygonsDataFrame and not a normal data frame, thus filter() wouldn't work
+# NAがある列を除外する
+# 通常のデータフレームではなくSpatialPolygonsDataFrameを扱っているため、subset（）のフィルタリングにBase Rメソッドを使用すると、filter（）は機能しません。
 
 states_merged_sb <- subset(states_merged_sb, !is.na(total))
 
-# Setting up the pop up text
+# ポップアップテキストの設定
 popup_sb <- paste0("Total: ", as.character(states_merged_sb$total))
 ```
 
-Next, the map.
 
-We're adding a few more **leaflet** functions.
+ **leaflet**関数をさらに追加します。
 
-* `addProviderTiles()` - instead of `addTiles()`
-    * Uses the Leaflet Providers plugin to add [different tiles](http://leaflet-extras.github.io/leaflet-providers/preview/) to map
-* `setView()` - sets the starting position of the map
-    * Centers it on defined coordinates with a specific zoom level
-* Lots of arguments passed to `addPolygons()`
+* `addProviderTiles()` - `addTiles()`の代わり
+    * 地図に[異なるタイル](http://leaflet-extras.github.io/leaflet-providers/preview/)を追加するためのプラグイン
+* `setView()` - 地図の開始位置を設定する
+    * 特定のズームレベルで定義された座標を中心にします
+* `addPolygons()`に渡される引数たち
     * `fillColor()`
     * `fillOpacity()`
     * `weight`
     * `smoothFactor()`
-* `addLegend()` - same as in the previous section but with more customization
+* `addLegend()` - 前のセクションよりカスタマイズされています
 
 ```{r starbucks_map, warning=F, message=F, eval=F}
-# Mapping it with the new tiles CartoDB.Positron
+# 新しいタイルでマッピングするCartoDB.Positron
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   setView(-98.483330, 38.712046, zoom = 4) %>% 
@@ -134,35 +127,34 @@ leaflet() %>%
 
 <iframe src="//learn.r-journalism.com/iframes/choro2.html" frameborder=0,  height=400, width="100%", scrolling="no"></iframe>
 
-Hmm... Not that interesting, right?
+うーん…それほど面白くないですよね。
+何が問題なのか *よく考えれば分かるはずです。*
 
-What's the problem here. *Deep down, you know what's wrong.*
+これは本質的には人口地図です。
 
-This is essentially a population map.
+とすれば、人口を調整する必要があります。
 
-So we need to adjust for population.
+国勢調査の APIを使うのが簡単です。
 
-And that's easy to do using the Census API.
+## APIを介して国勢調査データを取り込む
 
-## Bringing in Census data via API
-
-We'll use the [censusapi](https://github.com/hrecht/censusapi) package created by journalist Hannah Recht. 
+ハンナ･リヒトが作った [censusapi](https://github.com/hrecht/censusapi) を使います。
 
 ```{r census_api, warning=F, message=F}
-# If you don't have censusapi installed yet, uncomment the line below and run
+#  censusapiをインストールしていなければ以下の行のコメントを外して実行してください。
 #install.packages("censusapi")
 
 library(censusapi)
 ```
 
-Don't forget your [census key](https://api.census.gov/data/key_signup.html).
+ [census key](https://api.census.gov/data/key_signup.html)をお忘れなく。
 
 ```{r census_key, eval=F}
-# Add key to .Renviron
+#  .Renvironにキーを追加する
 Sys.setenv(CENSUS_KEY="YOURKEYHERE")
-# Reload .Renviron
+# .Renvironのリロード
 readRenviron("~/.Renviron")
-# Check to see that the expected key is output in your R console
+# Rコンソールに予想通りのキーが出力されていることを確認してください。
 Sys.getenv("CENSUS_KEY")
 ```
 
@@ -172,12 +164,11 @@ Sys.setenv(CENSUS_KEY=census_key)
 readRenviron("~/.Renviron")
 ```
 
-We've already gone in some detail into how to use this package in the previous section.
-
-But let's get the latest set of information on population from the ACS 5-year 2015 Census.
+前のセクションで、このパッケージの使い方について、詳しく説明しました。
+米地域社会調査の2015年調査から５年間の人口に関する最新の情報を入手しましょう。
 
 ```{r using_api, warning=F, message=F}
-# Alright, getting total population by state from the API
+# APIから州ごとの人口を入手します。
 state_pop <-  getCensus(name="acs5", 
                         vintage=2015,
                         key=census_key, 
@@ -187,22 +178,20 @@ state_pop <-  getCensus(name="acs5",
 head(state_pop)
 ```
 
-We now have the data set to be paired with the shape file.
+これで、データセットをシェープファイルとペアにすることができました。
 
-We need to prep them so they can join without issue. 
+問題なく結合できるように準備します。
 
-Did you notice that the names of states in the downloaded data frame are fully spelled out? In the shape file, states are abbreviated. 
-
-We need to deal with that. Did you know that R has arrays of state names and state abbreviations just built in? Just type `state.name` or `state.abb` and they just appear! That's pretty cool. We can build a dataframe of that and use that as a relationship file between the population data set and the shape file.
+ダウンロードしたデータフレームの州の名前が省略せず綴られていることに気付きましたか？シェイプファイルでは、州名は省略された形になっています。
+対処する必要があります。Rには州名と州の省略形の配列が組み込まれていることをご存知ですか。 `state.name` または `state.abb` と打ち込むと表示されます。データフレームを構築し、それを母集団データセットとシェープファイルの間の関係ファイルとして使用できます。
 
 ```{r cleaning}
-# Cleaning up the column names
+# 列名をクリーンアップする
 colnames(state_pop) <- c("state_id", "NAME", "population")
 state_pop$state_id <- as.numeric(state_pop$state_id)
-# Hm, data comes in numbers of fully spelled out, not abbreviations
+# データは省略形ではないようです
 
-# Did you know R has its own built in list of State names and State abbreviations?
-# Just pull it in this way to create a dataframe for reference
+
 
 state_off <- data.frame(state.abb, state.name)
 head(state_off)
@@ -210,36 +199,32 @@ head(state_off)
 ```
 
 ```{r joined_sb, warning=F, message=F}
-# So I needed to create the dataframe above because the Census API data 
-# gave me states with full names while the Starbucks data came with abbreviated state names
-# So I needed a relationship dataframe so I could join the two
 
-# Cleaning up the names for easier joining
+# 結合しやすい名前にクリーンアップします
 colnames(state_off) <- c("state", "NAME")
 
-# Joining state population dataframe to relationship file
+# 州の人口のデータフレームを関係するファイルに結合します
 state_pop <- left_join(state_pop, state_off)
 
-# The relationship dataframe didnt have DC or Puerto Rico, so I'm manually putting those in
 state_pop$state <- ifelse(state_pop$NAME=="District of Columbia", "DC", as.character(state_pop$state))
 state_pop$state <- ifelse(state_pop$NAME=="Puerto Rico", "PR", as.character(state_pop$state))
 
-# Joining Starbucks dataframe to adjusted state population dataframe
+# スターバックスのデータフレームを結合する
 sb_state_pop <- left_join(sb_state, state_pop)
 
-# Calculating per Starbucks stores 100,000 residents and rounding to 2 digits
+# スターバックスの店舗あたり10万人の住民を計算し、小数点第2位で四捨五入する
 sb_state_pop$per_capita <- round(sb_state_pop$total/sb_state_pop$population*100000,2)
 
-# Eliminating rows with NA
+#  NAの列を抽出する
 sb_state_pop <- filter(sb_state_pop, !is.na(per_capita))
 head(sb_state_pop)
 ```
 
-## Final map I
+## 地図の最終形 I
 
-We're going to use the same process code as the previous map but with the `per_capita` variable we've created. Reproducibility!
+前のマップと同じプロセスコードですが、作成した `per_capita` 変数を使います。これこそ再現性です!
 
-We'll be changing the pop up so it shows more data. It can take in HTML, so we'll pass an HTML string based on state name, total, and per capita data.
+より多くのデータが表示されるようにポップアップを変更します。HTMLを取り込むことができるので、州名、合計、および一人当たりのデータに基づいてHTML文字列を渡します。
 
 ```{r leaflet_choropleth, fig.width=8, fig.height=4, warning=F, message=F}
 states_merged_sb_pc <- geo_join(states, sb_state_pop, "STUSPS", "state")
@@ -247,15 +232,14 @@ states_merged_sb_pc <- geo_join(states, sb_state_pop, "STUSPS", "state")
 pal_sb <- colorNumeric("Greens", domain=states_merged_sb_pc$per_capita)
 states_merged_sb_pc <- subset(states_merged_sb_pc, !is.na(per_capita))
 
-# Here's the pop up
+# ポップアップです
 popup_sb <- paste0("<strong>", states_merged_sb_pc$NAME, 
                    "</strong><br />Total: ", states_merged_sb_pc$total,
                    "<br />Per capita: ", 
                    as.character(states_merged_sb_pc$per_capita))
 head(popup_sb)
 ```
-
-And now the map.
+地図はこうなりました。
 
 ```{r finalmap1, fig.width=8, fig.height=4, warning=F, message=F, eval=F}
 leaflet() %>%
@@ -276,19 +260,18 @@ leaflet() %>%
 <iframe src="//learn.r-journalism.com/iframes/choro3.html" frameborder=0,  height=400, width="100%", scrolling="no"></iframe>
 
 
-Pretty nice. An easy way to display data one way and offer more data after a click.
+クリックした後により多くのデータを提供する簡単な方法です。
 
 ---
 
-## Final map II
+## 地図の最終形 II
 
-You can also set it up so the choropleth maps surface data on hover.
+また、コロプレスをホバーした時にサーフェスデータをマッピングできる設定もあります。
 
-We use the `highlight()` and `labelOptions()` as sub functions to `addPolygons()`. 
+`addPolygons()` のサブ関数として`highlight()` や `labelOptions()` があります。 
 
 [Read more](https://rstudio.github.io/leaflet/choropleths.html) at rstudio.
-
-The downside is that it hover pop ups don't display HTML, so it limits the strings passed to it.
+欠点は、ポップアップにHTMLが表示されないため、渡すことができる文字列が制限されることです。
 
 ```{r hover_map, eval=F}
 
