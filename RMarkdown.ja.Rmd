@@ -86,11 +86,11 @@ GitHubはそれを解釈する方法を持っていないので、ネストさ�
 
 **まあいいでしょう**
 
-### Output .Rmd files to HTML
+###  .RmdファイルをHTMLに出力する
 
-R Markdown will let you output as HTML, which you can still host on GitHub Pages (which we'll go over [later](http://learn.r-journalism.com/en/git/github_pages/github-pages/)). You may have to include links to the actual page but doing so can be more effective than having a .Rmd file "render" in a GitHub repo.
+RマークダウンはHTMLに出力可能で、GitHubページでホストすることもできます(これは[あとで](http://learn.r-journalism.com/en/git/github_pages/github-pages/)取り上げます)。実際のページへのリンクよりも、.RmdファイルをGitHubのリポジトリに「レンダリング」した方がより効果的です。
 
-Rendering in HTML lets you add CSS and JavaScript, allowing for the inclusion of content like the interactive table below.
+HTMLでレンダリングすると、CSSとJavaScriptを追加でき、以下のインタラクティブなテーブルのようなコンテンツを含めることができます。
 
 ```{r datatable, warning=F, message=F}
 library(DT)
@@ -106,146 +106,139 @@ datatable(payroll, extensions = 'Buttons', options = list(
 )
 ```
 
-This table was rendered with the **DT** package. 
+**DT**パッケージで、このテーブルをレンダリングしました。 
 
-And we don't have to create the code to display it. 
+表示するためのコードは必要ありません。 
 
-It just worked because the folks who ported the [DataTables jquery plugin](https://datatables.net/) over to R wanted to make it seamless.
+[DataTablesのjqueryプラグインを](https://datatables.net/)  Rに移植した人々がシームレスにすることを追求したからです。
 
-Pass certain arguments to the function `datatable()` and you can include buttons that allow reporters to download your tables as CSVs.
+引数を `datatable()`に渡すと、記者があなたのテーブルをCSVとしてダウンロードできるボタンを作り出すことができます。
 
-Can you imagine the power of that?
+このすごさが分かりますか?
+収集したデータを変換してから、巨大なスプレッドシートを送信する代わりに、レポートへのリンクを送信して、フィルタリングしたり、必要なテーブルをダウンロードしたりできます。
 
-You've transformed the data collected it and then instead of sending them a huge spreadsheet, you send them a link to your report in which they can filter things out and download the table that they've come up with themselves.
+[leafletマップのような](https://learn.r-journalism.com/en/mapping/census_maps/census-maps/)他のインタラクティブなものもレンダリングできます。
 
-You can render other interactives, as well, like [leaflet maps](https://learn.r-journalism.com/en/mapping/census_maps/census-maps/).
+## リンクは添付ファイルじゃない！
 
-## Links not attachments!
+これはジャーナリストとしてとても大事な啓発です。
 
-This is a very important development as a journalist.
+ご存知のとおり、記者の仕事はあまり系統だったものではありません。
 
-You see, reporters sometimes aren't very organized. 
+要約したスプレッドシートを再送信できるかどうかを尋ねる電子メールをこれまでどれほど受け取ったことか。
 
-How often have you had someone email you asking if you could resend your summarized spreadsheet to them again? 
-
-This is what their downloads or desktop folder might look like. It's easy to see why they might have lost track of it.
+彼らのやデスクトップやダウンロードフォルダはこのようになっています。どこに何があるのか分かりませんね。
 
 <img src="/publishing/rmarkdown/images/bad_desktop.png">
 
-Send them links instead!
+リンクを代わりに送信しましょう!
 
-### Host the HTML of your analysis
+### 分析結果のHTMLをホストする
 
-- On your internal work network or
-- On [Github pages](https://github.com/wpinvestigative/kushner_eb5_census) (for free)
-- Share with reporters and editors, let them explore your analysis further
-- Let them download customized spreadsheets with buttons in the `DT` [(datatable) package](https://rstudio.github.io/DT/extensions.html)
-- If your analysis gets updated, keep the file name then they only have to refresh their link
+- 社内ネットワークで
+- [Githubページで](https://github.com/wpinvestigative/kushner_eb5_census) (無料)
+- 記者や編集者と共有し、彼らがあなたの分析をさらに探求できるようにしましょう。
+- `DT` [(データテーブル) パッケージ](https://rstudio.github.io/DT/extensions.html)でスプレッドシートをダウンロードできるボタンをカスタマイズしましょう。
+- 分析を更新したら、ファイル名を保存してください。リンクを更新するだけで済みます。
 
-Repeat this process enough and maybe you can start learning how to create [Shiny apps](https://rstudio.github.io/shiny/tutorial/) with R.
+このプロセスを何度も繰り返し、慣れてきたらRで [Shiny apps](https://rstudio.github.io/shiny/tutorial/)を作成する段階に進みます。
 
 
-# Creating R Markdown
+# Rマークダウンを記述する
 
-Follow the instructions below.
+以下の手順に従ってください。
 
-### 1. Open a new .Rmd file
+### 1. 新しい .Rmd fileを開く
 
-at **File > New File > R Markdown**. 
+ **File > New File > R Markdown**の順に進んでください。 
 
 <div style="max-width:500px; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/menu.png"></div>
 
-Title the R Markdown file and select **HTML** as the output for now.
+ Rマークダウンファイルに名前を付け、とりあえず **HTML** に出力するよう選びます。
 
 <div style="max-width:400px; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/html.png"></div>
 
-The default file created comes with code already included to give you a guidance on syntax and how it should be structured.
+デフォルトの作成済みファイルには、すでに構文とそれがどのように構造化されるべきかについてのガイダンスを与えるためのコードが含まれています。
 
-#### .Rmd structure
+#### .Rmd の構造
 
 <div style="width:50%; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/layout2.png"></div>
 
-Every .Rmd file starts out the same at the top.
+あらゆる .Rmdファイルの冒頭は同じです。
 
-**YAML HEADER**
+**YAML ヘッダー**
 
-Optional section of render options written as **key:value** pairs.
+**キー:値** のペアであるレンダリングオプションのセクションです。
 
-- At start of file
-- Between lines of **---** (3 dashes)
+- ファイルの冒頭
+-  **---** (三つのダッシュ)の間
 
-This is how R knows how to render your files. In the example above, the line`output: html_document` means it will create an HTML file. If it was `output: pdf` then you'd get a PDF instead.
+これによってRがファイルをレンダリングする方法を認識します。上記の例では、`output: html_document`はHTMLファイルを作成することを示します。`output: pdf`ならPDFになります。
 
-*You can output more than one type at a time, if you want.*
+*必要に応じて、複数の形式で出力できます。*
 
-**CODE CHUNKS**
+**コードチャンク**
 
-In the image above, the R code is in the gray area.
+上の画像では、Rコードはグレーの背景で表示されます。
+これらは埋め込まれた Rコードで、それぞれのチャンクは:
 
-These are chunks of embedded R code. Each chunk:
+-  **```{r}**で始まり
+- **```**で終わります。
 
-- begins with **```{r}** (the back tick key is to the left of 1)
-- ends with **```**
+**テキスト**
 
-**TEXT**
+それ以外の部分は、Rコードチャンクの間に散在しているマークダウンの地の文です。
 
-The rest of it is just the narrative of markdown interspersed in between the R code chunks.
+マークダウンの代わりにHTMLコードを使っても構いません。
 
-You can also use HTML code instead of Markdown if that's what you're more comfortable with.
+### 2. ドキュメントを書く
 
-### 2. Write document
+自分のコードとテキストを入力してデフォルトのテンプレートを編集します。
 
-Edit the default template by putting in your own code and text.
 
-Intersperse the text with your code to tell a story.
+### 2b. コードにラベルを付ける
 
-### 2b. Label your chunks of code
+スクリプトウィンドウの下部にあるプルダウンメニューを使用すると、ゆくゆくナビゲートしやすくなります。
 
-It'll be easier to navigate to in the future with the pull down menu at the bottom of the script window.
-
-It also will be useful to narrow down where code errors might occur.
+コードエラーが発生する可能性がある場所を絞り込むのにも役立ちます。
 
 <img src="/publishing/rmarkdown/images/labels.png">
 
-### 2c. Notebooks style
+### 2c. Notebooks スタイル
 
-You can run individual chunks of code before generating the full report to see how it looks.
+レポート全体を生成する前に個々のコードを実行して、動作を確認できます。
+それぞれのチャンクの横にある緑の矢印を押します。
 
-Click the green arrow next to each chunk. 
-
-*Hopefully, you've already been doing this in our coding walkthroughs in class.* 
+*あなたはすでにクラスのコーディングウォークスルーでやっているかもしれません。* 
 
 <img src="/publishing/rmarkdown/images/chunky.png">
 
 
-### 3. Knit document to create report
-
-Use knit button (the yarn ball!) at the top left or type **render()** to create the output file(s).
+### 3. ドキュメントをニットしてレポートを作る
+上部の左側にあるボタン (糸玉の形!)を使うか **render()**と入力します。
 
 <div style="width:60%; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/knit_button.png"></div>
 
-### 3b. Check out the build log
+### 3b. ビルドログをチェックする
 
-Warnings and errors will appear in the console below.
+警告とエラーが下のコンソールに表示されます。
 
-
-Also measures progress by chunks, which is why it's important to label them.
+また、チャンクごとの進捗を測定しますので、ラベルを付けることが重要です。
 
 <img src="/publishing/rmarkdown/images/console.png">
 
-### 4. Preview output in RStudio window
+### 4. RStudio ウィンドウでプレビュー出力
 
 <img src="/publishing/rmarkdown/images/preview.png">
 
-### 5. Output file
+### 5. ファイルを出力する
 
-You started with a .Rmd file and clicking knit HTML also generated a .html file.
+.Rmdファイルで始めましたが、ニットでHTMLをクリックすると.htmlファイルが生成されます。
 
 <div style="width:50%; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/testpage.png"></div>
 
-It's all there in your project folder now.
-
-Next, we'll go over more specific features in R Markdown files that will give you more control on how its presented.
+これで、プロジェクトフォルダ内のすべての作業が終わりました。
+次に、Rマークダウンファイルのより具体的な機能について説明します。表示方法をより詳細に制御できるようになります。
 
 
 -----
