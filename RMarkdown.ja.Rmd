@@ -2,44 +2,43 @@
   <iframe src="//www.youtube.com/embed/y0mN4HKKxaU?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
+##Rマークダウン
 
-By now you've inadvertently witnessed the different content that R Markdown can help generate:
+お気づきではないかもしれませんが、あなたはここに来るまでに、Rマークダウンが生成に役立ったさまざまなコンテンツに接しています。
 
-* HTML documents that are in each chapter sub folder
-* Notebooks in which you've run code chunks individually
-* PDFs that you can print out to follow along physically with the course
-* This entire learn.r-journalism.com website
+* 各chapterサブフォルダーにあるHTML文書
+* コードチャンクを個別に実行したノートブック
+* コースにに流れをたどるために印刷できるPDF
+* このlearn.r-journalism.comのサイト全体
 
-R Markdown is R code + **Markdown**.
+R マークダウンは Rコードと **マークダウン**の組み合わせです。
 
 <img src="/publishing/rmarkdown/images/rmdfiles.png">
 
 
-## What is Markdown?
+## マークダウンとは何か?
 
-A very easy way to add formatting to plain text created by John Gruber (of Daring Fireball) as a simple way for non-programming types to write in an easy-to-read format that could be converted directly into HTML.
+ジョン･グルーバー（Daring Fireball）が作成したプレーンテキストにフォーマットを追加するための非常に簡単な方法です。この方法は非プログラミング型で、HTMLに直接変換でき、しかも読みやすく書きやすいのが特徴です。
 
-In the image below, the text on the left was interpreted as HTML on the right.
+下の画像では、左側のテキストは右側のHTMLとして認識されました。
 
 <img src="/publishing/rmarkdown/images/markdown.png">
 
-GitHub has a [nice guide](https://guides.github.com/features/mastering-markdown/) on Markdown.
+GitHubにはマークダウンについての [ためになるガイド](https://guides.github.com/features/mastering-markdown/) があります。
 
-## R Markdown / .Rmd files
+## Rマークダウン / .Rmd files
 
-It's a simple way to embed chunks of R code (or other languages like Python) in **Markdown** documents.
+**Markdown** 文書にはRコードの塊（あるいはPythonのような他の言語）を簡単に埋め込むことができます。
 
-On one level, it allows you to present your analysis process and results in a format that doesn't require R to run.
+あるレベルまでは、分析プロセスと結果をRの実行を必要としない形式で表示することができます。
+しかし、コードは研究者または同僚のジャーナリストがあなたの仕事を複製するか、またはあなたの仕事に追加せざるをえない場合に備えて必要です。
 
-But the code is still there should a researcher or fellow journalist be compelled to reproduce or add to your work.
+これは[**文芸的プログラミング**](https://www-cs-faculty.stanford.edu/~knuth/lp.html)の一形態です。Rコードと文書を組み合わせることで、プログラミングはより堅牢で移植性が高くなり、保守が容易になります。
 
-It's a version of [**literate programming**](https://www-cs-faculty.stanford.edu/~knuth/lp.html). By combining your R code with documentation, it makes your programming more robust, portable, and easier to maintain. 
+ボタンをクリックするか、コマンドをクリックすると、Rマークダウンファイルのコードを再実行して作業内容を再現し、その結果を完成したレポートとしてエクスポートできます。
+Rマークダウンは、マークダウンに埋め込まれたコードを実行する [**knitr**](https://yihui.name/knitr/)パッケージとマークダウンをWord、PDF、HTMLなどのさまざまな出力形式に変換する [Pandoc](https://pandoc.org/)によって機能しています。
 
-At the click of a button, or the type of a command, you can rerun the code in an R Markdown file to reproduce your work and export the results as a finished report.
-
-R Markdown works thanks to the [**knitr**](https://yihui.name/knitr/) package, which runs code embedded in Markdown, and [Pandoc](https://pandoc.org/), which then converts Markdown into a bunch of different output formats, like Word, PDF, HTML, etc.
-
-R Markdown supports dozens of static and dynamic output formats including
+Rマークダウンは、以下に例を挙げた多数の静的および動的出力フォーマットをサポートします。
 
 - HTML
 - PDF
@@ -50,26 +49,26 @@ R Markdown supports dozens of static and dynamic output formats including
 - Books
 - Dashboards
 - Scientific articles (white pages)
-- Entire websites
+- Webサイト全体
 
 ---
 
-## Formats useful to journalists
+## ジャーナリスト向けのフォーマット
 
-### Produce slick-looking PDFs
+### スマートな見た目のPDFを作成する
 
-Exporting your work into PDFs can be effective.
+作品をPDFにエクスポートするのは効果的です。
 
-*For this to work, be sure to get [LaTex](https://www.latex-project.org/get/) installed first.*
+*これを機能させるためには、まず [LaTex](https://www.latex-project.org/get/) をインストールしてください。*
 
 <img src="/publishing/rmarkdown/images/pdf_output.png">
 
 
 ### IPython Notebooks
 
-Notebooks are very popular. 
+Notebooksはとても人気があります。
 
-This is how pandas and ipython notebooks render when uploaded to GitHub.
+これがGitHubにアップロードしたときにpandasやipythonとレンダリングする方法です。
 
 <img src="/publishing/rmarkdown/images/pythonnotebook.png" height="300">
 
