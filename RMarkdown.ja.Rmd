@@ -72,21 +72,19 @@ Notebooksはとても人気があります。
 
 <img src="/publishing/rmarkdown/images/pythonnotebook.png" height="300">
 
-It renders well and matches the experience of someone coding in that environment.
+うまくレンダリングされれば、その環境でコーディングしている他の誰かの経験と一致するはずです。
 
-### .Rmd files rendered on Github
+### .Rmd ファイルをGithubでレンダリングする
 
-How does an R Markdown file look on GitHub?
+RマークダウンファイルはGitHubではどのように見えるでしょうか?
 
 <img src="/publishing/rmarkdown/images/markdownoutput.png" height="300">
 
-Not well.
+それぞれの.Rmdファイルの上部には独自のYAMLセクションがあります。 正しいパッケージと組み合わせると**knitr** に.Rmd ファイルの出力方法を指示します。 `toc: toc_float`のように、ヘッダーのタイトルに基づいて自己生成した目次を持つHTMLファイルを作成します。
 
-Each .Rmd file has its own custom YAML section at the top. These are keywords that when combined with the right packages, lets **knitr** know how to output the .Rmd file. Like `toc: toc_float` creates an HTML file with a self-generated Table of Contents based on the header titles. 
+GitHubはそれを解釈する方法を持っていないので、ネストされた画像を上に作成するだけで、目次を作ろうはしません。
 
-GitHub doesn't have a way to interpret that so it creates that nested image above and doesn't even try to make a table of contents. 
-
-**That's fine, though**
+**まあいいでしょう**
 
 ### Output .Rmd files to HTML
 
