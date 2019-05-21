@@ -43,7 +43,7 @@ Note that you need to save this in `learn-chapter-6-master` not (as you might ha
 
 Yikes, okay, that's way too much. 
 
-### Hide warnings, messages
+### 警告やメッセージを非表示にする
 
 We can hide those console messages adding `warning=F` and `message=F` by the R code chunk labels.
 
