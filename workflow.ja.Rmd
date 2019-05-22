@@ -4,9 +4,9 @@
 </div>
 
 
-# Workflow
+# ワークフロー
 
-Why a clear data analysis workflow?
+なぜ明確なデータ分析ワークフローが必要なのでしょう。
 
 - Check analysis and track errors
 - Share results with colleagues for stories or editing
