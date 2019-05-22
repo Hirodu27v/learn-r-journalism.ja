@@ -1,19 +1,19 @@
-Let's create some R Markdown files.
+Rマークダウンファイルをいくつか作成しましょう。
 
-Make sure your working directory is set.
+作業ディレクトリが設定されていることを確認してください。
 
-If you're not working with the learn-chapter-6-master [folder](https://github.com/r-journalism/learn-chapter-6) you downloaded with **usethis**, download your files to a folder called *data*.
+**usethis**でダウンロードした the learn-chapter-6-masterの [フォルダ](https://github.com/r-journalism/learn-chapter-6) を使用していない場合、 *data*というフォルダを作ってそこにダウンロードしてください。
 
-If you get lost, the .Rmd files can be found in the [lesson repo](https://github.com/r-journalism/learn-chapter-6).
+うまくいかない場合、.Rmdファイルは[lesson repo](https://github.com/r-journalism/learn-chapter-6)にあります。
 
-We'll start out by generating a report with Boston city payroll data.
+まず、ボストン市の給与データを使ってレポートを作成します。　
 
-### Datatables
+### データテーブル
 
-1. Create a new R Markdown file and call it **Chunk 1**.
-    * Leave author blank for these exercises
+1. 新しいRマークダウンファイルを作成して、これに **Chunk 1**と名前を付けます。
+    * この演習では作成者を空白のままにしてください。
 
-The top of your file (currently called *Untitled 1*) should look like this:
+あなたのファイルのトップ(*無題1*) はこのようになっているはずです。
 
 ```
 ---
@@ -22,155 +22,145 @@ output: html_document
 ---
 ```
 
-and then that will be followed by the dummy code.
+それから、ダミーコードが続きます。
+YAMLコードの下にあるものをすべて削除します。
 
-Delete everything beneath the YAML code.
-
-Replace it with [this code](https://gist.github.com/andrewbtran/1af1ad6a9059e2521de53976e4934a1c):
+ [このコードに](https://gist.github.com/andrewbtran/1af1ad6a9059e2521de53976e4934a1c)置き換えましょう。
 
 <script src="https://gist.github.com/andrewbtran/1af1ad6a9059e2521de53976e4934a1c.js"></script>
 
-Save the file as 01_chunk.Rmd and click the knit button.
+ファイルを01_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 
 
 {{% notice warning %}}
-Note that you need to save this in `learn-chapter-6-master` not (as you might have gotten into the habit of doing `learn-chapter-6-master/more_rmarkdown`
+`learn-chapter-6-master/more_rmarkdown`ではなく`learn-chapter-6-master`に保存してください。 
 {{% /notice %}}
 
 
 
 ![](/publishing/more_rmarkdown/images/warnings.png)
 
-Yikes, okay, that's way too much. 
+これで大丈夫。
 
 ### 警告やメッセージを非表示にする
 
-We can hide those console messages adding `warning=F` and `message=F` by the R code chunk labels.
+Rコードのチャンクラベルに `warning=F` と `message=F` を追加して、コンソールメッセージを隠すことができます。
+新しいRマークダウンファイルを作成し **Chunk 2**とします。
 
-Create a new R Markdown file and call it **Chunk 2**.
-
-Type [the code](https://gist.github.com/andrewbtran/fb45ca115207549ce6d136917bf8d24c) in below.
-
-The new code can be found on lines 6 and 16.
+[以下のコード](https://gist.github.com/andrewbtran/fb45ca115207549ce6d136917bf8d24c)を入力してください。
+新しいコードは6行目と16行目です。
 
 <script src="https://gist.github.com/andrewbtran/fb45ca115207549ce6d136917bf8d24c.js"></script>
 
-Save the file as 02_chunk.Rmd and click the knit button.
+これは 02_chunk.Rmdと名前を付け、ニットボタンをクリックしてください。
 
 ![](/publishing/more_rmarkdown/images/chunk2.png)
 
-Now that's much more readable and gets to the data quicker.
+これで、はるかに読みやすくなり、データへのアクセスが早くなりました。
 
-### Hide code
+### コードを非表示にする
 
-If the person you're sharing this with has no interest in the code and only the quick results, use `echo=F` to hide the chunk of code and just display the output. It's on line 8.
+これを共有している人がコードに関心がないなら、 `echo=F` でチャンクを隠し、結果だけが表示されるようにします。８行目です。
 
-We'll also narrow down the variables selected so the table isn't way too wide.
+また、選択した変数を絞り込んで、テーブルが広くなりすぎないようにします。
 
-Create a new R Markdown file and call it **Chunk 3**.
+ **Chunk 3**という新しいRマークダウンファイルを作ります。
 
-Type [the code](https://gist.github.com/andrewbtran/8784cf26ad18309a17687d3e416541ed) in below.
+[以下のコード](https://gist.github.com/andrewbtran/8784cf26ad18309a17687d3e416541ed) を入力してください。
 
-The new code can be found on 8 and 17.
+新しいコードは8、17行目です。
 
 <script src="https://gist.github.com/andrewbtran/8784cf26ad18309a17687d3e416541ed.js"></script>
 
-Save the file as 03_chunk.Rmd and click the knit button.
+ 03_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 
 ![](/publishing/more_rmarkdown/images/chunk3.png)
 
-### Inline R code
+### Rコードを埋め込む
 
-Embed lines of R code within the markdown narrative with
+以下のようにマークダウンナラティブの中にRコードを埋め込みます。
 
 <div style="width:50%; margin-left:auto; margin-right:auto;"><img src="/publishing/rmarkdown/images/inline.png"></div>
 
-Create a new R Markdown file and call it **Chunk 4**.
+ **Chunk 4**というRマークダウンファイルを作成します。
 
-Type [the code](https://gist.github.com/andrewbtran/cad0673cdd4cf527f6781a94f597bd0c) in below.
+[以下のコード](https://gist.github.com/andrewbtran/cad0673cdd4cf527f6781a94f597bd0c) を入力してください。
 
-The new code can be found on line 29 and 31.
+新しいコードは29、31行目です。
 
 <script src="https://gist.github.com/andrewbtran/cad0673cdd4cf527f6781a94f597bd0c.js"></script>
 
-Save the file as 04_chunk.Rmd and click the knit button.
+04_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 
 ![](/publishing/more_rmarkdown/images/chunk4.png)
+このタイプの自己生成分析は重宝します。来年の給与計算データを入手し、このレポートを実行すると、自動的に最も収益を上げている市職員を割り出すことができます。
 
-This type of self-generating analysis is important because if you get the next year of payroll data, running this report will sub in the new city employee who makes the most money automatically.
+###　きれいなテーブル
 
-### Pretty tables
+ **knitr** パッケージと `kable()`関数できれいなテーブルを作りましょう。
 
-Make pretty tables with the **knitr** package and the `kable()` function.
+ **Chunk 5**というRマークダウンファイルを作成してください。
 
-
-Create a new R Markdown file and call it **Chunk 5**.
-
-Type [the code](https://gist.github.com/andrewbtran/1751cc2e09acae6f1778f481b86b9a17) in below.
-
-The new code can be found all the way down on line 60 and 61.
+[以下のコード](https://gist.github.com/andrewbtran/1751cc2e09acae6f1778f481b86b9a17)を入力します。
+新しいコードは60、61行目です。
 
 <script src="https://gist.github.com/andrewbtran/1751cc2e09acae6f1778f481b86b9a17.js"></script>
 
-Save the file as 05_chunk.Rmd and click the knit button.
+05_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 
 ![](/publishing/more_rmarkdown/images/chunk5.png)
 
-### Change theme and style
+### テーマとスタイルの変更
 
-Change the appearance and style of the HTML document by changing the theme up top.
+テーマを上に持ってきて、HTMLドキュメントの外観とスタイルを変更します。
 
-Options from the [Bootswatch](http://bootswatch.com/) theme library includes:
+ [Bootswatch](http://bootswatch.com/) テーマライブラリのオプションは以下の通りです。
 
 - `default`
 - `cerulean`
 - `journal`
 - `cosmo`
 
-highlights (for the code syntax)
+ハイライト (コード構文用)
 
 - `tango`
 - `pygments`
 - `kate`
 
-Create a new R Markdown file and call it **Chunk 6**.
+ **Chunk 6**というRマークダウンファイルを作成してください。
 
-Type [the code](https://gist.github.com/andrewbtran/ccbdf93edfbf2d700aafa2eaea39e6f3) in below.
-
-The new code is at the top in the YAML section.
+[以下のコード](https://gist.github.com/andrewbtran/ccbdf93edfbf2d700aafa2eaea39e6f3)を入力します。
+新しいコードはYAMLセクションにあります。
 
 <script src="https://gist.github.com/andrewbtran/ccbdf93edfbf2d700aafa2eaea39e6f3.js"></script>
-
-Save the file as 06_chunk.Rmd and click the knit button.
-
+ 06_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 ![](/publishing/more_rmarkdown/images/chunk6.png)
 
 
-### Table of contents
+### 目次
 
-Add a floating table of contents by changing `html_document` to `toc: true` and `toc_float: true`.
+`html_document` を `toc: true` と `toc_float: true`に変更して目次を加えます。
 
-Create a new R Markdown file and call it **Chunk 7**.
+ **Chunk 7**というRマークダウンファイルを作成してください。
 
-Type [the code](https://gist.github.com/andrewbtran/59cebe7576e99a7773f3e694b0f0bb3b) in below.
-
-The new code is at the top in the YAML section.
+[以下のコード](https://gist.github.com/andrewbtran/59cebe7576e99a7773f3e694b0f0bb3b) を入力します。
+新しいコードはYAMLセクションにあります。
 
 
 <script src="https://gist.github.com/andrewbtran/59cebe7576e99a7773f3e694b0f0bb3b.js"></script>
 
-Save the file as 07_chunk.Rmd and click the knit button.
+ 07_chunk.Rmdとして保存し、ニットボタンをクリックしてください。
 
 ![](/publishing/more_rmarkdown/images/chunk7.png)
 
-## Next steps?
+## 次は？
 
-Exporting as a PDF will require LaTex installed first
-  * Get it from [latex-project.org](https://www.latex-project.org/get/) or [MacTex](http://www.tug.org/mactex/)
+PDFとしてエクスポートするには、最初にLaTexをインストールする必要があります。
+  *  [latex-project.org](https://www.latex-project.org/get/) か[MacTex](http://www.tug.org/mactex/)から入手してください。
 
-Check out [all the features](http://rmarkdown.rstudio.com/html_document_format.html#overview) of R Markdown at RStudio
+RStudioでRマークダウンの [全ての機能](http://rmarkdown.rstudio.com/html_document_format.html#overview) をチェックしてみましょう。
 
-**Publish your results to Github pages**
+そして、次は**Githubページに結果を公開します。**
 
 
 -----
