@@ -8,81 +8,79 @@
 
 なぜ明確なデータ分析ワークフローが必要なのでしょう。
 
-- Check analysis and track errors
-- Share results with colleagues for stories or editing
-- Send methodology to sources for bullet-proofing
-- To easily adjust when presented with new data
-- Easily switch between work environments (desktop and laptop)
-- Scavenge and repurpose code in future projects
+- 分析を検証してエラーを追跡する
+- ストーリーや編集のために同僚と結果を共有する
+- 批判から身を守るための方法を情報源に送る
+- 新しいデータが表示されたときに簡単に調整する
+- 作業環境（デスクトップとラップトップ）を簡単に切り替える
+- 将来のプロジェクトでコードを再利用する
 
-## Constraints
+## 制約
 
-- Workflow has to be platform agnostic
-- Easy to deploy for yourself and others
-- Free open source software
-- Input has to be real raw data in whatever format it is (and wherever it is)
-- But have a backup for when internet is not accessible
-- Output has to work -- whether html, PDF, or web app
-- IDE agnostic (be able to run it from a command line without RStudio)
+- ワークフローはプラットフォームに依存しない
+- 自分や他の人にデプロイしやすい
+- 無料のオープンソースソフトウェア
+- どんなフォーマットであれ、またどこで作業するにしろ生データを入力しなければならない
+- しかし、インターネットにアクセスできない場合のバックアップを取る必要がある
+- HTML、PDF、Webアプリのいずれであっても、出力は機能しなければならない。
+- IDEにとらわれない（RStudioなしでコマンドラインから実行できるようにする）
 
-## Four components
+## 四つの要素
 
-1. Software
+1. ソフトウェア
 	* R
 	* RStudio
 	* Git for version control
-2. Clear file organization
-3. One R script to pull it all together
-4. Hosting the html output internally or publicly with GitHub pages
+2. 明確なファイル編成法
+3. それを全てまとめるための一元的なRスクリプト
+4. HTML出力をGitHubページで公開、または非公開の形でホスティングする
 
 
-## Thanks
+## 謝辞
 
-These are all things I picked up from browsing other presentations and repos.
+これらは私が他のプレゼンテーションやリポジトリからピックアップしました。
 
-Much thanks to [Jenny Bryan](https://github.com/jennybc) and [Joris Muller](http://blog.jom.link/) from whom I cobbled many of these ideas and practices from. 
+[Jenny Bryan](https://github.com/jennybc)と [Joris Muller](http://blog.jom.link/) には多くのアイデアと実践事例をご教示いただきました。
 
-Also to BuzzFeed, FiveThirtyEight, ProPublica, Chicago Tribune, Los Angeles Times, and TrendCT.org
-
-
-## Comment your code
-
-Anything that appears on a line after `#` will be treated as a comment. That means it will be ignored when the code in the script is executed.
-
-Use this to explain what the code does. 
-
-Get into this habit early. Future readers of the code will be grateful for the clear documentation you leave behind-- including yourself months from now.
+BuzzFeed、FiveThirtyEight、ProPublica、Chicago Tribune、 Los Angeles TimesとTrendCT.orgにも御礼申し上げます。
 
 
-## Use projects to organize
+## コードにコメントする
+
+ `#` の後の行にあるものはすべてコメントとして扱われます。つまり、スクリプト内のコードを実行しても無視されます。
+
+コードの機能を説明するために活用してください。
+
+この習慣を身に付けてください。コードの将来の読者は、あなたが残す明確なドキュメントに感謝するでしょう。
+
+
+## プロジェクトを使って整理する
 
 
 <img src="/how_to_use_r/workflow/images/project.png" alt="Projects in RStudio", class="shadow", style="width:70%">
 
-#### Do not dump your scripts into a folder
-
+#### スクリプトをフォルダに放り込まないで！
 
 <img src="/how_to_use_r/workflow/images/folder_rscripts.png" alt="Cut the cord", class="shadow", style="width:70%">
 
-#### One folder per project
+#### プロジェクトごとに一つのフォルダを。
 
-- RStudio project
-- Git repo
-- Can run parallel projects
+- RStudio プロジェクト
+- Git リポジトリ
+- などを使えばプロジェクトを並行作業できます
 
 
 <img src="/how_to_use_r/workflow/images/multiple_projects.png" alt="Cut the cord", class="shadow", style="width:70%">
 
 
-## Use portable file paths 
+## ポータブルファイルパスを使用する
 
-**DO NOT USE** `setwd()`
+ `setwd()`**は使わないで！**
 
-Keep everything relative to your project directory and it will work on everyone who downloads your project repo folder.
-
+プロジェクトディレクトリを基準に保存しておくと、プロジェクトレポジトリフォルダをダウンロードしたすべての人がその内容を見ることができるようになります。
 
 {{% notice note %}}
-Don't run the lines of code below. This is just to show you how it would work in theory.
+以下のコードを実行しないでください。これは理論的にどのように機能するかを示すためだけのものです。
 {{% /notice %}}
 
 ```{r, eval=FALSE}
@@ -92,12 +90,12 @@ library(here)
 here("Test", "Folder", "text.txt")
 ##> [1] "/Users/IRE/Projects/NICAR/2018/workflow/Test/Folder/test.txt"
 cat(readLines(here("Test", "Folder", "text.txt")))
-##> You found the text file nested in these subdirectories!
+##> サブディレクトリにネストされた全てのテキストファイルを発見しました！
 ```
 
-## Files organization
+## ファイル編成法
 
-#### At minimum
+#### 必要最低限
 
 ```{r, eval=FALSE}
 name_of_project
@@ -115,7 +113,7 @@ name_of_project
 ```
 
 
-#### Optimal
+#### 理想
 
 ```{r, eval=FALSE}
 name_of_project
@@ -140,11 +138,11 @@ name_of_project
 ```
 
 {{% notice info %}}
-Everything below is for more advanced users but I'm putting it here for future reference.
+以下は上級ユーザー向けですが、今後の参考のために掲載します。
 {{% /notice %}}
 
 
-#### Creating folder shortcut
+#### フォルダショートカットを作成する
 
 ```{r, eval=FALSE}
 folder_names <- c("raw_data", "output_data", "rmd", "docs", "scripts")
@@ -152,16 +150,16 @@ folder_names <- c("raw_data", "output_data", "rmd", "docs", "scripts")
 sapply(folder_names, dir.create)
 ```
 
-## Organization principles
+## 組織化の原則
 
-- Directory names are obvious to anyone looking
-- Reports and the script files are not in the same directory
-- Reports are sorted using 2-digit numbers. Tell your story clearly.
+- ディレクトリ名が閲覧者に分かりやすいものであること
+- レポートとスクリプトファイルが同じディレクトリにないこと
+- レポートが2桁の数字でソートされていること。ストーリーは明確に伝達すること。
 
 
-##Source to the online data
+##オンラインデータへのソース
 
-#### Normal data file
+#### 普通のデータファイル
 ```{r, eval=FALSE}
 if (!file.exists("data/bostonpayroll2013.csv")) {
 
@@ -174,7 +172,7 @@ if (!file.exists("data/bostonpayroll2013.csv")) {
 payroll <- read_csv("data/bostonpayroll2013.csv")
 ```
 
-#### Dealing with a zip file
+#### zipファイル
 ```{r, eval=FALSE}
 if (!file.exists("data/employment/2016-12/FACTDATA_DEC2016.TXT")) {
   
@@ -190,11 +188,11 @@ if (!file.exists("data/employment/2016-12/FACTDATA_DEC2016.TXT")) {
 payroll <- read_csv("data/bostonpayroll2013.csv")
 ```
 
-## Operate without a net
+## オフラインで運用する
 
-**Never** save work space to .RData on exiting RStudio and uncheck Restore .RData on start up.
+**絶対に** RStudioの終了時にワークスペースを.RDataに保存し、起動時にRestore .RDataのチェックを外すことはやめてください。
 
-This will make sure you've optimized your data ingesting and cleaning process and aren't working with a misstep in your process.
+これをすることで、データの取り込みとクリーニングのプロセスが最適化され、プロセスのステップミスをしていないことを確認できます。
 
 <img src="/how_to_use_r/workflow/images/cut_the_cord.png" alt="Cut the cord", class="shadow", style="width:70%">
 
