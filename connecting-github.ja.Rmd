@@ -1,0 +1,125 @@
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/A07QI3_Ie34?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+### Githubへの接続
+
+Githubは、Webベースでコードとデータの共有および共同作業を行うためのホスティングサービスです。
+
+これらのサービスはあなたのニーズと好み[次第で](https://medium.com/flow-ci/github-vs-bitbucket-vs-gitlab-vs-coding-7cf2b43888a1)使ってください。
+どれもよく似ています。
+
+**オプション**
+
+- [Github](http://www.github.com)
+- [BitBucket](https://bitbucket.org/)
+- [GitLab](https://about.gitlab.com/)
+
+オープンソースソフトウェアプロジェクトへの無料ホスティングを提供してくれているGithubにフォルダを公開します。
+
+開発済みのRパッケージのほとんどがここにホストされています。
+
+{{% notice warning %}}
+Githubで2段階認証を使用している場合は、SSHキーを生成して接続する[いくつかのステップ](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)を踏む必要があります。
+新しいアカウントを作成したばかりでGithubを使用しているのであれば、これは関係ありません。
+{{% /notice %}}
+
+### Githubリポジトリの作成
+
+アカウントを持っていなければ Github.com にアクセスして[作成して](https://github.com/join)ください。
+gitで設定したものと同じユーザー名とメールアドレスを使用してください。
+
+ここでは、Publishingの章で作成したチャンクのフォルダをアップロードします。
+
+Githubで、「チャンク」と呼ばれる [リポジトリを作成](https://github.com/new) しましょう。
+
+「Initialize with README」にチェックを入れないでください。まっさらのリポジトリが必要だからです。
+
+![](/git/github/images/chunks.png)
+
+新しいリポジトリページをこれから作成しようとしているローカルリポジトリと同期させる必要があります。
+任意の場所にフォルダを作成し (Documentフォルダかプロジェクトのためにつくったフォルダがいいでしょう)"チャンク"と名づけてください。
+
+01_chunk.htmlと01_chunk.rmdファイルを含むファイルをコピーして「チャンク」フォルダに貼り付けます。
+
+![](/git/github/images/chunk_files.png)
+
+CMD /ターミナルを開き、フォルダに移動してください。
+
+私の場合は、このようになります。
+
+![](/git/github/images/navigate.png)
+
+[先ほど学習した](http://learn.r-journalism.com/en/git/git/git/)コマンドの initialize、 add、 commitを入力します。
+
+```
+git init
+git add .
+git commit -m "first commit"
+```
+
+![](/git/github/images/git_execute.png)
+
+次に、ローカルコンピュータ上のリポジトリをGithub上のリポジトリに接続する必要があります。
+
+
+![](/git/github/images/push_existing.png)
+
+Githubでリポジトリを作成したときに提供されたのと同じものをターミナル/cmdに入力してください。
+
+```
+git remote add origin git@github.com:YOURUSERNAME/chunks.git
+git push -u origin master
+```
+
+![](/git/github/images/git_pushed.png)
+
+Githubリポジトリを更新すると、すべてのファイルがそこにあるはずです。
+
+![](/git/github/images/github_yay.png)
+これらのHTMLファイルをホストすることができます。
+
+### Githubページでホスティングする
+
+ [http://github.com/username/reponame/index.html](http://github.com/username/reponame/index.html) ->
+
+ [http://username.github.io/reponame/index.html](http://username.github.io/reponame/index.html)
+
+github.io は、ホストされているファイルのアドレスです。まずファイルをホストするためにGithubを設定する必要があります。
+
+### GHページの設定
+
+リポをアップロードしたら右上の**設定**をクリックしてください。
+
+![](/git/github/images/settings.png)
+
+ **GitHub Pages** までスクロールします。
+
+ *Source* を `None`から`master branch`に変更して保存します。
+
+![](/git/github/images/master_branch.png)
+
+
+将来のプロジェクトでは、すべてのHTMLの出力が `docs`フォルダに格納され、整理することができます。
+そうすると、`master branch\docs`オプションがそれらのファイルをホストし、ルートフォルダー内のすべてを無視します。
+
+
+
+ https://YOURUSERNAME.github.io/chunks/06_chunk.htmlにアクセスし、あなた自身のホスト済みファイルを手に入れましょう。
+
+![](/git/github/images/chunk6.png)
+
+
+新しいデータを取得してこれを更新したい場合はどうしますか？
+
+1. ローカルプロジェクトにインポートされたデータを変更する
+2. Rmdファイルから新しいHTMLを生成します。
+3. git addでファイルを追加
+4. "new data"あたりのメッセージをつけてgit commit -m
+5. ファイルの変更をGithubに反映するにはgit push -u origin master
+6. URLアドレスを更新すると、変更内容が反映されます。
+
+これで全部です。
+
+レポを公開することで、あなたは再現性のあるジャーナリズムコミュニティの一因になりました。
+
+最後にいくつかのヒントと、効率のよい方法を教えます。
