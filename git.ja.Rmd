@@ -1,0 +1,99 @@
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/UNnUPfEc944?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+###　gitを設定し、使ってみよう
+
+さて、はじめましょう。
+
+gitをインストールすると、コンピュータにあるディレクトリを [リポジトリ](https://en.wikipedia.org/wiki/Repository_(version_control))に変換することができます。
+これは、その内容と変更点がその時点から追跡できるようになることを意味します。
+
+ターミナルに戻りましょう。
+
+### 新しいリポジトリを作成する
+
+gitで追跡したいプロジェクトフォルダに移動します。
+
+コマンドプロンプトを使用してPC上のフォルダに移動するための[親切なガイド](https://www.digitalcitizen.life/command-prompt-how-use-basic-commands) for using the command prompt to navigate to folders on your PC. And a [guide for Macs](https://www.macworld.com/article/2042378/master-the-command-line-navigating-files-and-folders.html)があります。
+ショートカットのうちの一つは、Finderからフォルダをメニューのターミナルアイコンにドラッグすることです。
+正しいフォルダに入れたら、次のように入力します。
+
+
+```
+git init .
+```
+
+これはgitに `.`コマンドで現在のフォルダ内の新しいリポジトリとその中にあるすべてのものを初期化するよう指示します。
+
+あなたの名前とメールアドレスを設定しましたか？
+
+```
+git config --global user.email "your@email.com"
+git config --global user.name "your name"
+```
+
+### コミットする
+
+フォルダをリポジトリとして初期化したので、記録を始めましょう。
+
+これを「コミット」といいます。
+
+必須ではありませんが、作業をコミットする前の最初のステップとして、次のコマンドでgitのステータスを確認しておくといいです。
+
+```
+git status
+```
+
+おそらく "untracked"の下に膨大なリストが出現するでしょう。
+これは、gitはこれらのファイルの存在は認識しているものの、変更を追跡していないことを示しています。
+
+ `add` [command](https://git-scm.com/docs/git-add)コマンドを使わなければなりません。
+
+```
+git add .
+```
+
+これにより、追跡対象のディレクトリにすべてが追加されます。
+
+全ファイルを意味する `.`コマンドの代わりに、特定のファイル名を入力することで、そのファイルを追跡することもできます。
+
+万一に備えて、コミットする前にaddコマンドを実行し、ファイルが残っていないことを確認してください。
+
+ファイルを追加したら、statusコマンドを再度実行してください。
+
+```
+git status
+```
+
+Gitはあなたのファイルがステージングされコミットする準備が整ったことを教えてくれます。
+
+これで、この変更を `commit` [command](https://git-scm.com/docs/git-commit)コマンドで記録できるようになりました。
+
+メッセージを含めるには、メッセージの文字列を指定して `-m` とともに渡します。
+
+```
+git commit -m "first commit"
+```
+
+将来のコミットのために、どのような変更が行われたのかを伝えるようにしてください。
+
+これは、以前のバージョンに戻す必要がある場合に役立ちます。
+
+
+{{% notice note %}}
+まめに追加したりコミットしたりする習慣を身に付けましょう。
+{{% /notice %}}
+
+よくできました！
+最初は煩雑な作業に思えるかもしれませんが、これを行うための最も良い手法は次の通りです。
+
+1. ファイルの追加
+2. メッセージを添えてファイルをコミット
+3. 繰り返し
+
+あなたならできます。
+
+次に、これらの変更をGitHubにオンラインでプッシュして共有します。
