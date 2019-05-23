@@ -1,0 +1,110 @@
+## マックでインストール
+
+ベン・ウェルシュが彼のサイト [firstpythonnotebook.org](http://www.firstpythonnotebook.org/)で説明した手順通り進みます。
+
+最初のステップはGitが既にインストールされているかどうかを確認することです。
+
+GitはMacに自動的にインストールされます。
+
+虫眼鏡のマークをクリックして、ターミナルを検索、開いてください。
+
+![](/git/installing_git/images/macterminal.png)
+
+そしてこのコマンドを入力してください
+
+```
+git --version
+```
+
+このような表示が出るはずです。
+
+```
+git version 2.15.2 (Apple Git-101.1)
+```
+
+
+ Gitヴァージョンが2.15.2であることが分かりました。 
+
+空白があっだったりエラーが発生したりした場合は、Gitがインストールされていません。
+
+古いバージョンを持っているか、またはあなたがそれをインストールしていないならば、このWebサイトを見てください。 [git-scm.com](https://git-scm.com/)
+
+![](/git/installing_git/images/downloadmac.png)
+
+「開発元が未確認のため開けません」というエラーが表示される場合があります。
+
+![](/git/installing_git/images/developer_mac.png)
+
+さあ、OKをクリックしてください。 
+
+この部分は管理者権限が必要です。検索に戻り、設定を開きます。そうしたらセキュリティとプライバシーをクリックしてください。
+
+![](/git/installing_git/images/security.png)
+
+
+
+![](/git/installing_git/images/open_mac.png)
+
+このまま開くをクリックします。 そして、ユーザー名とパスワードを入力してください。
+インストーラが開きます。ソフトウェアをインストールし、指示に従ってユーザー名とパスワードを入力します。
+
+ターミナルを閉じて再度開きます。
+
+これを入力します。
+
+```
+git --version
+```
+
+こうすると、
+
+```
+git version 2.18.0
+```
+と表示されます。
+
+### アカウント登録
+
+ターミナルにコマンドを入力します。
+
+```
+git config --global user.email "your@email.com"
+git config --global user.name "your name"
+```
+
+これで完了。次の段階に進む準備ができました。
+
+## PCでインストール
+
+手順は、このメモ帳にあります。まず、Gitがすでにインストールされているかどうかをチェックしましょう。
+
+```
+git --version 
+```
+
+Gitが内部または外部コマンドとして認識されない場合、それはまだインストールされていないことを意味します。
+
+[gitforwindows.org](https://gitforwindows.org)をご覧ください。
+ダウンロードをクリックし、exeファイルを解凍して実行します。
+
+管理者権限が必要です。.
+
+すべてデフォルトでクリックしてください。
+
+CMDを閉じます。変更を反映させるにはターミナルを再起動する必要があるため、それをもう一度開きます。
+
+再度入力してください。
+
+```
+git --version
+```
+
+最後に CMD/terminalにこのように入力します。
+
+```
+git config --global user.email "your@email.com"
+git config --global user.name "your name"
+```
+
+これで次のセクションに進む準備が整いました。
+
