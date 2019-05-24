@@ -270,7 +270,7 @@ leaflet() %>%
 
 `addPolygons()` のサブ関数として`highlight()` や `labelOptions()` があります。 
 
-[Read more](https://rstudio.github.io/leaflet/choropleths.html) at rstudio.
+[詳しくは](https://rstudio.github.io/leaflet/choropleths.html)こちら。
 欠点は、ポップアップにHTMLが表示されないため、渡すことができる文字列が制限されることです。
 
 ```{r hover_map, eval=F}
