@@ -1,0 +1,79 @@
+---
+title: "Best practices for GitHub"
+description: "Transparency and avoiding issues"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["git"]
+tags: ["git", "github", "github pages", "publishing"]
+weight: 4
+slug: github-pages
+---
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/rKUYR9HC7N0?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+
+###　Githubを使いこなす最良の方法
+
+これからお話しするのは、GitHubリポジトリをクリーンに保つためのいくつかの提案です。
+
+あなたのデータを読む人はさまざまな人たちだということを覚えておいてください。
+
+## 要約したデータを提供する
+
+未加工データを洗練されたセットに変換するために必要なクリーニングと処理の詳細を記述したスクリプトを公開するのは素晴らしいことです。しかし、大半の人々は完成したデータをダウンロードして楽しむことを望んでいます。
+
+リポにフォルダーを含めることで、彼らはあなたの方法をたどってデータを再生する必要がなくなります。
+
+## .gitignore 
+
+特定のファイルを除いてGitHubへのアップロードからするには、Use [.gitignore](https://git-scm.com/docs/gitignore) to exclude certain files from being uploaded to GitHub. Such as:
+
+- 100 mbを超えるファイル
+    * GitHubにアップロードできません
+- キーやパスワード付きのファイル
+- Rの個人的なhistoryのような余分なファイル
+
+ あとは[この.gitignore](https://github.com/wpinvestigative/kushner_eb5_census/blob/master/.gitignore) ファイルをご覧ください。
+
+## Readmeとデータ辞書を含める
+
+読者に何を扱っているのかを知らせます。
+
+データをどこから入手したかなど、できるだけ具体的にしてください。
+
+- [Buzzfeed](https://github.com/BuzzFeedNews/everything) は、ストーリーリンクとリポジトリをテーブルとしてインデックス付けする方法のモデルです。
+
+<img src="/git/github/images/index.png">
+
+## ライセンス
+
+必ずそれぞれのリポに[ライセンス](https://help.github.com/articles/licensing-a-repository/)を含めてください。
+
+これにより、オープンソースであることを他の人に知らせ、人々があなたの作品を使用、変更、または配布する方法に制限を課します。
+
+たとえば、Washington Postは[Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) license](https://creativecommons.org/licenses/by-nc-sa/4.0/)の下でGitHubに作品を公開しています。
+
+つまり、ユーザーは私たちのデータを任意の媒体またはフォーマットで共有、コピー、および再配布することができ、私たちの仕事に基づいてリミックス、変換、構築することができます。
+しかし、彼らは適切なクレジットを表示し、何らかの変更が行われたかどうかを示さなければなりません。
+さらに商業目的の使用はできず、同じライセンスの下で彼らの作品を共有しなければなりません。
+
+MITライセンスもこれに[よく似ています](https://tldrlegal.com/license/mit-license)。
+
+あなたの仲間と話し合いをし、一貫性を保ってください。
+
+## モンスターじみたデータ量のリポを作らないこと
+
+<img src="/git/github/images/fivethirtyeight.png">
+
+## Rで gitとGitHubを扱うことについてもっと学ぶ人のために
+
+* [http://happygitwithr.com/](http://happygitwithr.com/)
+
+
+-----
+
+<span style="color:gray">© Copyright 2018, Andrew Ba Tran</span>
+
