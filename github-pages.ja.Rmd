@@ -15,7 +15,7 @@ slug: github-pages
 
 
 
-###　Githubを使いこなす最良の方法
+###　Githubのベストプラクティス
 
 これからお話しするのは、GitHubリポジトリをクリーンに保つためのいくつかの提案です。
 
@@ -29,7 +29,7 @@ slug: github-pages
 
 ## .gitignore 
 
-特定のファイルを除いてGitHubへのアップロードからするには、Use [.gitignore](https://git-scm.com/docs/gitignore) to exclude certain files from being uploaded to GitHub. Such as:
+特定のファイルを除いてGitHubへのアップロードからするには、[.gitignore](https://git-scm.com/docs/gitignore)を使います。例えば：
 
 - 100 mbを超えるファイル
     * GitHubにアップロードできません
