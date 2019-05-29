@@ -1,3 +1,14 @@
+---
+title: "RStudio�̃C���X�g�[��"
+description: "Click, click, click... click"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "install",]
+weight: 4
+slug: installing-rstudio
+---
+
 ## RStudioのインストール
 
 * RStudio Desktop - [http://www.rstudio.com](https://www.rstudio.com/products/rstudio/)
