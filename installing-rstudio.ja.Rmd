@@ -1,5 +1,5 @@
 ---
-title: "RStudio�̃C���X�g�[��"
+title: "RStudioのインストール"
 description: "Click, click, click... click"
 author: "Andrew Ba Tran"
 date: 2018-05-27T21:13:14-05:00
