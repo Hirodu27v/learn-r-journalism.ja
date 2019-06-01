@@ -1,3 +1,19 @@
+---
+title: "Murders case study"
+description: "Looking for evidence of serial killers"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "wrangling", "joins"]
+weight: 3
+slug: murders-case-study
+---
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/HMJW3JL4WTI?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 FBIは、全国で40年間にわたり75万件以上の殺人事件を捜査してきました。これには、警察が統計を送らなかった殺人事件は含まれていません。
 
 スクリップス・ハワード・ニュース・サービスの全国特派員だったトーマス・ハーグローブは、FBIのデータを使用して、連続殺人が発生した可能性が高い地域を特定するアルゴリズムを開発しました。彼の仕事によってオハイオ州とインディアナ州の当局者は2010年に絞殺事件の捜査を始めました。この事件は、ダレン・バンの逮捕につながりました。彼は数十年にわたって女性を殺害してきたと告白し、警察はこれらの未発見の犠牲者を見つけるため、インディアナ州ゲーリーの廃墟に向かうことになりました。
