@@ -1,3 +1,19 @@
+---
+title: "Data structures in R"
+description: "Types of data that you'll be working with in R"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "data structures"]
+weight: 3
+slug: data-structures
+---
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/eXb5ks7lMwQ?t=5s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 ## ベクトル
 
 **ベクトル**は、同じ基本型のデータ要素を順序付けた集まりです。ベクトルを構成する部分は、**コンポーネント**または**要素**と呼びます。
