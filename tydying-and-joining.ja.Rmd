@@ -1,3 +1,20 @@
+---
+title: "Tidying and joining data"
+description: "Learn how to tidy up and join data"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "wrangling", "dplyr"]
+weight: 2
+slug: tidyr-joins
+---
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/9kMfZp2_REI?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 **殺人事件** のデータベースを掘り下げながら、**tidyr** と joinsという新しい概念を学びましょう。
 先ほど、整理したデータについて簡単に述べましたが、このセクションで詳しく説明します。
 
