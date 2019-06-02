@@ -1,3 +1,13 @@
+---
+title: "CSV files"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "importing", "csv"]
+weight: 1
+slug: csv-files
+---
+
 コンマで区切られたファイルは、Microsoftの有料プログラムなしでスプレッドシートを保存する最も一般的な方法です。
 
 ## csvファイルはどのようなものか
