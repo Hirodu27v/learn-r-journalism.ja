@@ -1,3 +1,19 @@
+--
+title: "Static maps"
+description: "Mapping with sf and ggplot2"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "ggplot2", "maps"]
+weight: 1
+slug: static-maps
+---
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/-udJxD9DkA8?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 静的な地図
 
 このセクションでは、空間データ、シェープファイル、および国勢調査データをマッピングするための基礎的な方法について説明します。
