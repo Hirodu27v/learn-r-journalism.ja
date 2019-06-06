@@ -1,3 +1,20 @@
+--
+title: "Interactive choropleth maps"
+description: "With Starbucks and Census data"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "mapping", "census"]
+weight: 5
+slug: census-maps
+---
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/M1AQ7ri7AfE?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 ## インタラクティブなコロプレスマップ
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
   <iframe src="//www.youtube.com/embed/M1AQ7ri7AfE?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
