@@ -1,3 +1,20 @@
+---
+title: "Traffic stops case study"
+description: "Looking for racial profiling in traffic stops"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "mapping", "rgdal"]
+weight: 3
+slug: traffic-stops
+---
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/kYK2bDH2czk?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 検問のケーススタディ
 
 これまでに学んだことを踏まえ、検問の空間分析を行います。
