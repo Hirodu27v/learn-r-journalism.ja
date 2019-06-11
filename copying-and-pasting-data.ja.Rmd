@@ -1,3 +1,18 @@
+---
+title: "Copying and pasting data"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "importing", "copying", "pasting"]
+weight: 5
+slug: copying-pasting
+---
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/3W9m2iyfoGk?t=2s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 あらかじめ作られたフォーマットでなければ、Rにデータを取り込むのはとても難しいものです。
 
 Webサイトの表データがそうですが、これは一般的ではないフォーマット構造のExcelスプレッドシートやPDFにも当てはまります。
