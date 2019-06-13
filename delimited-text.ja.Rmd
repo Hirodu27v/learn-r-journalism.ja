@@ -1,3 +1,18 @@
+---
+title: "Delimited Text"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "importing", "delimited text"]
+weight: 3
+slug: delimited-text
+---
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/qGL-wio4cZU?t=4s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 コンマ以外の記号で区切られた（区別された）値を持つデータと出合うことがあります。たとえば、私はかつて絵文字で区切られたスプレッドシートを受け取ったことがあります。
 
 なぜこうしたことが起こるのでしょう？ これは、データがデータベースからエクスポートされ、ユーザーがこのオプションを選択したことを意味しています。すべてのデータが理想的な方法で存在するとは限りませんが、このデータ構造に限れば、少なくともPDFを扱っていることがわかります（可能ではありますが、このコースでは深追いしません）。
