@@ -56,7 +56,7 @@ ggplot(data=ages) +
 
 ![](/visualizing/charts_with_ggplot/images/gg1.png)
 
-まずは　**データフレーム**　からです。 **年齢**　を`ggplot()`に渡して初期化しました。
+まずは**データフレーム**からです。 **年齢**　を`ggplot()`に渡して初期化しました。
 
 
 ![](/visualizing/charts_with_ggplot/images/gg1c.png)
