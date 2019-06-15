@@ -1,3 +1,19 @@
+---
+title: "Folder of files"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "importing", "bulk"]
+weight: 7
+slug: bulk-files
+---
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/SNtzR9ZOJO4?t=3s" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; encrypted-media" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 スプレッドシートを一つにまとめて大きなサイズのフォルダにしようと思ったことはありませんか。
 スプレッドシートは、何度もコピーして貼り付ける必要があります。
 しかし、Rを使えばそのプロセスをスクリプト化できます。
