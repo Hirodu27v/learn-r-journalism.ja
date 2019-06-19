@@ -1,3 +1,14 @@
+---
+title: "What is R"
+description: "What dReams are made of"
+author: "Andrew Ba Tran"
+date: 2018-05-27T21:13:14-05:00
+categories: ["R"]
+tags: ["R", "introduction"]
+weight: 2
+slug: what-is-r
+---
+
 ## Rとは?
 * コンピュータを用いた統計とグラフィックのためのプログラミング言語及び開発実行環境です。
 * ベル研究所が開発した"S"言語に基づき、開発されました。
