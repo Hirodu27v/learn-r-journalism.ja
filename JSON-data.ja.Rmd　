@@ -10,7 +10,7 @@ JSONはJavaScript Object Notationの略で、地図のようなWebサイト機�
 
 ![](/importing_exporting/json/images/sinclair2.png)
 
-ブラウザのデベロッパーツールからサイズ順に並べ替えることができる **Network** をクリックし、マップによって呼び出されている **json** ファイルがあることを確認します。
+ブラウザのデベロッパーツールからサイズ順に並べ替えることができる **Network** をクリックし、マップが呼び出した **json** ファイルがあることを確認します。
 
 ![](/importing_exporting/json/images/sinclair3.png)
 
