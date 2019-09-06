@@ -3,7 +3,7 @@ title: "Copying and pasting data"
 author: "Andrew Ba Tran"
 date: 2018-05-27T21:13:14-05:00
 categories: ["R"]
-tags: ["R", "importing", "copying", "pasting"]
+tags: ["R", "importing", "copying", "pasting"] 
 weight: 5
 slug: copying-pasting
 ---
