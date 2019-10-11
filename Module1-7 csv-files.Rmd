@@ -8,7 +8,7 @@ weight: 1
 slug: csv-files
 ---
 
-コンマで区切られたファイルは、Microsoftの有料プログラムなしでスプレッドシートを保存する最も一般的な方法です。
+コンマで区切られたファイルは、Microsoftの有料プログラムを使わずにスプレッドシートを保存する最も一般的な方法です。
 
 ## csvファイルはどのようなものか
 
@@ -17,7 +17,7 @@ CSV のファイル名は **.csv**　で終わります。
 ![](/importing_exporting/csv/images/csv1.png?classes=shadow)
 
 
-## csvファイルの中身はどのようになっているのか
+## csvファイルの中身はどうなっているのか
 
 画像のファイル名は、コンマで区切られた値を説明しています。
 
@@ -25,7 +25,7 @@ CSV のファイル名は **.csv**　で終わります。
 
 # CSVファイルのインポート
 
-- CSVのインポートはベースRでできるので、パッケージは本来不要です。
+- CSVのインポートはbase Rでできるので、パッケージは不要です。
 - しかし、ここではあえて **readr**　パッケージを使ってみましょう。
 
 ## データを取得する2つの方法
@@ -50,7 +50,29 @@ CSVファイルをインポートするための関数は`read.csv()`です。UR
 df_csv <- read.csv("https://data.ct.gov/api/views/iyru-82zq/rows.csv?accessType=DOWNLOAD", stringsAsFactors=F)
 head(df_csv, 10)
 ```
-
+## FiscalYear MonthYear Town AdmMonth FYMonthOrder AdmYear
+## 1 2014 July-13 Ansonia 7 1 2013
+## 2 2014 August-13 Ansonia 8 2 2013
+## 3 2014 September-13 Ansonia 9 3 2013
+## 4 2014 October-13 Ansonia 10 4 2013
+## 5 2014 November-13 Ansonia 11 5 2013
+## 6 2014 December-13 Ansonia 12 6 2013
+## 7 2014 January-14 Ansonia 1 7 2014
+## 8 2014 February-14 Ansonia 2 8 2014
+## 9 2014 March-14 Ansonia 3 9 2014
+## 10 2014 April-14 Ansonia 4 10 2014
+## MonthTotal
+## 1 42
+## 2 43
+## 3 39
+## 4 33
+## 5 38
+3
+## 6 45
+## 7 35
+## 8 38
+## 9 45
+## 10 46
 
 ## データをインポートする他の方法：ダウンロード
 
@@ -58,7 +80,7 @@ head(df_csv, 10)
 
 ![](/importing_exporting/csv/images/downloading.png?classes=shadow)
 
-作業ディレクトリに保存してください。
+ワーキングディレクトリに保存してください。
 
 右側の更新を表す矢印をクリックしてファイルを更新し、保存されていることを確認します。
 
@@ -69,11 +91,12 @@ head(df_csv, 10)
  `setwd("/directory/where/you/want")` と入力するか、メニューから **Session > Set Working Directory > Choose Directory...**と進んでください。
 
 ![](/importing_exporting/csv/images/setwd.png?classes=shadow)
+
 ## ローカルのCSVのインポート
 
 ファイル名をURLの代わりにします。
 
-**Note:** 作業ディレクトリがcsvファイルがある場所に設定されている場合にのみ機能します。
+**Note:** ワーキングディレクトリがcsvファイルがある場所に設定されている場合にのみ機能します。
 
 ```{r segment2}
 df_csv <- read.csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__and_Month.csv", stringsAsFactors=F)
@@ -82,11 +105,11 @@ df_csv <- read.csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__
 
 ## stringsAsFactors=F
 
-なぜこうする必要があるのでしょうか？
+なぜこうすべきなのでしょうか？
 
 統計学者のせいです。
 
-Rが作成された当時、現在のような使い方はされていませんでした。
+Rが作成された当時、現在のようにさまざまな文字列を扱うことはありませんでした。
 
 **`stringsAsFactors=F`を使わないと**
 
@@ -94,12 +117,20 @@ Rが作成された当時、現在のような使い方はされていません�
 df_csv <- read.csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__and_Month.csv")
 str(df_csv)
 ```
+## 'data.frame': 3420 obs. of 7 variables:
+## $ FiscalYear : int 2014 2014 2014 2014 2014 2014 2014 2014 2014 2014 ...
+## $ MonthYear : Factor w/ 36 levels "April-14","April-15",..: 16 4 34 31 28 7 13 10 22 1 ...
+## $ Town : Factor w/ 102 levels "Ansonia","Berlin",..: 1 1 1 1 1 1 1 1 1 1 ...
+## $ AdmMonth : int 7 8 9 10 11 12 1 2 3 4 ...
+## $ FYMonthOrder: int 1 2 3 4 5 6 7 8 9 10 ...
+## $ AdmYear : int 2013 2013 2013 2013 2013 2013 2014 2014 2014 2014 ...
+## $ MonthTotal : int 42 43 39 33 38 45 35 38 45 46 ...
 
 
 
 ##readrパッケージからread_csv()を使う
 
-**readr** は矩形データを素早く読み込むことができるパッケージで、デフォルトでは文字はストリングであって、ファクタ型ではないと仮定しています。
+**readr** は矩形データを素早く読み込むことができるパッケージで、デフォルトでは文字はストリングであって、因子型ではないと仮定しています。
 
 ```{r segment4}
 ## がまだインストールされていない場合は、以下の行のコメントを外して実行してください。
@@ -107,6 +138,16 @@ str(df_csv)
 library(readr)
 df_csv <- read_csv("data/Admissions_to_DMHAS_Addiction_Treatment_by_Town__Year__and_Month.csv")
 ```
+## Parsed with column specification:
+## cols(
+## FiscalYear = col_integer(),
+## MonthYear = col_character(),
+## Town = col_character(),
+## AdmMonth = col_integer(),
+## FYMonthOrder = col_integer(),
+## AdmYear = col_integer(),
+## MonthTotal = col_integer()
+## )
 
 ご覧のとおり、`read_csv()` 関数は **MonthYear** と **Town** 列を`read.csv()`のように因子型としてではなくストリングとして解釈しました。
 
