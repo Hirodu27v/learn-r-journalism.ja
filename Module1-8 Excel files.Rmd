@@ -24,13 +24,13 @@ Excelのファイル名は **.xls** か **.xlsx**　で終わります。
 
 ## Excelファイルの内部
 
-奇妙でしょう？解析は絶対無理です。
+奇妙でしょう？このままでは解析は絶対無理です。
 
 ![](/importing_exporting/csv/images/excel2.png?classes=shadow)
 
 私は時々、Excelのシートを.csvファイルとして保存します。
 
-それはショートカットです。しかし、透明性を保ち、生データを処理したい場合は次のようにします。
+それは一つのショートカットです。しかし、透明性を保ち、生データを処理したい場合は次のようにします。
 
 ## Excelファイルのインポート
 - Excelのインポートは複雑で、 **readxl package** が必要です。
@@ -73,9 +73,9 @@ View(df_xl)
 ![](/importing_exporting/csv/images/excel_imported.png?classes=shadow)
 
 
-**これはダメです**。
+**全然ダメです**。
 
-Excelファイルは、Excelでは見栄えがよくてもRでは意味がないフォーマットが好きだという問題があります。
+Excelファイルは、Excelでは見栄えがよくてもRでは意味がないフォーマットを好むという問題があります。
 
 ## read_excel() をもう一度
 
@@ -102,9 +102,18 @@ View(df_xl)
 
 ```{r df_xl}
 # the colnames() 関数はデータフレームcolnames(df_xl)の列名をリストします。
+colnames(df_xl)
 
 ```
-
+## [1] "Fiscal Year 7/1-6/30" "Accessions"
+## [3] "Autopsies" "Exam-inations"
+## [5] "Other Cases" "TOTAL"
+## [7] "Cremations" "% incl crem"
+## [9] "Homicides" "Suicide"
+## [11] "Accidents" "Undetermined"
+## [13] "ALL" "U 20"
+## [15] "U 17" "SIDS"
+## [17] "Clinicals"
 それでは、スペースを含む列のデータをどのように参照すればよいのでしょう。
 
 列を抽出するためにいつも通り `$` を使ってみましょう。
@@ -112,13 +121,15 @@ View(df_xl)
 ```{r df_xl_col_fail, error=T}
 head(df_xl$Other Cases)
 ```
-
+## Error: <text>:1:18: unexpected symbol
+## 1: head(df_xl$Other Cases
+##
 このように、スペースがあるとうまくいきません。 スペースのある列を処理するには、バッククオートを追加します。
 
 ```{r df_xl_col_pass, error=T}
 head(df_xl$`Other Cases`)
 ```
-
+## [1] 39 17 40 40 40 37
 限られた基礎的な作業ならば、いくつか余分な操作をするだけでよいので大丈夫でしょう。
 
 ただし、これから実行する作業を見越して、文字やスペースがないよう列名を簡略化する必要があります。これが
@@ -142,6 +153,15 @@ View(df_xl)
 ```{r new_colnames}
 colnames(df_xl)
 ```
+## [1] "Fiscal.Year......7.1.6.30" "Accessions"
+## [3] "Autopsies" "Exam.inations"
+## [5] "Other.Cases" "TOTAL"
+## [7] "Cremations" "X..incl.crem"
+## [9] "Homicides" "Suicide"
+## [11] "Accidents" "Undetermined"
+## [13] "ALL" "U.20"
+## [15] "U.17" "SIDS"
+## [17] "Clinicals"
 
 まあまあです。
 
@@ -182,7 +202,11 @@ df_xl <- rename(df_xl, Year=Fiscal.Year......7.1.6.30)
 ```{r colnames_again}
 colnames(df_xl)
 ```
-
+## [1] "Year" "Accessions" "Autopsies" "Exam.inations"
+## [5] "Other.Cases" "TOTAL" "Cremations" "X..incl.crem"
+## [9] "Homicides" "Suicide" "Accidents" "Undetermined"
+## [13] "ALL" "U.20" "U.17" "SIDS"
+## [17] "Clinicals"
 必要に応じて他の列の名前も修正してください。私はとりあえずこのままにしておきます。
 
 
