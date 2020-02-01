@@ -11,7 +11,7 @@ slug: intro-to-r
 
 ## 構文
 
-Rが機能するためには、厳格な構文規則に従わなければなりません。Rはあなたの意図を推測しないのです。
+Rを機能させるには、厳格な構文規則に従わなければなりません。Rは忖度できません。
 
 ![](/how_to_use_r/tour_rstudio/images/left.png?classes=shadow)
 
@@ -47,7 +47,7 @@ setwd("C:/Documents/learn-r-journalism")
 
 
 {{% notice note %}}
-スラッシュが普通のスラッシュであることを確かめ、そして引用符を忘れないようにしてください。.
+スラッシュが普通のスラッシュであることを確かめ、そして引用符を忘れないようにしてください。
 {{% /notice %}}
 
 RStudioでは　*Tools > Set Working Directory*　という手順で作業ディレクトリを設定することもできます。
