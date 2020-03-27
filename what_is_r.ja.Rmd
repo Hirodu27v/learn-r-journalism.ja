@@ -32,7 +32,7 @@ slug: what-is-r
 * [Spies in the Skies](https://www.buzzfeed.com/peteraldhous/spies-in-the-skies?utm_term=.ufYW814Den#.iyOnAg13qy)
 
 ## Rでプログラミングするためのインターフェース
-* Rそのもの (以下の全てでBase Rが必要です)
+* Rそのもの (以下の全てでBase Rが必要です) 
 * RStudio (このコースでは、これを優先して使います)
 * その他
 	* Eclipse StatET
