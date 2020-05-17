@@ -6,7 +6,7 @@ date: 2018-05-27T21:13:14-05:00
 categories: ["R"]
 tags: ["R", "basics", "programming"]
 weight: 5
-slug: r-syntax
+slug: r-syntax　　
 ---
 
 
