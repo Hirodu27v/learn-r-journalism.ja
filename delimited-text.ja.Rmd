@@ -88,7 +88,7 @@ df2
 
 **readr**　パッケージの [`read_fwf()`](https://readr.tidyverse.org/reference/read_fwf.html) 関数を使います。
 
-コンソールの `?read_fwf` に入力するだけです:
+コンソールに `?read_fwf` と入力するだけです:
 
 ```
 read_fwf(file, col_positions, col_types = NULL, locale = default_locale(),
