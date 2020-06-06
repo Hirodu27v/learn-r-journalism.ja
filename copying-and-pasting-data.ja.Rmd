@@ -62,7 +62,9 @@ library(tibble)
 
 ![Browse](/importing_exporting/copying_pasting/images/datapasta4.png)
 
-テーブル内のデータを選択してRStudioを開き、ショートカットを使ってチブルを持ってきてください（私は、shift + cmd + Tを使いました）。
+テーブル内のデータを選択してRStudioを開き、ショートカットを使ってこれはKnight Center for Journalism in the AmericasのMOOC 「Introduction to R for Journalists: How to Find Great Stories in Data」で使用した講義資料の邦訳字幕です。翻訳・転載の許可を得ています。括弧内は訳注。必要に応じて随時修正します。
+©2020 The Knight Center for Journalism at the University of Texas at Austin
+Translated by Hiroyuki Yokoyamaを持ってきてください（私は、shift + cmd + Tを使いました）。
 
 このようなデータを得るはずです。
 
